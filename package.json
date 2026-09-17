@@ -1,0 +1,22 @@
+{
+  "description": "The Recipe Seeker — nutrition-first recipe site (build orchestration at repo root; no runtime deps here)",
+  "devDependencies": {
+    "sharp": "^0.35.4"
+  },
+  "license": "UNLICENSED",
+  "name": "recipe-seeker",
+  "private": true,
+  "workspaces": [
+    "client"
+  ],
+  "scripts": {
+    "data:build": "node scripts/resolve-nutrition.mjs",
+    "seo:build": "node scripts/generate-seo.mjs",
+    "seo:check": "node scripts/check-seo.mjs client/dist",
+    "server:dev": "npm --prefix server run dev",
+    "server:start": "npm --prefix server run start",
+    "build": "npm run data:build && npm run seo:build && npm --prefix client run build",
+    "client:build": "npm --prefix client run build"
+  },
+  "version": "0.1.0"
+}

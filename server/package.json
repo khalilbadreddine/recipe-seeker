@@ -1,0 +1,1 @@
+{"dependencies":{"better-sqlite3":"^12.4.1","cors":"^2.8.5","dotenv":"^16.4.7","express":"^4.21.2"},"description":"Express + SQLite API layer for The Recipe Seeker (nutrition-first recipe site)","license":"UNLICENSED","main":"src/index.js","name":"recipe-seeker-server","private":true,"scripts":{"dev":"node --watch src/index.js","start":"node src/index.js"},"version":"0.1.0"}
