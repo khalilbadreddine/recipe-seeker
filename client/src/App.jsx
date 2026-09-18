@@ -20,6 +20,8 @@ import AboutPage from './pages/AboutPage'
 import DisclaimerPage from './pages/DisclaimerPage'
 import PrivacyPage from './pages/PrivacyPage'
 import ContactPage from './pages/ContactPage'
+import ReviewConsole from './pages/admin/ReviewConsole'
+import Dashboard from './pages/admin/Dashboard'
 import NotFound from './pages/NotFound'
 
 /** Scroll to top on route change (client-side only effect; harmless in SSR). */
@@ -56,6 +58,8 @@ export default function App() {
           <Route path="/disclaimer" element={<DisclaimerPage />} />
           <Route path="/privacy" element={<PrivacyPage />} />
           <Route path="/contact" element={<ContactPage />} />
+          <Route path="/admin/review" element={<ReviewConsole />} />
+          <Route path="/admin/dashboard" element={<Dashboard />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>

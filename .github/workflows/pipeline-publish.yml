@@ -1,0 +1,52 @@
+# Pipeline Publisher — runs the approved-drafts publisher on a schedule.
+#
+# What it does:
+#   1. Runs pipeline/scripts/publisher.mjs (only touches drafts with
+#      status='approved'; the P1 guardrail + DB constraints refuse the rest)
+#   2. If client/src/data/recipes.json changed, commits + pushes it.
+#      Vercel auto-deploys on push -> the new post goes live.
+#
+# Required repository secrets (Settings -> Secrets and variables -> Actions):
+#   SUPABASE_URL, SUPABASE_SERVICE_KEY
+#
+# Trigger: daily at 06:00 UTC, or manually via "Run workflow".
+
+name: pipeline-publish
+
+on:
+  schedule:
+    - cron: '0 6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Run publisher
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+          SITE_URL: https://recipe-seeker-client.vercel.app
+        run: node pipeline/scripts/publisher.mjs
+
+      - name: Commit new posts (if any)
+        run: |
+          if git diff --quiet -- client/src/data/recipes.json; then
+            echo "No new posts."
+          else
+            git config user.name "recipe-seeker-pipeline"
+            git config user.email "pipeline@recipe-seeker.local"
+            git add client/src/data/recipes.json
+            git commit -m "pipeline: publish approved post(s) [skip ci]"
+            git push
+            echo "Pushed — Vercel will deploy."
+          fi
