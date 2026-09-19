@@ -13,18 +13,7 @@ import { readFileSync, existsSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-// minimal .env loader (repo root), no dependencies
-const HERE = dirname(fileURLToPath(import.meta.url));
-for (const p of [join(HERE, '..', '..', '.env'), join(HERE, '..', '.env')]) {
-  if (existsSync(p)) {
-    for (const line of readFileSync(p, 'utf8').split('\n')) {
-      const m = line.match(/^\s*([A-Z_][A-Z0-9_]*)\s*=\s*(.*?)\s*$/);
-      if (m && !m[2].startsWith('<') && process.env[m[1]] === undefined) {
-        process.env[m[1]] = m[2];
-      }
-    }
-  }
-}
+import './lib/env.mjs';
 
 const { chat, configuredProviders } = await import('./lib/llm.mjs');
 

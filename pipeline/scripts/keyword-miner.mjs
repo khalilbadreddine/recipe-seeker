@@ -23,6 +23,7 @@
  *   MAX_KEYWORDS_PER_DAY (default 5)
  */
 
+import './lib/env.mjs';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';

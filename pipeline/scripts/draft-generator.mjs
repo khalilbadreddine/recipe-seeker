@@ -33,6 +33,7 @@
  *   node pipeline/scripts/draft-generator.mjs   # auto chain
  */
 
+import './lib/env.mjs';
 import { createDb } from './lib/db.mjs';
 import { startRun, logEvent, finishRun } from './lib/runlog.mjs';
 import { chat } from './lib/llm.mjs';

@@ -28,6 +28,7 @@
  * Full step-by-step: pipeline/docs/pin-scheduler-guide.md
  */
 
+import './lib/env.mjs';
 import { createDb } from './lib/db.mjs';
 import { GuardrailError, assertPinCreatable } from './lib/guardrails.mjs';
 import { createPinterest } from './lib/pinterest.mjs';

@@ -19,6 +19,7 @@
  * Vercel then auto-deploys the new post.
  */
 
+import './lib/env.mjs';
 import { readFileSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
