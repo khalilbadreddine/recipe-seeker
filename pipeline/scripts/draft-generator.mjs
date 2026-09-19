@@ -11,7 +11,9 @@
  *      can touch it until a human approves it in the Review Console
  *
  * Guardrails:
- *   - P3: a draft with an empty personal_note is REJECTED (never saved).
+ *   - P3: the generator may not invent personal experience — no real note in
+ *     input means the TODO_KHALIL placeholder, which the publisher (P1)
+ *     will refuse to publish until Khalil writes his own note.
  *   - P4: DRAFTS_PER_DAY cap (default 3) — the review queue can never
  *     become a rubber-stamp backlog.
  *   - The LLM is instructed to NEVER invent nutrition numbers; anything
@@ -77,7 +79,7 @@ function generateManual(keyword) {
     sections: [{ h2: 'TODO: section heading', paragraphs: ['TODO: write this section.'] }],
     faqs: [{ q: 'TODO: question', a: 'TODO: answer' }],
     allergen_claims: [],
-    personal_note: 'TODO: REQUIRED — one concrete personal signal (testing note, substitution you tried, tip from experience). The draft CANNOT be published until this is filled in.',
+    personal_note: 'TODO_KHALIL: add your personal testing note (a substitution you tried, a tip from your kitchen). The draft CANNOT be published until this is replaced with your own words.',
     pin_variants: [{ title: `TODO pin title for ${keyword}`, description: 'TODO pin description' }],
     _manual: true,
   };
@@ -103,7 +105,7 @@ async function main() {
 
   let candidates;
   if (DRY_RUN) {
-    console.log('[drafts] DRY_RUN=1 — using a fake keyword, no LLM/DB calls');
+    console.log('[drafts] DRY_RUN=1 — using a fake keyword, real LLM call, nothing saved to DB');
     candidates = [{ id: 'dry-run-id', keyword: 'high protein overnight oats' }];
   } else {
     candidates = await db.select(

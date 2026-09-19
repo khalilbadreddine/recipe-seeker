@@ -5,9 +5,11 @@
  * are what the scripts call, and what the test suite asserts.
  *
  * Rule summary:
- *  P1: publish requires status='approved' + non-empty personal_note + image + empty live_url
+ *  P1: publish requires status='approved' + human-written personal_note
+ *      (no TODO_KHALIL placeholder) + image + empty live_url
  *  P2: pin creation requires status='published' + live_url set
- *  P3: new drafts require non-empty personal_note (the LLM/agent cannot skip it)
+ *  P3: new drafts require a personal_note; the LLM/agent may never invent
+ *      experience — without a real supplied note it must emit TODO_KHALIL
  *  P4: daily caps are enforced before miner/generator write anything
  */
 
@@ -26,6 +28,9 @@ export function assertPublishable(draft) {
   }
   if (!draft.personal_note || !draft.personal_note.trim()) {
     throw new GuardrailError('P1', 'refusing to publish: personal_note is empty (human signal required)');
+  }
+  if (draft.personal_note.includes('TODO_KHALIL')) {
+    throw new GuardrailError('P1', 'refusing to publish: personal_note is still the placeholder — Khalil must write his own note first');
   }
   if (!draft.image || !draft.image.trim()) {
     throw new GuardrailError('P1', 'refusing to publish: image path is empty (pins need a hero image)');
