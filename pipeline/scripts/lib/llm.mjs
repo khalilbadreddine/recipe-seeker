@@ -37,12 +37,15 @@ const PROVIDERS = [
     id: 'openrouter',
     keyEnv: 'OPENROUTER_API_KEY',
     base: 'https://openrouter.ai/api/v1',
-    // :free models rotate/die without warning — try several in order.
+    // :free models rotate/die without warning — verified live 2026-09-19
+    // against https://openrouter.ai/api/v1/models. Try several in order.
     models: () => [
-      'openai/gpt-oss-120b:free',
       'nvidia/nemotron-3-ultra-550b-a55b:free',
+      'nvidia/nemotron-3-super-120b-a12b:free',
+      'deepseek/deepseek-v4-flash-0731:free',
+      'z-ai/glm-5.2:free',
+      'qwen/qwen3.8-27b:free',
       'google/gemma-4-26b-a4b-it:free',
-      'meta-llama/llama-3.3-70b-instruct:free',
     ],
     headers: () => ({
       'HTTP-Referer': SITE_URL,
@@ -53,7 +56,9 @@ const PROVIDERS = [
     id: 'nvidia',
     keyEnv: 'NVIDIA_API_KEY',
     base: 'https://integrate.api.nvidia.com/v1',
-    models: () => [process.env.NVIDIA_MODEL || 'nvidia/llama-3.1-nemotron-70b-instruct'],
+    // Default verified live 2026-09-19 with a free NVIDIA key.
+    // (llama-3.1-nemotron-70b-instruct 404s: not provisioned for free accounts.)
+    models: () => [process.env.NVIDIA_MODEL || 'nvidia/nemotron-3-super-120b-a12b'],
   },
   {
     id: 'gemini',

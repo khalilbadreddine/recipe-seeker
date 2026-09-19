@@ -57,16 +57,44 @@ const DRAFTS_PER_DAY = Number(process.env.DRAFTS_PER_DAY || 3);
 const HERE = dirname(fileURLToPath(import.meta.url));
 const WRITER_MD = readFileSync(join(HERE, '..', 'agents', 'WRITER.md'), 'utf8');
 
+function extractJson(text) {
+  // Robust: find the outermost JSON object even if wrapped in fences/prose.
+  const start = text.indexOf('{');
+  const end = text.lastIndexOf('}');
+  if (start === -1 || end === -1 || end <= start) throw new Error('no JSON object in LLM response');
+  return JSON.parse(text.slice(start, end + 1));
+}
+
+function draftFieldsOk(d) {
+  return d && typeof d.title === 'string' && d.title.trim().length > 0
+    && Array.isArray(d.sections) && d.sections.length > 0
+    && typeof d.personal_note === 'string' && d.personal_note.trim().length > 0
+    && Array.isArray(d.pin_variants) && d.pin_variants.length > 0;
+}
+
 async function generateWithLlm(keyword, log) {
-  const { text, provider, model } = await chat(
-    WRITER_MD,
-    'Write the blog post for the keyword: "' + keyword + '"',
-    { json: true, log }
-  );
-  const clean = text.replace(/^```(?:json)?/i, '').replace(/```$/, '').trim();
-  const draft = JSON.parse(clean);
-  draft._llm = { provider, model };
-  return draft;
+  // Free-tier models are flaky (empty JSON, timeouts, 404/429 on :free
+  // slugs). Retry the whole chain a few times before giving up.
+  // The candidate stays 'new' so nothing is lost.
+  let lastErr;
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    try {
+      const { text, provider, model } = await chat(
+        WRITER_MD,
+        'Write the blog post for the keyword: "' + keyword + '"',
+        { json: true, log, timeoutMs: 120_000 }
+      );
+      const draft = extractJson(text);
+      if (!draftFieldsOk(draft)) throw new Error('response parsed but required fields are empty/missing');
+      draft._llm = { provider, model };
+      return draft;
+    } catch (e) {
+      lastErr = e;
+      log(`[drafts] attempt ${attempt}/3 failed (${e.message.split('\n')[0].slice(0, 120)}) — retrying`);
+      if (attempt < 3) await new Promise((r) => setTimeout(r, 5000 * attempt));
+    }
+  }
+  throw new Error(`LLM failed after 3 attempts: ${lastErr.message.split('\n')[0].slice(0, 200)}`);
 }
 
 function generateManual(keyword) {
