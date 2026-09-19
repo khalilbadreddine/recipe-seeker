@@ -18,17 +18,27 @@
  *     numeric near a health claim is flagged for the reviewer.
  *
  * LLM providers (LLM_PROVIDER):
- *   - "gemini"  (default): Google AI Studio free tier. Needs GEMINI_API_KEY.
+ *   - "auto" (default): fallback chain in pipeline/scripts/lib/llm.mjs —
+ *     xAI Grok -> OpenRouter :free -> NVIDIA NIM -> Gemini (last).
+ *     Needs at least one of: XAI_API_KEY, OPENROUTER_API_KEY,
+ *     NVIDIA_API_KEY, GEMINI_API_KEY (all have free tiers, no card).
  *   - "manual": writes a structured skeleton with TODOs; the human fills
  *     it in the Review Console. Zero cost, zero API key.
  *
+ * The writer follows pipeline/agents/WRITER.md (the instruction file is
+ * the system prompt). Guardrails + human review still apply downstream.
+ *
  * Run:
  *   LLM_PROVIDER=manual DRY_RUN=1 node pipeline/scripts/draft-generator.mjs
- *   LLM_PROVIDER=gemini node pipeline/scripts/draft-generator.mjs
+ *   node pipeline/scripts/draft-generator.mjs   # auto chain
  */
 
 import { createDb } from './lib/db.mjs';
 import { startRun, logEvent, finishRun } from './lib/runlog.mjs';
+import { chat } from './lib/llm.mjs';
+import { readFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+import { dirname, join } from 'node:path';
 import {
   GuardrailError,
   enforceDailyCap,
@@ -37,62 +47,23 @@ import {
 } from './lib/guardrails.mjs';
 
 const DRY_RUN = process.env.DRY_RUN === '1';
-const PROVIDER = (process.env.LLM_PROVIDER || 'gemini').toLowerCase();
+const PROVIDER = (process.env.LLM_PROVIDER || 'auto').toLowerCase();
 const DRAFTS_PER_DAY = Number(process.env.DRAFTS_PER_DAY || 3);
 
-const SYSTEM_PROMPT = `You write for "The Recipe Seeker", a nutrition-first recipe site.
-Positioning: "find recipes by what your body needs" — every post connects a
-nutrient (iron, protein, calcium, vitamin C, zinc, fiber...) to real food.
+// The WRITER agent instruction file IS the system prompt.
+const HERE = dirname(fileURLToPath(import.meta.url));
+const WRITER_MD = readFileSync(join(HERE, '..', 'agents', 'WRITER.md'), 'utf8');
 
-HARD RULES:
-1. NEVER invent nutrition numbers. If you are not certain of a per-serving
-   number, write the claim WITHOUT numbers (e.g. "a good source of iron").
-   Any number you do write MUST be one you are confident about.
-2. State allergen/diet claims EXPLICITLY as a list: e.g. ["gluten-free", "dairy-free"].
-   Never imply a dish is allergen-free without saying so plainly.
-3. personal_note is MANDATORY and must be non-empty: one concrete, personal
-   signal — a testing note, a substitution you actually tried, a cooking tip
-   from experience. Generic filler ("I love this recipe!") is not acceptable.
-4. The post must read like a human food writer, not SEO filler. Short
-   paragraphs. Practical. No hype words ("amazing", "incredible", "game-changer").
-
-Return ONLY valid JSON (no markdown fences) with EXACTLY this shape:
-{
-  "title": "string (<= 70 chars)",
-  "description": "string, meta description <= 160 chars",
-  "lede": "string, 1-2 sentence opener",
-  "category": "one of: Iron, Protein, Calcium, Vitamin C, Zinc, Fiber, Meal Prep, Breakfast",
-  "sections": [ { "h2": "string", "paragraphs": ["string", "..."] } ],   // 3-5 sections
-  "faqs": [ { "q": "string", "a": "string" } ],                          // 3-5 FAQs
-  "allergen_claims": ["gluten-free", "dairy-free"],
-  "personal_note": "string, REQUIRED, concrete and personal",
-  "pin_variants": [
-    { "title": "string <= 100 chars", "description": "string <= 450 chars" },
-    { "title": "...", "description": "..." },
-    { "title": "...", "description": "..." }
-  ]
-}`;
-
-async function generateWithGemini(keyword) {
-  const key = process.env.GEMINI_API_KEY;
-  if (!key) throw new Error('LLM_PROVIDER=gemini needs GEMINI_API_KEY (free at Google AI Studio)');
-  const res = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${key}`,
-    {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] },
-        contents: [{ parts: [{ text: `Write the blog post for the keyword: "${keyword}"` }] }],
-        generationConfig: { responseMimeType: 'application/json', temperature: 0.7 },
-      }),
-    }
+async function generateWithLlm(keyword, log) {
+  const { text, provider, model } = await chat(
+    WRITER_MD,
+    'Write the blog post for the keyword: "' + keyword + '"',
+    { json: true, log }
   );
-  if (!res.ok) throw new Error(`Gemini ${res.status}: ${(await res.text()).slice(0, 300)}`);
-  const json = await res.json();
-  const text = json.candidates?.[0]?.content?.parts?.map((p) => p.text || '').join('') || '';
   const clean = text.replace(/^```(?:json)?/i, '').replace(/```$/, '').trim();
-  return JSON.parse(clean);
+  const draft = JSON.parse(clean);
+  draft._llm = { provider, model };
+  return draft;
 }
 
 function generateManual(keyword) {
@@ -152,7 +123,9 @@ async function main() {
     console.log(`[drafts] keyword: "${cand.keyword}"`);
     let gen;
     try {
-      gen = PROVIDER === 'manual' ? generateManual(cand.keyword) : await generateWithGemini(cand.keyword);
+      gen = PROVIDER === 'manual'
+        ? generateManual(cand.keyword)
+        : await generateWithLlm(cand.keyword, (m) => console.log(m));
     } catch (e) {
       console.error(`[drafts] generation failed for "${cand.keyword}": ${e.message} — leaving candidate as 'new'`);
       continue;
