@@ -86,8 +86,8 @@ begin
   if OLD.status = 'pending_review' and NEW.status in ('approved', 'rejected') then
     return NEW;
   end if;
-  if OLD.status = 'approved' and NEW.status in ('published', 'rejected') then
-    return NEW;
+  if OLD.status = 'approved' and NEW.status in ('published', 'rejected', 'pending_review') then
+    return NEW; -- 'pending_review': approved drafts can be sent back for another pass (migration allow-approved-back-to-review.sql)
   end if;
   if OLD.status = 'rejected' and NEW.status = 'pending_review' then
     return NEW; -- allow re-drafting a rejected draft

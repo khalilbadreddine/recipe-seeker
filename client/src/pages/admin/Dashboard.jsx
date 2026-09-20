@@ -1,32 +1,31 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { useAuth } from '../../context/AuthContext'
-import { getSupabase, isSupabaseConfigured } from '../../lib/supabase'
+import { getSupabase } from '../../lib/supabase'
 import Seo from '../../components/Seo'
 import ReviewConsole from './ReviewConsole'
+import {
+  ago, fmt, useCopy, Card, SectionTitle, StatusPill, ScriptChip, LevelPill,
+  TabBadge, PrimaryBtn, GhostBtn, EmptyState, StatCard,
+} from './ui'
 
 /**
  * Growth Pipeline Dashboard — the control center. Route: /admin/dashboard.
  *
  * Tabs:
  *   Overview — funnel, stats, pipeline health, what needs you, quick actions
- *   Review   — THE human gate (redesigned ReviewConsole: preview + edit)
- *   Content  — every draft ever, filterable by status
+ *   Review   — THE human gate (ReviewConsole: preview + edit + approve/reject)
+ *   Content  — every draft ever: filter, move between statuses, publish options
  *   Pins     — pin queue: scheduled vs live, per post
  *   Keywords — what the miner found, scores, statuses
  *   AI       — which provider/model wrote what (observability)
  *   Activity — full event log, filterable by script + level
  *   Settings — table health, caps, secrets note
  *
- * Only emails in `pipeline_admins` may enter.
+ * Only emails in `pipeline_admins` may enter. Noindex always.
+ *
+ * Design: mobile-first, single column < 768px, touch targets >= 44px.
+ * Palette lock: forest / cream / ember only. Fraunces display + Inter body.
  */
-
-// ---------- brand ----------
-const GREEN = '#1e4633'
-const CREAM = '#fffdf8'
-const TOMATO = '#E4572E'
-const BORDER = '#e3d9c8'
-const MUTED = '#6b5f4d'
-const SERIF = 'Georgia, "Times New Roman", serif'
 
 const TABS = [
   { id: 'overview', label: 'Overview' },
@@ -47,36 +46,14 @@ const SCRIPT_DESC = {
   publisher: 'Publishes drafts you approved',
   scheduler: 'Schedules pins for published posts',
 }
-const CHIP = {
-  miner: { bg: '#e3efe7', fg: GREEN },
-  generator: { bg: '#e7e4f7', fg: '#3e3670' },
-  publisher: { bg: '#fbe9e1', fg: '#c24a24' },
-  scheduler: { bg: '#e8f0fa', fg: '#2456a6' },
-  you: { bg: '#fff3d6', fg: '#8a6d1b' },
-}
-const STATUS_STYLE = {
-  new: ['#e8f0fa', '#2456a6'],
-  drafted: ['#fff3d6', '#8a6d1b'],
-  pending_review: ['#fbe9e1', '#c24a24'],
-  approved: ['#e7e4f7', '#3e3670'],
-  rejected: ['#f1ece1', '#6b5f4d'],
-  published: ['#e3efe7', GREEN],
+
+/** "Draft X saved as pending_review via openrouter/model:free" -> {title, provider, model} */
+export function parseAiEvent(message) {
+  const m = /Draft "(.+?)" saved as pending_review via ([^/]+)\/(.+)$/.exec(message || '')
+  if (!m) return null
+  return { title: m[1], provider: m[2], model: m[3] }
 }
 
-// ---------- helpers ----------
-function ago(iso) {
-  if (!iso) return '—'
-  const s = (Date.now() - new Date(iso).getTime()) / 1000
-  if (s < 0) return 'just now'
-  if (s < 60) return 'just now'
-  if (s < 3600) return `${Math.floor(s / 60)}m ago`
-  if (s < 86400) return `${Math.floor(s / 3600)}h ago`
-  return `${Math.floor(s / 86400)}d ago`
-}
-function fmt(iso) {
-  if (!iso) return '—'
-  return new Date(iso).toLocaleString()
-}
 /** Safe query: returns { data } or { error }. Never throws. */
 async function safe(promise) {
   try {
@@ -87,153 +64,142 @@ async function safe(promise) {
     return { error: e.message }
   }
 }
-/** "Draft X saved as pending_review via openrouter/model:free" -> {title, provider, model} */
-export function parseAiEvent(message) {
-  const m = /Draft "(.+?)" saved as pending_review via ([^/]+)\/(.+)$/.exec(message || '')
-  if (!m) return null
-  return { title: m[1], provider: m[2], model: m[3] }
-}
 
-// ---------- tiny components ----------
-const card = { border: `1px solid ${BORDER}`, borderRadius: 12, padding: 16, background: CREAM }
-const num = { fontFamily: SERIF, fontSize: 30, fontWeight: 700, color: GREEN }
-const lbl = { fontSize: 12, color: MUTED, marginTop: 4, lineHeight: 1.4 }
-const h2 = { fontFamily: SERIF, fontSize: 18, margin: '26px 0 10px', color: GREEN }
-const pill = (bg, fg) => ({
-  display: 'inline-block', fontSize: 11, fontWeight: 700, padding: '3px 10px',
-  borderRadius: 12, background: bg, color: fg, whiteSpace: 'nowrap',
-})
-const btn = (bg) => ({
-  padding: '10px 18px', borderRadius: 8, border: 'none', cursor: 'pointer',
-  background: bg, color: '#fff', fontWeight: 700, fontSize: 14, marginRight: 8, marginBottom: 8,
-  minHeight: 44,
-})
-const ghostBtn = {
-  padding: '10px 16px', borderRadius: 8, cursor: 'pointer', fontWeight: 700, fontSize: 13,
-  background: CREAM, color: GREEN, border: `1px solid #d8cfc2`, marginRight: 8, marginBottom: 8,
-  minHeight: 44,
-}
-
-export function Empty({ text }) {
-  return <p style={{ color: MUTED, fontSize: 14 }}>{text}</p>
-}
-export function Chip({ script }) {
-  const c = CHIP[script] || CHIP.you
+function Kicker({ children }) {
   return (
-    <span style={{ ...pill(c.bg, c.fg), textTransform: 'uppercase', fontSize: 10, letterSpacing: '.05em' }}>
-      {SCRIPT_LABEL[script] || script}
-    </span>
-  )
-}
-export function StatusPill({ status }) {
-  const [bg, fg] = STATUS_STYLE[status] || ['#efe7d6', MUTED]
-  return <span style={pill(bg, fg)}>{(status || '').replace(/_/g, ' ')}</span>
-}
-export function SectionTitle({ children }) {
-  return <h2 style={h2}>{children}</h2>
-}
-function StatCard({ value, label, accent }) {
-  return (
-    <div style={card}>
-      <div style={{ ...num, ...(accent ? { color: accent } : {}) }}>{value}</div>
-      <div style={lbl}>{label}</div>
-    </div>
+    <p className="mb-1 text-[11px] font-extrabold tracking-[0.14em] text-ember-dark uppercase">{children}</p>
   )
 }
 
 /* ============================== OVERVIEW ============================== */
 
-export function OverviewView({ data, onCopy, copied, goTab }) {
+export function OverviewView({ data, goTab }) {
+  const { copied, copy } = useCopy()
   const { funnel, health, events, attention } = data
+
+  const quickActions = [
+    ['⛏ Run keyword miner', 'node pipeline/scripts/keyword-miner.mjs'],
+    ['✍ Generate drafts (AI)', 'node pipeline/scripts/draft-generator.mjs'],
+    ['🧪 Test generator (no save)', 'DRY_RUN=1 node pipeline/scripts/draft-generator.mjs'],
+    ['🚀 Publish approved', 'node pipeline/scripts/publisher.mjs'],
+    ['📌 Schedule pins', 'node pipeline/scripts/pin-scheduler.mjs'],
+    ['📌 List Pinterest boards', 'node pipeline/scripts/pin-scheduler.mjs --boards'],
+    ['🤖 Test AI chain', 'node pipeline/scripts/test-llm.mjs'],
+  ]
+
   return (
     <div>
       {attention.length > 0 && (
-        <div style={{ ...card, marginTop: 16, borderColor: TOMATO, background: '#fff7f3' }}>
-          <div style={{ fontWeight: 800, marginBottom: 8, color: TOMATO }}>Needs your attention</div>
-          {attention.map((a, i) => (
-            <div key={i} style={{ display: 'flex', gap: 10, alignItems: 'center', marginBottom: 6, fontSize: 14 }}>
-              <span style={{ flex: 1 }}>{a.text}</span>
-              <button style={{ ...ghostBtn, margin: 0, minHeight: 36, padding: '6px 12px' }} onClick={() => goTab(a.tab)}>
-                {a.cta}
-              </button>
-            </div>
-          ))}
-        </div>
+        <Card className="mt-4 !border-ember-dark/40 !bg-ember-soft/30">
+          <Kicker>Needs your attention</Kicker>
+          <div className="space-y-2.5">
+            {attention.map((a, i) => (
+              <div key={i} className="flex items-center gap-3">
+                <span className="flex-1 text-sm text-[#1c2b23]">{a.text}</span>
+                <GhostBtn className="!min-h-9 !px-3.5 !text-[13px]" onClick={() => goTab(a.tab)}>
+                  {a.cta}
+                </GhostBtn>
+              </div>
+            ))}
+          </div>
+        </Card>
       )}
 
       <SectionTitle>Pipeline funnel</SectionTitle>
-      <div style={{ display: 'flex', alignItems: 'stretch', gap: 6, overflowX: 'auto', paddingBottom: 4 }}>
+      {/* mobile: vertical stepper · desktop: horizontal */}
+      <div className="md:hidden">
         {funnel.map((f, i) => (
           <React.Fragment key={f.label}>
-            <div style={{ ...card, flex: 1, minWidth: 110, textAlign: 'center', padding: '12px 8px' }}>
-              <div style={{ ...num, fontSize: 26 }}>{f.value}</div>
-              <div style={lbl}>{f.label}</div>
-              {f.sub && <div style={{ fontSize: 10, color: MUTED }}>{f.sub}</div>}
-            </div>
+            <Card className="flex items-center gap-4 !p-3.5">
+              <div className="font-display text-[28px] font-bold text-forest">{f.value}</div>
+              <div>
+                <div className="text-sm font-bold text-[#1c2b23]">{f.label}</div>
+                {f.sub && <div className="text-xs text-[#6b5f4d]">{f.sub}</div>}
+              </div>
+            </Card>
             {i < funnel.length - 1 && (
-              <div style={{ alignSelf: 'center', color: '#b9ac97', fontSize: 18, flex: 'none' }}>→</div>
+              <div className="py-1 text-center text-lg text-[#b9ac97]">↓</div>
+            )}
+          </React.Fragment>
+        ))}
+      </div>
+      <div className="hidden items-stretch gap-1.5 md:flex">
+        {funnel.map((f, i) => (
+          <React.Fragment key={f.label}>
+            <Card className="flex-1 !p-3 text-center">
+              <div className="font-display text-[28px] font-bold text-forest">{f.value}</div>
+              <div className="mt-1 text-xs leading-snug text-[#6b5f4d]">{f.label}</div>
+              {f.sub && <div className="text-[10px] text-[#6b5f4d]">{f.sub}</div>}
+            </Card>
+            {i < funnel.length - 1 && (
+              <div className="self-center text-lg text-[#b9ac97]">→</div>
             )}
           </React.Fragment>
         ))}
       </div>
 
       <SectionTitle>Pipeline health</SectionTitle>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 12 }}>
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         {SCRIPTS.map((s) => {
           const h = health[s] || {}
           const st = h.status
-          const dot = st === 'ok' ? '#1a7a3c' : st === 'failed' ? '#b03a2e' : '#b9ac97'
+          const dot = st === 'ok' ? 'bg-[#1a7a3c]' : st === 'failed' ? 'bg-ember-dark' : 'bg-[#b9ac97]'
           const word = st === 'ok' ? 'healthy' : st === 'failed' ? 'failed' : 'not run yet'
           return (
-            <div key={s} style={card}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <span style={{ width: 10, height: 10, borderRadius: '50%', background: dot, flex: 'none' }} />
-                <b style={{ fontSize: 14 }}>{SCRIPT_LABEL[s]}</b>
-                <span style={{ marginLeft: 'auto', fontSize: 11, color: MUTED }}>{word}</span>
+            <Card key={s}>
+              <div className="flex items-center gap-2">
+                <span className={`h-2.5 w-2.5 flex-none rounded-full ${dot}`} />
+                <b className="text-sm text-[#1c2b23]">{SCRIPT_LABEL[s]}</b>
+                <span className="ml-auto text-[11px] text-[#6b5f4d]">{word}</span>
               </div>
-              <div style={{ fontSize: 12, color: MUTED, margin: '6px 0' }}>{SCRIPT_DESC[s]}</div>
-              <div style={{ fontSize: 12 }}>
+              <div className="my-1.5 text-xs text-[#6b5f4d]">{SCRIPT_DESC[s]}</div>
+              <div className="text-xs text-[#1c2b23]">
                 {h.started_at ? (
-                  <>Last run <b>{ago(h.started_at)}</b>{h.summaryText ? <><br /><span style={{ color: MUTED }}>{h.summaryText}</span></> : null}</>
+                  <>Last run <b>{ago(h.started_at)}</b>{h.summaryText ? <><br /><span className="text-[#6b5f4d]">{h.summaryText}</span></> : null}</>
                 ) : (
-                  <span style={{ color: MUTED }}>No runs recorded yet</span>
+                  <span className="text-[#6b5f4d]">No runs recorded yet</span>
                 )}
               </div>
-            </div>
+            </Card>
           )
         })}
       </div>
 
       <SectionTitle>Latest activity</SectionTitle>
-      {events.length === 0 && <Empty text="No pipeline activity yet — run the miner to start the loop." />}
-      {events.map((e, i) => (
-        <div key={i} style={{ display: 'flex', gap: 10, alignItems: 'flex-start', fontSize: 13, padding: '9px 0', borderBottom: '1px solid #efe7d6' }}>
-          <Chip script={e.script} />
-          <span style={{ flex: 1, color: e.level === 'error' ? '#b03a2e' : e.level === 'warn' ? '#8a6d1b' : 'inherit' }}>{e.message}</span>
-          <span style={{ fontSize: 11, color: MUTED, whiteSpace: 'nowrap' }}>{ago(e.created_at)}</span>
-        </div>
-      ))}
+      {events.length === 0 && (
+        <EmptyState
+          icon="🌱"
+          title="No activity yet"
+          text="The pipeline hasn't run. Start the loop: mine keywords, then generate drafts."
+          actionLabel="⛏ Copy: run the miner"
+          actionDoneLabel="✓ Copied!"
+          onAction={() => copy('node pipeline/scripts/keyword-miner.mjs', 'miner')}
+        />
+      )}
       {events.length > 0 && (
-        <button style={ghostBtn} onClick={() => goTab('activity')}>Full activity log →</button>
+        <Card className="!p-0 overflow-hidden">
+          {events.map((e, i) => (
+            <div key={i} className={`flex items-start gap-2.5 px-3.5 py-2.5 text-[13px] ${i > 0 ? 'border-t border-cream-dark' : ''}`}>
+              <ScriptChip script={e.script} />
+              <span className={`flex-1 ${e.level === 'error' ? 'text-ember-dark' : e.level === 'warn' ? 'text-ember-dark' : 'text-[#1c2b23]'}`}>{e.message}</span>
+              <span className="text-[11px] whitespace-nowrap text-[#6b5f4d]">{ago(e.created_at)}</span>
+            </div>
+          ))}
+        </Card>
+      )}
+      {events.length > 0 && (
+        <div className="mt-3"><GhostBtn onClick={() => goTab('activity')}>Full activity log →</GhostBtn></div>
       )}
 
       <SectionTitle>Quick actions</SectionTitle>
-      <p style={{ fontSize: 13, color: MUTED, marginTop: 0 }}>
+      <p className="mt-0 mb-3 text-[13px] text-[#6b5f4d]">
         Scripts run in your terminal from the repo root — tap a button to copy the exact command.
       </p>
-      <div>
-        {[
-          ['miner', '⛏ Run keyword miner', 'node pipeline/scripts/keyword-miner.mjs'],
-          ['generator', '✍ Generate drafts (AI)', 'node pipeline/scripts/draft-generator.mjs'],
-          ['generator-dry', '🧪 Test generator (no save)', 'DRY_RUN=1 node pipeline/scripts/draft-generator.mjs'],
-          ['publisher', '🚀 Publish approved', 'node pipeline/scripts/publisher.mjs'],
-          ['scheduler', '📌 Schedule pins', 'node pipeline/scripts/pin-scheduler.mjs'],
-          ['boards', '📌 List Pinterest boards', 'node pipeline/scripts/pin-scheduler.mjs --boards'],
-          ['llm', '🤖 Test AI chain', 'node pipeline/scripts/test-llm.mjs'],
-        ].map(([key, label, cmd]) => (
-          <button key={key} style={ghostBtn} onClick={() => onCopy(cmd, label)}>
+      <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+        {quickActions.map(([label, cmd]) => (
+          <GhostBtn key={label} className="justify-start !font-semibold" onClick={() => copy(cmd, label)}>
             {copied === label ? '✓ Copied!' : label}
-          </button>
+          </GhostBtn>
         ))}
       </div>
     </div>
@@ -244,45 +210,149 @@ export function OverviewView({ data, onCopy, copied, goTab }) {
 
 const CONTENT_FILTERS = ['all', 'pending_review', 'approved', 'rejected', 'published']
 
-export function ContentView({ drafts }) {
+/** Publish controls for an approved draft. Publishing itself runs in the
+ *  terminal (publisher.mjs) or the daily GitHub Action — there is no browser
+ *  endpoint, so "now / schedule" are shown disabled with the honest reason,
+ *  plus a working copy-command button. */
+function PublishPanel({ draft }) {
+  const { copied, copy } = useCopy()
+  const [open, setOpen] = useState(false)
+  const [when, setWhen] = useState('')
+  return (
+    <div className="mt-2.5 rounded-xl bg-forest-soft/50 p-3">
+      <button
+        onClick={() => setOpen(!open)}
+        className="flex min-h-11 w-full items-center justify-between text-sm font-bold text-forest"
+      >
+        <span>🚀 Publish options</span>
+        <span className="text-[#6b5f4d]">{open ? '▾' : '▸'}</span>
+      </button>
+      {open && (
+        <div className="pt-1">
+          <div className="flex flex-wrap gap-2">
+            <button
+              disabled
+              title="No browser endpoint — the publisher runs in your terminal or the daily GitHub Action"
+              className="inline-flex min-h-11 cursor-not-allowed items-center rounded-xl bg-forest px-4 text-sm font-bold text-white opacity-50"
+            >
+              Publish now
+            </button>
+            <div className="flex min-h-11 items-center gap-2 rounded-xl border border-forest-line bg-cream-card px-3 opacity-60">
+              <input
+                type="datetime-local"
+                disabled
+                value={when}
+                onChange={(e) => setWhen(e.target.value)}
+                title="Scheduling needs a backend endpoint that doesn't exist yet"
+                className="cursor-not-allowed bg-transparent text-sm text-[#6b5f4d]"
+              />
+              <button disabled title="Scheduling needs a backend endpoint that doesn't exist yet"
+                className="cursor-not-allowed text-sm font-bold text-[#6b5f4d]">
+                Schedule
+              </button>
+            </div>
+          </div>
+          <p className="mt-2 text-xs leading-relaxed text-[#6b5f4d]">
+            One-click publish & scheduling need a backend endpoint that doesn't exist yet — the publisher
+            is a terminal script (<code>pipeline/scripts/publisher.mjs</code>) plus a daily 06:00 UTC GitHub
+            Action. Until it's wired, run it yourself:
+          </p>
+          <div className="mt-2">
+            <GhostBtn className="!min-h-11 !text-[13px]" onClick={() => copy('node pipeline/scripts/publisher.mjs', 'publisher-cmd')}>
+              {copied === 'publisher-cmd' ? '✓ Copied!' : '📋 Copy: publish approved now'}
+            </GhostBtn>
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
+
+function DraftCard({ draft, onReview, onMoveStatus, moving }) {
+  const fc = (draft.flagged_claims || []).length
+  return (
+    <Card className="mb-3 !p-3.5">
+      <div className="flex items-start gap-3">
+        {draft.image ? (
+          <img src={draft.image} alt="" loading="lazy" className="h-16 w-16 flex-none rounded-xl object-cover" />
+        ) : (
+          <div className="font-display flex h-16 w-16 flex-none items-center justify-center rounded-xl bg-forest-soft text-xl font-bold text-forest">
+            {(draft.title || 'R')[0].toUpperCase()}
+          </div>
+        )}
+        <div className="min-w-0 flex-1">
+          <div className="text-[15px] font-bold text-[#1c2b23]">{draft.title || '(untitled)'}</div>
+          <div className="mt-1 text-xs text-[#6b5f4d]">
+            {draft.category} · {fc} flagged · {(draft.pin_variants || []).length} pin variants · {ago(draft.created_at)}
+          </div>
+          {draft.status === 'published' && draft.live_url && (
+            <div className="mt-1 text-xs">
+              <a href={draft.live_url} target="_blank" rel="noreferrer" className="font-semibold text-forest underline">
+                View live post →
+              </a>
+            </div>
+          )}
+        </div>
+        <StatusPill status={draft.status} />
+      </div>
+
+      {/* per-status actions — a draft is never stuck */}
+      <div className="mt-2.5 flex flex-wrap gap-2">
+        {draft.status === 'pending_review' && (
+          <GhostBtn className="!min-h-11 !text-[13px]" onClick={() => onReview(draft.id)}>
+            👁 Review →
+          </GhostBtn>
+        )}
+        {draft.status === 'approved' && (
+          <GhostBtn className="!min-h-11 !text-[13px]" disabled={moving} onClick={() => onMoveStatus(draft, 'pending_review')}>
+            ↩ {moving ? 'Moving…' : 'Back to review'}
+          </GhostBtn>
+        )}
+        {draft.status === 'rejected' && (
+          <GhostBtn className="!min-h-11 !text-[13px]" disabled={moving} onClick={() => onMoveStatus(draft, 'pending_review')}>
+            ↩ {moving ? 'Restoring…' : 'Restore to review'}
+          </GhostBtn>
+        )}
+      </div>
+      {draft.status === 'approved' && <PublishPanel draft={draft} />}
+    </Card>
+  )
+}
+
+export function ContentView({ drafts, onReview, onMoveStatus, movingId }) {
   const [filter, setFilter] = useState('all')
+  const { copied, copy } = useCopy()
   const list = (drafts || []).filter((d) => filter === 'all' || d.status === filter)
   const counts = {}
   for (const d of drafts || []) counts[d.status] = (counts[d.status] || 0) + 1
   return (
-    <div style={{ marginTop: 16 }}>
-      <div style={{ marginBottom: 12, display: 'flex', flexWrap: 'wrap', gap: 0 }}>
+    <div className="mt-4">
+      <div className="no-scrollbar -mx-1 mb-3 flex gap-2 overflow-x-auto px-1 pb-1">
         {CONTENT_FILTERS.map((f) => (
-          <button
+          <GhostBtn
             key={f}
+            active={filter === f}
+            className="!text-[13px] whitespace-nowrap"
             onClick={() => setFilter(f)}
-            style={{
-              ...ghostBtn,
-              ...(filter === f ? { background: GREEN, color: '#fff', borderColor: GREEN } : {}),
-            }}
           >
             {f === 'all' ? `All (${(drafts || []).length})` : `${f.replace(/_/g, ' ')} (${counts[f] || 0})`}
-          </button>
+          </GhostBtn>
         ))}
       </div>
-      {list.length === 0 && <Empty text={filter === 'all' ? 'No drafts yet — run the generator.' : `No drafts with status "${filter}".`} />}
+      {list.length === 0 && (
+        <EmptyState
+          icon="📝"
+          title={filter === 'all' ? 'No drafts yet' : `No ${filter.replace(/_/g, ' ')} drafts`}
+          text={filter === 'all'
+            ? 'Run the generator to create your first AI drafts — they will appear here and in the Review queue.'
+            : 'Nothing with this status right now.'}
+          actionLabel={filter === 'all' ? (copied === 'generator-cmd' ? '✓ Copied!' : '✍ Copy: run the generator') : undefined}
+          actionDoneLabel={undefined}
+          onAction={filter === 'all' ? () => copy('node pipeline/scripts/draft-generator.mjs', 'generator-cmd') : undefined}
+        />
+      )}
       {list.map((d) => (
-        <div key={d.id} style={{ ...card, marginBottom: 10 }}>
-          <div style={{ display: 'flex', gap: 10, alignItems: 'flex-start' }}>
-            <div style={{ flex: 1 }}>
-              <div style={{ fontWeight: 700, fontSize: 15 }}>{d.title || '(untitled)'}</div>
-              <div style={{ fontSize: 12, color: MUTED, marginTop: 4 }}>
-                {d.category} · {(d.flagged_claims || []).length} flagged · {(d.pin_variants || []).length} pin variants · {ago(d.created_at)}
-              </div>
-              {d.status === 'published' && d.live_url && (
-                <div style={{ fontSize: 12, marginTop: 4 }}>
-                  <a href={d.live_url} target="_blank" rel="noreferrer" style={{ color: '#2456a6' }}>{d.live_url}</a>
-                </div>
-              )}
-            </div>
-            <StatusPill status={d.status} />
-          </div>
-        </div>
+        <DraftCard key={d.id} draft={d} onReview={onReview} onMoveStatus={onMoveStatus} moving={movingId === d.id} />
       ))}
     </div>
   )
@@ -295,38 +365,38 @@ export function PinsView({ pins }) {
   const live = (pins || []).filter((p) => p.published_at)
   const immediate = (pins || []).filter((p) => !p.publish_at && !p.published_at)
   const PinCard = ({ p }) => (
-    <div key={p.id} style={{ ...card, marginBottom: 10, display: 'flex', gap: 12, alignItems: 'center' }}>
-      <div style={{
-        width: 48, height: 48, borderRadius: 8, background: GREEN, color: '#fff',
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        fontFamily: SERIF, fontWeight: 700, fontSize: 20, flex: 'none',
-      }}>
+    <Card className="mb-2.5 flex items-center gap-3 !p-3">
+      <div className="font-display flex h-12 w-12 flex-none items-center justify-center rounded-xl bg-forest text-lg font-bold text-white">
         {(p.draftTitle || p.title || 'P')[0].toUpperCase()}
       </div>
-      <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{ fontWeight: 700, fontSize: 14 }}>{p.draftTitle || p.title}</div>
-        <div style={{ fontSize: 11, color: MUTED, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-          Board: {p.board_id}
-        </div>
-        <div style={{ fontSize: 11, color: MUTED }}>
+      <div className="min-w-0 flex-1">
+        <div className="truncate text-sm font-bold text-[#1c2b23]">{p.draftTitle || p.title}</div>
+        <div className="truncate text-[11px] text-[#6b5f4d]">Board: {p.board_id}</div>
+        <div className="text-[11px] text-[#6b5f4d]">
           {p.published_at ? `went live ${ago(p.published_at)}` : p.publish_at ? `scheduled for ${fmt(p.publish_at)}` : 'publish time not set'}
         </div>
       </div>
       {p.published_at
-        ? <span style={pill('#e3efe7', GREEN)}>live</span>
+        ? <span className="inline-block rounded-full bg-forest px-2.5 py-1 text-[11px] font-bold text-white whitespace-nowrap">live</span>
         : p.publish_at
-          ? <span style={pill('#fff3d6', '#8a6d1b')}>scheduled</span>
-          : <span style={pill('#e8f0fa', '#2456a6')}>queued</span>}
-    </div>
+          ? <span className="inline-block rounded-full bg-ember-soft px-2.5 py-1 text-[11px] font-bold text-ember-dark whitespace-nowrap">scheduled</span>
+          : <span className="inline-block rounded-full bg-forest-soft px-2.5 py-1 text-[11px] font-bold text-forest whitespace-nowrap">queued</span>}
+    </Card>
   )
   return (
-    <div style={{ marginTop: 16 }}>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', gap: 12, marginBottom: 8 }}>
-        <StatCard value={scheduled.length} label="Scheduled" accent="#8a6d1b" />
+    <div className="mt-4">
+      <div className="mb-2 grid grid-cols-3 gap-2.5">
+        <StatCard value={scheduled.length} label="Scheduled" accent="#c7431f" />
         <StatCard value={live.length} label="Live on Pinterest" />
-        <StatCard value={immediate.length} label="Queued (no time set)" accent="#2456a6" />
+        <StatCard value={immediate.length} label="Queued" accent="#1e4633" />
       </div>
-      {(pins || []).length === 0 && <Empty text="No pins yet — the scheduler creates them from published posts." />}
+      {(pins || []).length === 0 && (
+        <EmptyState
+          icon="📌"
+          title="No pins yet"
+          text="The scheduler creates pins from published posts. Publish something first, then schedule pins for it."
+        />
+      )}
       {scheduled.length > 0 && <><SectionTitle>Scheduled</SectionTitle>{scheduled.map((p) => <PinCard key={p.id} p={p} />)}</>}
       {live.length > 0 && <><SectionTitle>Live</SectionTitle>{live.map((p) => <PinCard key={p.id} p={p} />)}</>}
       {immediate.length > 0 && <><SectionTitle>Queued</SectionTitle>{immediate.map((p) => <PinCard key={p.id} p={p} />)}</>}
@@ -337,26 +407,36 @@ export function PinsView({ pins }) {
 /* ============================== KEYWORDS ============================== */
 
 export function KeywordsView({ keywords }) {
+  const { copied, copy } = useCopy()
   return (
-    <div style={{ marginTop: 16 }}>
-      {(keywords || []).length === 0 && <Empty text="No keywords yet — run the miner (⛏ button on the Overview tab)." />}
+    <div className="mt-4">
+      {(keywords || []).length === 0 && (
+        <EmptyState
+          icon="🔍"
+          title="No keywords yet"
+          text="The miner finds trending Pinterest keywords and scores them. Run it to fill this list."
+          actionLabel="⛏ Copy: run the miner"
+          actionDoneLabel="✓ Copied!"
+          onAction={() => copy('node pipeline/scripts/keyword-miner.mjs', 'miner-kw')}
+        />
+      )}
       {(keywords || []).map((k, i) => (
-        <div key={k.id || i} style={{ ...card, marginBottom: 10 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-            <div style={{ flex: 1 }}>
-              <div style={{ fontWeight: 700 }}>{k.keyword}</div>
-              <div style={{ fontSize: 11, color: MUTED }}>
+        <Card key={k.id || i} className="mb-2.5 !p-3.5">
+          <div className="flex items-center gap-3">
+            <div className="min-w-0 flex-1">
+              <div className="truncate font-bold text-[#1c2b23]">{k.keyword}</div>
+              <div className="mt-0.5 text-[11px] text-[#6b5f4d]">
                 mined {ago(k.created_at)}
                 {k.trend_score != null && <> · trend {Math.round(k.trend_score)}</>}
               </div>
             </div>
-            <div style={{ width: 90, height: 6, borderRadius: 3, background: '#efe7d6', overflow: 'hidden', flex: 'none' }}>
-              <div style={{ width: `${Math.min(100, k.score || 0)}%`, height: '100%', background: TOMATO }} />
+            <div className="h-1.5 w-20 flex-none overflow-hidden rounded-full bg-cream-dark">
+              <div className="h-full rounded-full bg-ember" style={{ width: `${Math.min(100, k.score || 0)}%` }} />
             </div>
-            <div style={{ fontSize: 12, fontWeight: 700, width: 34, textAlign: 'right', flex: 'none' }}>{k.score ?? '—'}</div>
+            <div className="w-9 flex-none text-right text-xs font-bold text-[#1c2b23]">{k.score ?? '—'}</div>
             <StatusPill status={k.status} />
           </div>
-        </div>
+        </Card>
       ))}
     </div>
   )
@@ -379,47 +459,53 @@ export function AiView({ generations }) {
     byModel[key] = (byModel[key] || 0) + 1
   }
   return (
-    <div style={{ marginTop: 16 }}>
-      <SectionTitle style={{ marginTop: 0 }}>Provider chain</SectionTitle>
-      <p style={{ fontSize: 13, color: MUTED, marginTop: 0 }}>
+    <div className="mt-4">
+      <Kicker>Provider chain</Kicker>
+      <p className="mt-0 mb-3 text-[13px] text-[#6b5f4d]">
         The writer tries providers top-down and uses the first one that answers. Any provider without a key is skipped silently.
       </p>
       {CHAIN.map((c, i) => (
-        <div key={c.id} style={{ ...card, marginBottom: 10, display: 'flex', gap: 12, alignItems: 'flex-start' }}>
-          <div style={{
-            width: 28, height: 28, borderRadius: '50%', background: i === 0 ? '#efe7d6' : GREEN,
-            color: i === 0 ? MUTED : '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontWeight: 800, fontSize: 13, flex: 'none',
-          }}>{i + 1}</div>
-          <div>
-            <div style={{ fontWeight: 700 }}>{c.name}</div>
-            <div style={{ fontSize: 12, color: MUTED }}>{c.note}</div>
+        <Card key={c.id} className="mb-2.5 flex items-start gap-3 !p-3.5">
+          <div className={`flex h-7 w-7 flex-none items-center justify-center rounded-full text-[13px] font-extrabold ${i === 0 ? 'bg-cream-dark text-[#6b5f4d]' : 'bg-forest text-white'}`}>
+            {i + 1}
           </div>
-        </div>
+          <div>
+            <div className="font-bold text-[#1c2b23]">{c.name}</div>
+            <div className="text-xs text-[#6b5f4d]">{c.note}</div>
+          </div>
+        </Card>
       ))}
 
       <SectionTitle>What the AI wrote recently</SectionTitle>
-      {gens.length === 0 && <Empty text="No AI generations logged yet — run the generator." />}
+      {gens.length === 0 && (
+        <EmptyState
+          icon="🤖"
+          title="No AI generations logged"
+          text="When the generator writes drafts, each one is logged here with the provider and model that wrote it."
+        />
+      )}
       {gens.map((g, i) => (
-        <div key={i} style={{ ...card, marginBottom: 10 }}>
-          <div style={{ fontWeight: 700, fontSize: 14 }}>{g.parsed.title}</div>
-          <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginTop: 6, flexWrap: 'wrap' }}>
-            <span style={pill('#e7e4f7', '#3e3670')}>{g.parsed.provider}</span>
-            <code style={{ fontSize: 11, color: MUTED }}>{g.parsed.model}</code>
-            <span style={{ marginLeft: 'auto', fontSize: 11, color: MUTED }}>{ago(g.created_at)}</span>
+        <Card key={i} className="mb-2.5 !p-3.5">
+          <div className="text-sm font-bold text-[#1c2b23]">{g.parsed.title}</div>
+          <div className="mt-1.5 flex flex-wrap items-center gap-2">
+            <span className="inline-block rounded-full bg-forest-soft px-2.5 py-1 text-[11px] font-bold text-forest">{g.parsed.provider}</span>
+            <code className="text-[11px] text-[#6b5f4d]">{g.parsed.model}</code>
+            <span className="ml-auto text-[11px] text-[#6b5f4d]">{ago(g.created_at)}</span>
           </div>
-        </div>
+        </Card>
       ))}
 
       {Object.keys(byModel).length > 0 && (
         <>
           <SectionTitle>Model usage</SectionTitle>
-          {Object.entries(byModel).sort((a, b) => b[1] - a[1]).map(([m, n]) => (
-            <div key={m} style={{ display: 'flex', gap: 10, alignItems: 'center', padding: '8px 4px', borderBottom: '1px solid #efe7d6', fontSize: 13 }}>
-              <code style={{ flex: 1, fontSize: 12 }}>{m}</code>
-              <b>{n} draft{n === 1 ? '' : 's'}</b>
-            </div>
-          ))}
+          <Card className="!p-0 overflow-hidden">
+            {Object.entries(byModel).sort((a, b) => b[1] - a[1]).map(([m, n], i) => (
+              <div key={m} className={`flex items-center gap-2.5 px-3.5 py-2.5 text-[13px] ${i > 0 ? 'border-t border-cream-dark' : ''}`}>
+                <code className="flex-1 text-xs text-[#1c2b23]">{m}</code>
+                <b className="text-[#1c2b23]">{n} draft{n === 1 ? '' : 's'}</b>
+              </div>
+            ))}
+          </Card>
         </>
       )}
     </div>
@@ -434,39 +520,37 @@ export function ActivityView({ events }) {
   const list = (events || []).filter(
     (e) => (script === 'all' || e.script === script) && (level === 'all' || (e.level || 'info') === level)
   )
-  const levelPill = (lv) => {
-    const l = lv || 'info'
-    const map = { info: ['#e8f0fa', '#2456a6'], warn: ['#fff3d6', '#8a6d1b'], error: ['#fdecea', '#b03a2e'] }
-    const [bg, fg] = map[l] || map.info
-    return <span style={pill(bg, fg)}>{l}</span>
-  }
   return (
-    <div style={{ marginTop: 16 }}>
-      <div style={{ marginBottom: 12 }}>
+    <div className="mt-4">
+      <div className="no-scrollbar -mx-1 mb-2.5 flex gap-2 overflow-x-auto px-1 pb-1">
         {['all', ...SCRIPTS].map((s) => (
-          <button key={s} onClick={() => setScript(s)}
-            style={{ ...ghostBtn, ...(script === s ? { background: GREEN, color: '#fff', borderColor: GREEN } : {}) }}>
+          <GhostBtn key={s} active={script === s} className="!text-[13px] whitespace-nowrap" onClick={() => setScript(s)}>
             {s === 'all' ? 'All scripts' : SCRIPT_LABEL[s]}
-          </button>
+          </GhostBtn>
         ))}
       </div>
-      <div style={{ marginBottom: 12 }}>
+      <div className="mb-3 flex flex-wrap gap-2">
         {['all', 'info', 'warn', 'error'].map((l) => (
-          <button key={l} onClick={() => setLevel(l)}
-            style={{ ...ghostBtn, ...(level === l ? { background: GREEN, color: '#fff', borderColor: GREEN } : {}) }}>
+          <GhostBtn key={l} active={level === l} className="!min-h-9 !px-3.5 !text-[13px]" onClick={() => setLevel(l)}>
             {l === 'all' ? 'All levels' : l}
-          </button>
+          </GhostBtn>
         ))}
       </div>
-      {list.length === 0 && <Empty text="No events match these filters." />}
-      {list.map((e, i) => (
-        <div key={i} style={{ display: 'flex', gap: 10, alignItems: 'flex-start', fontSize: 13, padding: '9px 0', borderBottom: '1px solid #efe7d6' }}>
-          <Chip script={e.script} />
-          <span style={{ flex: 1 }}>{e.message}</span>
-          {levelPill(e.level)}
-          <span style={{ fontSize: 11, color: MUTED, whiteSpace: 'nowrap' }}>{ago(e.created_at)}</span>
-        </div>
-      ))}
+      {list.length === 0 && (
+        <EmptyState icon="📜" title="No events match" text="Try widening the filters — or run a pipeline script to generate activity." />
+      )}
+      {list.length > 0 && (
+        <Card className="!p-0 overflow-hidden">
+          {list.map((e, i) => (
+            <div key={i} className={`flex items-start gap-2.5 px-3.5 py-2.5 text-[13px] ${i > 0 ? 'border-t border-cream-dark' : ''}`}>
+              <ScriptChip script={e.script} />
+              <span className="flex-1 text-[#1c2b23]">{e.message}</span>
+              <LevelPill level={e.level} />
+              <span className="hidden text-[11px] whitespace-nowrap text-[#6b5f4d] sm:inline">{ago(e.created_at)}</span>
+            </div>
+          ))}
+        </Card>
+      )}
     </div>
   )
 }
@@ -475,34 +559,42 @@ export function ActivityView({ events }) {
 
 export function SettingsView({ health }) {
   return (
-    <div style={{ marginTop: 16 }}>
-      <h2 style={{ ...h2, marginTop: 0 }}>Pipeline tables</h2>
-      {(health || []).map((h) => (
-        <div key={h.table} style={{ display: 'flex', gap: 10, alignItems: 'center', padding: '10px 4px', borderBottom: '1px solid #efe7d6', fontSize: 14 }}>
-          <code style={{ flex: 1 }}>{h.table}</code>
-          {h.ok
-            ? <span style={pill('#e3efe7', GREEN)}>✓ exists</span>
-            : <span style={pill('#fdecea', '#b03a2e')}>✗ {h.error || 'missing'}</span>}
-        </div>
-      ))}
+    <div className="mt-4">
+      <Kicker>Pipeline tables</Kicker>
+      <Card className="!p-0 overflow-hidden">
+        {(health || []).map((h, i) => (
+          <div key={h.table} className={`flex items-center gap-2.5 px-3.5 py-2.5 text-sm ${i > 0 ? 'border-t border-cream-dark' : ''}`}>
+            <code className="flex-1 text-[#1c2b23]">{h.table}</code>
+            {h.ok
+              ? <span className="inline-block rounded-full bg-forest-soft px-2.5 py-1 text-[11px] font-bold text-forest whitespace-nowrap">✓ exists</span>
+              : <span className="inline-block rounded-full bg-ember-dark px-2.5 py-1 text-[11px] font-bold text-white whitespace-nowrap">✗ {h.error || 'missing'}</span>}
+          </div>
+        ))}
+      </Card>
       {(health || []).some((h) => !h.ok) && (
-        <p style={{ fontSize: 13, color: MUTED }}>
+        <p className="mt-2 text-[13px] text-[#6b5f4d]">
           Some tables are missing — apply <code>pipeline/supabase/schema-pipeline.sql</code> in the Supabase SQL Editor, then reload.
         </p>
       )}
       <SectionTitle>Daily caps</SectionTitle>
-      <div style={{ fontSize: 14, lineHeight: 2.1 }}>
-        <div>Keywords mined per day: <b>5</b></div>
-        <div>Drafts generated per day: <b>3</b></div>
-        <div>Hours between pins: <b>6</b></div>
-      </div>
-      <p style={{ fontSize: 12, color: MUTED }}>Caps are set in the pipeline scripts' env vars — ask Neo to change them.</p>
+      <Card>
+        <div className="space-y-1.5 text-sm text-[#1c2b23]">
+          <div className="flex justify-between"><span>Keywords mined per day</span><b>5</b></div>
+          <div className="flex justify-between"><span>Drafts generated per day</span><b>3</b></div>
+          <div className="flex justify-between"><span>Hours between pins</span><b>6</b></div>
+        </div>
+      </Card>
+      <p className="mt-2 text-xs text-[#6b5f4d]">Caps are set in the pipeline scripts' env vars — ask Neo to change them.</p>
       <SectionTitle>Secrets</SectionTitle>
-      <p style={{ fontSize: 13, color: MUTED }}>
-        API tokens live in the gitignored <code>.env</code> on the machine that runs the scripts — never in this dashboard, never in the browser.
-        The AI chain needs <code>OPENROUTER_API_KEY</code> and/or <code>NVIDIA_API_KEY</code>; the pipeline needs{' '}
-        <code>SUPABASE_URL</code> + <code>SUPABASE_SERVICE_KEY</code>; the scheduler needs <code>PINTEREST_ACCESS_TOKEN</code>.
-      </p>
+      <Card>
+        <p className="m-0 text-[13px] leading-relaxed text-[#6b5f4d]">
+          API tokens live in the gitignored <code>.env</code> on the machine that runs the scripts — never in this
+          dashboard, never in the browser. The AI chain needs <code>OPENROUTER_API_KEY</code> and/or{' '}
+          <code>NVIDIA_API_KEY</code>; the pipeline needs <code>SUPABASE_URL</code> +{' '}
+          <code>SUPABASE_SERVICE_KEY</code>; the scheduler needs <code>PINTEREST_ACCESS_TOKEN</code>; image
+          generation needs <code>HF_TOKEN</code> or <code>POLLINATIONS_API_KEY</code>.
+        </p>
+      </Card>
     </div>
   )
 }
@@ -514,8 +606,9 @@ export default function Dashboard() {
   const [admin, setAdmin] = useState(null)
   const [tab, setTab] = useState('overview')
   const [msg, setMsg] = useState('')
-  const [copied, setCopied] = useState('')
   const [tabLoading, setTabLoading] = useState(false)
+  const [reviewFocus, setReviewFocus] = useState(null)
+  const [movingId, setMovingId] = useState(null)
 
   const [overview, setOverview] = useState(null)
   const [drafts, setDrafts] = useState(null)
@@ -599,11 +692,10 @@ export default function Dashboard() {
       attention,
       pendingCount: pend,
     })
-    return {}
   }, [countWhere])
 
   const loadContent = useCallback(async (sb) => {
-    const r = await safe(sb.from('drafts').select('id,title,category,status,flagged_claims,pin_variants,live_url,created_at').order('created_at', { ascending: false }).limit(200))
+    const r = await safe(sb.from('drafts').select('id,title,category,status,flagged_claims,pin_variants,image,live_url,created_at').order('created_at', { ascending: false }).limit(200))
     if (!r.error) setDrafts(r.data)
     return r.error ? { error: r.error } : {}
   }, [])
@@ -651,6 +743,38 @@ export default function Dashboard() {
     return {}
   }, [])
 
+  /** Move a draft between statuses (approved/rejected -> pending_review).
+   *  Logged to draft_revisions so the audit trail stays complete. */
+  const moveDraftStatus = useCallback(async (draft, toStatus) => {
+    setMovingId(draft.id)
+    setMsg('')
+    try {
+      const sb = await getSupabase()
+      if (!sb) throw new Error('Supabase not configured')
+      const { error } = await sb.from('drafts').update({ status: toStatus }).eq('id', draft.id)
+      if (error) throw error
+      await sb.from('draft_revisions').insert({
+        draft_id: draft.id,
+        edited_by: user.id,
+        diff: { status: { before: draft.status, after: toStatus } },
+      })
+      setMsg(`✓ "${draft.title}" moved back to review.`)
+      const sb2 = await getSupabase()
+      if (sb2) {
+        await loadOverview(sb2)
+        await loadContent(sb2)
+      }
+    } catch (e) {
+      if (/PIPELINE GUARDRAIL/i.test(e.message)) {
+        setMsg('The database still blocks approved → review. Apply pipeline/supabase/migrations/allow-approved-back-to-review.sql in the Supabase SQL Editor once, then try again. (Ask Neo.)')
+      } else {
+        setMsg(`Couldn't move the draft: ${e.message}`)
+      }
+    } finally {
+      setMovingId(null)
+    }
+  }, [user, loadOverview, loadContent])
+
   const loadTab = useCallback(async (id) => {
     const sb = await getSupabase()
     if (!sb) return
@@ -658,13 +782,14 @@ export default function Dashboard() {
     setMsg('')
     let r = {}
     try {
-      if (id === 'overview') r = await loadOverview(sb)
-      else if (id === 'content') r = await loadContent(sb)
+      await loadOverview(sb) // always refresh: tab badges + attention stay live
+      if (id === 'content') r = await loadContent(sb)
       else if (id === 'pins') r = await loadPins(sb)
       else if (id === 'keywords') r = await loadKeywords(sb)
       else if (id === 'ai') r = await loadAi(sb)
       else if (id === 'activity') r = await loadActivity(sb)
       else if (id === 'settings') r = await loadHealth(sb)
+      // 'review' and 'overview' need nothing beyond the overview refresh
     } finally {
       setTabLoading(false)
     }
@@ -676,39 +801,35 @@ export default function Dashboard() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [admin, tab])
 
-  const copy = async (text, label) => {
-    try {
-      await navigator.clipboard.writeText(text)
-      setCopied(label)
-      setTimeout(() => setCopied(''), 2000)
-    } catch {
-      setMsg('Copy failed — select the command manually.')
-    }
-  }
+  const goTab = useCallback((id) => setTab(id), [])
 
-  if (authLoading || admin === null) return <div style={{ padding: 40 }}>Loading dashboard…</div>
+  if (authLoading || admin === null) {
+    return <div className="p-10 text-[#6b5f4d]">Loading dashboard…</div>
+  }
 
   if (!configured || !user) {
     return (
-      <div style={{ padding: 40, maxWidth: 560 }}>
+      <div className="max-w-xl p-10">
         <Seo title="Pipeline dashboard — internal" noindex />
-        <h1 style={{ fontFamily: SERIF }}>Growth Pipeline</h1>
-        <p>Sign in with the owner Google account to open the dashboard.</p>
-        <button style={btn('#1a7a3c')} onClick={signInWithGoogle}>Sign in with Google</button>
+        <h1 className="font-display text-3xl font-semibold text-forest">Growth Pipeline</h1>
+        <p className="mt-2 text-[#1c2b23]">Sign in with the owner Google account to open the dashboard.</p>
+        <div className="mt-4"><PrimaryBtn onClick={signInWithGoogle}>Sign in with Google</PrimaryBtn></div>
       </div>
     )
   }
 
   if (!admin) {
     return (
-      <div style={{ padding: 40, maxWidth: 560 }}>
+      <div className="max-w-xl p-10">
         <Seo title="Pipeline dashboard — internal" noindex />
-        <h1 style={{ fontFamily: SERIF }}>Growth Pipeline</h1>
-        <p>This account ({user.email}) is not a pipeline admin.</p>
-        <p style={{ fontSize: 13, color: MUTED }}>
-          The owner must run this once in Supabase SQL Editor:<br />
-          <code>insert into public.pipeline_admins (email) values ('{user.email}') on conflict do nothing;</code>
-        </p>
+        <h1 className="font-display text-3xl font-semibold text-forest">Growth Pipeline</h1>
+        <p className="mt-2">This account ({user.email}) is not a pipeline admin.</p>
+        <Card className="mt-4">
+          <p className="m-0 text-[13px] text-[#6b5f4d]">
+            The owner must run this once in Supabase SQL Editor:<br />
+            <code className="text-xs">insert into public.pipeline_admins (email) values ('{user.email}') on conflict do nothing;</code>
+          </p>
+        </Card>
       </div>
     )
   }
@@ -716,52 +837,68 @@ export default function Dashboard() {
   const pendingCount = overview?.pendingCount ?? 0
 
   return (
-    <div style={{ padding: '20px 14px 80px', maxWidth: 1100, margin: '0 auto' }}>
+    <div className="mx-auto max-w-5xl px-3.5 pb-28 sm:px-5">
       <Seo title="Growth Pipeline dashboard — internal" description="Internal pipeline control center." noindex />
 
-      <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 4, flexWrap: 'wrap' }}>
-        <div style={{ width: 42, height: 42, borderRadius: 12, background: TOMATO, display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontFamily: SERIF, fontWeight: 700, fontSize: 22, flex: 'none' }}>R</div>
-        <div style={{ flex: 1, minWidth: 140 }}>
-          <h1 style={{ fontFamily: SERIF, margin: 0, fontSize: 22 }}>Growth Pipeline</h1>
-          <div style={{ fontSize: 10, color: MUTED, letterSpacing: '.08em', textTransform: 'uppercase' }}>Control center</div>
+      {/* header */}
+      <div className="flex items-center gap-3 pt-5">
+        <div className="font-display flex h-11 w-11 flex-none items-center justify-center rounded-2xl bg-ember-dark text-[22px] font-bold text-white">
+          R
         </div>
-        <button style={{ ...ghostBtn, margin: 0 }} onClick={() => loadTab(tab)}>⟳ Refresh</button>
-        <button style={{ ...ghostBtn, margin: 0 }} onClick={signOut}>Sign out</button>
+        <div className="min-w-0 flex-1">
+          <h1 className="font-display m-0 text-[22px] leading-tight font-semibold text-forest">Growth Pipeline</h1>
+          <div className="text-[10px] tracking-[0.14em] text-[#6b5f4d] uppercase">Control center</div>
+        </div>
+        <GhostBtn className="!min-h-11 !px-3.5 !text-[13px]" onClick={() => loadTab(tab)}>⟳ Refresh</GhostBtn>
+        <GhostBtn className="!min-h-11 !px-3.5 !text-[13px]" onClick={signOut}>Sign out</GhostBtn>
       </div>
-      <div style={{ fontSize: 11, color: MUTED, marginBottom: 8 }}>{user.email}</div>
+      <div className="mt-1 mb-1 text-[11px] text-[#6b5f4d]">{user.email}</div>
 
-      <div style={{ display: 'flex', gap: 2, borderBottom: `2px solid ${BORDER}`, margin: '8px 0 4px', overflowX: 'auto', position: 'sticky', top: 0, background: '#faf6ee', zIndex: 5 }}>
-        {TABS.map((t) => (
-          <button
-            key={t.id}
-            onClick={() => setTab(t.id)}
-            style={{
-              border: 'none', background: 'none', cursor: 'pointer', fontSize: 14, fontWeight: 700,
-              padding: '12px 14px', color: tab === t.id ? TOMATO : MUTED,
-              borderBottom: tab === t.id ? '2px solid #E4572E' : '2px solid transparent',
-              marginBottom: -2, whiteSpace: 'nowrap', minHeight: 44,
-            }}
-          >
-            {t.label}
-            {t.id === 'review' && pendingCount > 0 && (
-              <span style={{ ...pill(TOMATO, '#fff'), marginLeft: 6 }}>{pendingCount}</span>
-            )}
-          </button>
-        ))}
+      {/* tab bar — sticky, swipeable, badges */}
+      <div className="sticky top-0 z-30 -mx-3.5 border-b border-forest-line bg-cream/95 px-3.5 backdrop-blur sm:-mx-5 sm:px-5">
+        <div className="no-scrollbar flex gap-1.5 overflow-x-auto py-2.5">
+          {TABS.map((t) => {
+            const active = tab === t.id
+            return (
+              <button
+                key={t.id}
+                onClick={() => setTab(t.id)}
+                className={`flex min-h-11 flex-none items-center rounded-full px-4 text-sm font-bold whitespace-nowrap active:scale-[0.98] ${
+                  active ? 'bg-forest text-white' : 'bg-cream-card text-[#6b5f4d] ring-1 ring-forest-line'
+                }`}
+              >
+                {t.label}
+                {t.id === 'review' && <TabBadge count={pendingCount} />}
+                {t.id === 'content' && <TabBadge count={pendingCount} />}
+              </button>
+            )
+          })}
+        </div>
       </div>
 
       {msg && (
-        <div style={{ padding: '10px 14px', borderRadius: 8, margin: '12px 0', background: '#fdecea', fontSize: 14 }}>{msg}</div>
+        <div className={`mt-3 rounded-xl px-3.5 py-2.5 text-sm ${msg.startsWith("Couldn't") || msg.startsWith('The database') ? 'bg-ember-soft text-ember-dark' : 'bg-forest-soft text-forest'}`}>
+          {msg}
+        </div>
       )}
-      {tabLoading && <p style={{ color: MUTED, fontSize: 13 }}>Loading…</p>}
+      {tabLoading && <p className="mt-3 text-[13px] text-[#6b5f4d]">Loading…</p>}
 
       {tab === 'overview' && overview && (
-        <OverviewView data={overview} onCopy={copy} copied={copied} goTab={setTab} />
+        <OverviewView data={overview} goTab={goTab} />
       )}
       {tab === 'review' && (
-        <div style={{ marginTop: 8 }}><ReviewConsole /></div>
+        <div className="mt-4">
+          <ReviewConsole focusId={reviewFocus} onFocusHandled={() => setReviewFocus(null)} />
+        </div>
       )}
-      {tab === 'content' && <ContentView drafts={drafts} />}
+      {tab === 'content' && (
+        <ContentView
+          drafts={drafts}
+          onReview={(id) => { setReviewFocus(id); setTab('review') }}
+          onMoveStatus={moveDraftStatus}
+          movingId={movingId}
+        />
+      )}
       {tab === 'pins' && <PinsView pins={pins} />}
       {tab === 'keywords' && <KeywordsView keywords={keywords} />}
       {tab === 'ai' && <AiView generations={generations} />}
