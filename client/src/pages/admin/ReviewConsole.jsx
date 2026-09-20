@@ -14,8 +14,9 @@ import Seo from '../../components/Seo'
  *
  * Approval checklist (client-side, server re-checks):
  *   - every flagged numeric claim ticked as verified
- *   - personal note written by the human (TODO_KHALIL placeholder blocks)
- *   - hero image path set
+ *   - personal note present and real (AI-written in the brand character's
+ *     voice; the TODO_KHALIL placeholder still blocks)
+ *   - hero image set (auto-generated at draft time; replaceable)
  */
 
 const CATEGORIES = ['Iron', 'Protein', 'Calcium', 'Vitamin C', 'Zinc', 'Fiber', 'Meal Prep', 'Breakfast']
@@ -77,6 +78,13 @@ export function Preview({ draft }) {
       <p style={{ fontSize: 12, color: MUTED, margin: '0 0 16px' }}>
         <b>Google snippet:</b> {draft.description}
       </p>
+
+      {draft.image ? (
+        <div style={{ marginBottom: 18 }}>
+          <img src={draft.image} alt="" style={{ width: '100%', borderRadius: 10, display: 'block' }} />
+          <div style={{ fontSize: 11, color: MUTED, marginTop: 6 }}>Hero image (auto-generated — replace any time via the field below)</div>
+        </div>
+      ) : null}
 
       <div style={{
         borderLeft: `4px solid ${hasTodo ? TOMATO : GREEN}`, background: hasTodo ? '#fff7f3' : '#f4f8f4',

@@ -6,14 +6,25 @@
  *   1. Picks up `keyword_candidates` with status='new' (oldest first)
  *   2. Asks an LLM for a full draft: title, meta, lede, category, sections,
  *      FAQs, allergen claims, personal_note, 3 pin title/description variants
- *   3. Flags numeric health claims for MANDATORY human verification
- *   4. Writes the draft with status='pending_review' — nothing downstream
+ *   3. AUTO personal note: a second LLM call writes the personal_note in the
+ *      brand character's voice (pipeline/CHARACTER.md) — a kitchen tip /
+ *      substitution note, NEVER invented testing claims ("I tested this...").
+ *      Falls back to the TODO_KHALIL placeholder only if CHARACTER.md is
+ *      missing (manual skeletons always keep the placeholder).
+ *   4. AUTO hero image: generated via pipeline/scripts/lib/image-gen.mjs
+ *      (Pollinations.ai -> Hugging Face fallback, free), uploaded to the
+ *      public Supabase Storage bucket `ai-images`, URL stored on the draft.
+ *      Non-fatal: a failed image never blocks the draft.
+ *   5. Flags numeric health claims for MANDATORY human verification
+ *   6. Writes the draft with status='pending_review' — nothing downstream
  *      can touch it until a human approves it in the Review Console
  *
  * Guardrails:
- *   - P3: the generator may not invent personal experience — no real note in
- *     input means the TODO_KHALIL placeholder, which the publisher (P1)
- *     will refuse to publish until Khalil writes his own note.
+ *   - P3: every draft carries a personal_note. Auto mode writes it in the
+ *     character voice (kitchen tip, no invented testing claims); the
+ *     TODO_KHALIL placeholder survives only for manual skeletons or a
+ *     missing CHARACTER.md, and the publisher (P1) still refuses to publish
+ *     any draft carrying the placeholder.
  *   - P4: DRAFTS_PER_DAY cap (default 3) — the review queue can never
  *     become a rubber-stamp backlog.
  *   - The LLM is instructed to NEVER invent nutrition numbers; anything
@@ -39,7 +50,8 @@ import './lib/env.mjs';
 import { createDb } from './lib/db.mjs';
 import { startRun, logEvent, finishRun } from './lib/runlog.mjs';
 import { chat } from './lib/llm.mjs';
-import { readFileSync } from 'node:fs';
+import { generateHeroImage, uploadHeroImage, buildHeroPrompt } from './lib/image-gen.mjs';
+import { readFileSync, existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import {
@@ -47,6 +59,7 @@ import {
   enforceDailyCap,
   flagNumericHealthClaims,
   validateNewDraft,
+  slugify,
 } from './lib/guardrails.mjs';
 
 const DRY_RUN = process.env.DRY_RUN === '1';
@@ -56,6 +69,13 @@ const DRAFTS_PER_DAY = Number(process.env.DRAFTS_PER_DAY || 3);
 // The WRITER agent instruction file IS the system prompt.
 const HERE = dirname(fileURLToPath(import.meta.url));
 const WRITER_MD = readFileSync(join(HERE, '..', 'agents', 'WRITER.md'), 'utf8');
+
+// Brand character voice (pipeline/CHARACTER.md). When present, the generator
+// writes the personal note in this voice automatically. When missing, the old
+// TODO_KHALIL placeholder behavior applies.
+const CHARACTER_PATH = join(HERE, '..', 'CHARACTER.md');
+const CHARACTER_MD = existsSync(CHARACTER_PATH) ? readFileSync(CHARACTER_PATH, 'utf8') : null;
+if (!CHARACTER_MD) console.log('[drafts] WARNING: pipeline/CHARACTER.md not found — personal notes will use the TODO_KHALIL placeholder');
 
 function extractJson(text) {
   // Robust: find the outermost JSON object even if wrapped in fences/prose.
@@ -95,6 +115,36 @@ async function generateWithLlm(keyword, log) {
     }
   }
   throw new Error(`LLM failed after 3 attempts: ${lastErr.message.split('\n')[0].slice(0, 200)}`);
+}
+
+/**
+ * Write the personal note in the brand character's voice (pipeline/CHARACTER.md).
+ * A kitchen tip / substitution note — NEVER invented testing claims.
+ * Returns { note, provider, model }. Throws on failure (caller falls back).
+ */
+async function generateCharacterNote(gen, log) {
+  const dish = `${gen.title || ''} — ${gen.lede || ''}`.replace(/\s+/g, ' ').trim().slice(0, 300);
+  const system =
+    CHARACTER_MD +
+    `
+
+You are now writing the PERSONAL NOTE for a Recipe Seeker blog post, in the character voice above.
+
+HARD RULES:
+- 2-3 sentences. A genuine kitchen tip, substitution idea, or serving suggestion tied to the dish.
+- NEVER claim you cooked, tested, or tasted this specific dish. Banned phrases: "I tested", "when I made this", "my family loved/devoured".
+- Frame it as the character's kitchen wisdom: a swap that works, a prep tip, how to serve it.
+- No nutrition numbers. No medical claims. No hype words (amazing, incredible, game-changer).
+- First person, in character. Reply with ONLY the note text — no quotes, no preamble.`;
+  const { text, provider, model } = await chat(system, `Dish: ${dish}`, {
+    maxTokens: 220,
+    timeoutMs: 60_000,
+    log,
+  });
+  const note = text.replace(/^["'\s]+|["'\s]+$/g, '').trim();
+  if (!note) throw new Error('empty character note from LLM');
+  if (/TODO_KHALIL/.test(note)) throw new Error('LLM echoed the placeholder');
+  return { note, provider, model };
 }
 
 function generateManual(keyword) {
@@ -162,7 +212,37 @@ async function main() {
       continue;
     }
 
-    const bodyText = JSON.stringify(gen.sections) + ' ' + JSON.stringify(gen.faqs);
+    // ---- FULL-AUTO: character note + hero image (auto provider only) ----
+    // Manual skeletons and DRY_RUN skip this: the human fills TODOs in review.
+    if (PROVIDER !== 'manual' && !DRY_RUN && !gen._manual) {
+      if (CHARACTER_MD) {
+        try {
+          const { note, provider, model } = await generateCharacterNote(gen, (m) => console.log(m));
+          gen.personal_note = note;
+          gen._noteLlm = { provider, model };
+          console.log(`[drafts] personal note written via ${provider}/${model} (character voice)`);
+        } catch (e) {
+          console.log(`[drafts] character note failed — keeping writer's note: ${e.message.split('\n')[0].slice(0, 120)}`);
+          await logEvent(`Character note failed, kept writer note: ${e.message.split('\n')[0].slice(0, 120)}`, 'warn');
+        }
+      }
+      try {
+        const img = await generateHeroImage(buildHeroPrompt(gen.title, gen.category), { log: (m) => console.log(m) });
+        if (img) {
+          const url = await uploadHeroImage(img.buffer, slugify(gen.title), img.contentType, (m) => console.log(m));
+          if (url) {
+            gen._heroImage = url;
+            gen._imageProvider = img.provider;
+          }
+        }
+      } catch (e) {
+        // generateHeroImage/uploadHeroImage are non-fatal by design; belt & braces.
+        console.log(`[drafts] hero image skipped: ${e.message.split('\n')[0].slice(0, 120)}`);
+      }
+    }
+
+    const bodyText =
+      JSON.stringify(gen.sections) + ' ' + JSON.stringify(gen.faqs) + ' ' + (gen.personal_note || '');
     const flagged = flagNumericHealthClaims(gen.title + ' ' + gen.lede + ' ' + bodyText);
     if (flagged.length > 0) {
       console.log(`[drafts] flagged ${flagged.length} numeric claim(s) for human verification:`);
@@ -178,7 +258,7 @@ async function main() {
       description: gen.description,
       lede: gen.lede,
       category: gen.category,
-      image: '',
+      image: gen._heroImage || '',
       body: { sections: gen.sections, faqs: gen.faqs },
       allergen_claims: gen.allergen_claims || [],
       flagged_claims: flagged,
@@ -210,6 +290,8 @@ async function main() {
     // Observability: record which provider/model wrote this draft (no schema change).
     const llmInfo = gen._llm ? ` via ${gen._llm.provider}/${gen._llm.model}` : '';
     await logEvent(`Draft "${gen.title}" saved as pending_review${llmInfo}`);
+    if (gen._noteLlm) await logEvent(`Personal note written via ${gen._noteLlm.provider}/${gen._noteLlm.model} (character voice)`);
+    if (gen._heroImage) await logEvent(`Hero image generated via ${gen._imageProvider}`);
     console.log(`[drafts] saved as pending_review: ${saved.id} (candidate marked drafted)`);
     created++;
   }

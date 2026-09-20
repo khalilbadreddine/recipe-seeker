@@ -59,7 +59,7 @@ Console. This is enforced twice:
 | Script | Needs | Does |
 |---|---|---|
 | `keyword-miner.mjs` | Pinterest token | Trends → score → dedupe vs site → top N to `keyword_candidates`. Cap: `MAX_KEYWORDS_PER_DAY` (5). |
-| `draft-generator.mjs` | Gemini key **or** `LLM_PROVIDER=manual` | Drafts posts + 3 pin variants → `pending_review`. Flags numeric health claims. Cap: `DRAFTS_PER_DAY` (3). `personal_note` is mandatory — empty = rejected. |
+| `draft-generator.mjs` | Gemini key **or** `LLM_PROVIDER=manual` | Drafts posts + 3 pin variants → `pending_review`. Auto-writes `personal_note` in the brand character voice (`pipeline/CHARACTER.md`) + auto-generates the hero image (Pollinations.ai via `POLLINATIONS_API_KEY` → Hugging Face via `HF_TOKEN`; both free signups, no card — without keys the draft saves imageless and review requires one). Uploads to Supabase Storage `ai-images`. Flags numeric health claims. Cap: `DRAFTS_PER_DAY` (3). `personal_note` is mandatory — empty = rejected. |
 | `publisher.mjs` | Supabase service key | Publishes `approved` drafts into `recipes.json`, marks `published` + `live_url`. Refuses everything else (P1). |
 | `pin-scheduler.mjs` | Pinterest token + board id | Creates scheduled pins (`publish_at`, spaced `PIN_SPACING_HOURS` apart) for `published` drafts. Refuses everything else (P2). `--explain` teaches, `--boards` lists boards. |
 

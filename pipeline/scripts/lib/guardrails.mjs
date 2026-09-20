@@ -5,11 +5,14 @@
  * are what the scripts call, and what the test suite asserts.
  *
  * Rule summary:
- *  P1: publish requires status='approved' + human-written personal_note
- *      (no TODO_KHALIL placeholder) + image + empty live_url
+ *  P1: publish requires status='approved' + human-approved personal_note
+ *      (no TODO_KHALIL placeholder — the publisher refuses it even if the
+ *      placeholder somehow survived review) + image + empty live_url
  *  P2: pin creation requires status='published' + live_url set
- *  P3: new drafts require a personal_note; the LLM/agent may never invent
- *      experience — without a real supplied note it must emit TODO_KHALIL
+ *  P3: new drafts require a non-empty personal_note. Auto mode writes it in
+ *      the brand character's voice (kitchen tip, never invented testing
+ *      claims); TODO_KHALIL remains only for manual skeletons or a missing
+ *      pipeline/CHARACTER.md.
  *  P4: daily caps are enforced before miner/generator write anything
  */
 

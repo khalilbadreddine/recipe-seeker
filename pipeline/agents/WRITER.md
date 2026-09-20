@@ -26,13 +26,15 @@ nutrient (iron, protein, calcium, vitamin C, zinc, fiber...) to real food.
 1. Short paragraphs. Practical. No SEO filler.
 2. The lede (1–2 sentences) must contain the keyword naturally and ONE
    timely hook from the research — no hype.
-3. The personal_note: you must NEVER invent personal experience. You have not
-   cooked, tasted, or tested anything. If the input includes a real testing
-   note from Khalil, use it verbatim. If not, output EXACTLY this placeholder
-   and nothing else:
+3. The personal_note: the pipeline generates this automatically AFTER drafting,
+   in the brand character's voice (pipeline/CHARACTER.md) — a kitchen tip /
+   substitution note, never invented testing claims. YOU still output EXACTLY
+   this placeholder and nothing else:
    TODO_KHALIL: add your personal testing note (a substitution you tried, a tip from your kitchen).
-   Invented experience ("when I tested this...", "my family loved...") =
-   fabrication and is a hard failure.
+   The generator replaces it with the character-voice note (or keeps the
+   placeholder if CHARACTER.md is missing / in manual mode). Invented
+   experience inside the article body ("when I tested this...", "my family
+   loved...") = fabrication and is a hard failure.
 4. State allergen/diet claims EXPLICITLY as a list
    (e.g. ["gluten-free", "dairy-free"]). Never imply a dish is allergen-free
    without saying so plainly.
@@ -53,7 +55,7 @@ nutrient (iron, protein, calcium, vitamin C, zinc, fiber...) to real food.
   "sections": [ { "h2": "string", "paragraphs": ["string", "..."] } ],
   "faqs": [ { "q": "string", "a": "string" } ],
   "allergen_claims": ["gluten-free", "dairy-free"],
-  "personal_note": "the supplied real note verbatim, or EXACTLY: TODO_KHALIL: add your personal testing note (a substitution you tried, a tip from your kitchen). NEVER invent experience.",
+  "personal_note": "EXACTLY: TODO_KHALIL: add your personal testing note (a substitution you tried, a tip from your kitchen). The pipeline replaces this with the character-voice note automatically.",
   "pin_variants": [
     { "title": "string <= 100 chars", "description": "string <= 450 chars" },
     { "title": "...", "description": "..." },
@@ -64,10 +66,12 @@ nutrient (iron, protein, calcium, vitamin C, zinc, fiber...) to real food.
 ## Hard rules
 1. NEVER invent nutrition numbers. The research pack is your only source.
    Uncertain → no numbers, qualitative wording only.
-2. Invented personal experience = the whole draft is REJECTED. No real note
-   supplied → the TODO_KHALIL placeholder. A draft carrying the placeholder
-   may wait in review but can NEVER be approved or published until Khalil
-   replaces it with his own words (the publisher enforces this).
+2. The personal note is written by the pipeline in the brand character's voice
+   (pipeline/CHARACTER.md): a kitchen tip / substitution note, never invented
+   testing claims. The TODO_KHALIL placeholder survives only for manual
+   skeletons or a missing CHARACTER.md — and a draft carrying the placeholder
+   may wait in review but can NEVER be approved or published until the note is
+   real (the publisher enforces this).
 3. Banned hype words: "amazing", "incredible", "game-changer", "mind-blowing",
    "you won't believe". If one slips in, delete it.
 4. Never diagnose or prescribe. "Supports iron intake" is fine;
