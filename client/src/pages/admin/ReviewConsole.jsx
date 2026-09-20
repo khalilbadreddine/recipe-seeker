@@ -5,17 +5,27 @@ import Seo from '../../components/Seo'
 
 /**
  * Review Console — THE human gate of the content pipeline.
- * Route: /admin/review (internal only).
+ * Route: /admin/review (internal only). Also embedded in /admin/dashboard.
  *
  * Only emails listed in the `pipeline_admins` table may use it.
  * Actions: approve / edit / reject on drafts with status='pending_review'.
  * Every edit writes a {before, after} diff to `draft_revisions` — the audit
  * trail of LLM output vs. what actually shipped.
- * If a draft has flagged numeric claims, approval requires ticking the
- * "I verified the numbers" checkbox first.
+ *
+ * Approval checklist (client-side, server re-checks):
+ *   - every flagged numeric claim ticked as verified
+ *   - personal note written by the human (TODO_KHALIL placeholder blocks)
+ *   - hero image path set
  */
 
 const CATEGORIES = ['Iron', 'Protein', 'Calcium', 'Vitamin C', 'Zinc', 'Fiber', 'Meal Prep', 'Breakfast']
+const GREEN = '#1e4633'
+const CREAM = '#fffdf8'
+const TOMATO = '#E4572E'
+const BORDER = '#e3d9c8'
+const MUTED = '#6b5f4d'
+const SERIF = 'Georgia, "Times New Roman", serif'
+const TODO_MARK = 'TODO_KHALIL'
 
 function diffObjects(before, after) {
   const diff = {}
@@ -27,14 +37,183 @@ function diffObjects(before, after) {
   return diff
 }
 
+function ago(iso) {
+  if (!iso) return '—'
+  const s = (Date.now() - new Date(iso).getTime()) / 1000
+  if (s < 3600) return `${Math.max(1, Math.floor(s / 60))}m ago`
+  if (s < 86400) return `${Math.floor(s / 3600)}h ago`
+  return `${Math.floor(s / 86400)}d ago`
+}
+
+const input = {
+  width: '100%', padding: '10px 12px', margin: '4px 0 12px', border: '1px solid #d8cfc2',
+  borderRadius: 8, fontSize: 15, fontFamily: 'inherit', background: '#fff', boxSizing: 'border-box',
+}
+const label = { fontSize: 11, fontWeight: 800, color: MUTED, textTransform: 'uppercase', letterSpacing: '.05em', marginTop: 4 }
+const btn = (bg, disabled) => ({
+  padding: '12px 20px', borderRadius: 8, border: 'none', cursor: disabled ? 'not-allowed' : 'pointer',
+  background: disabled ? '#c9bfae' : bg, color: '#fff', fontWeight: 700, fontSize: 15,
+  marginRight: 8, marginBottom: 8, minHeight: 48, opacity: disabled ? 0.7 : 1,
+})
+const pill = (bg, fg) => ({
+  display: 'inline-block', fontSize: 11, fontWeight: 700, padding: '3px 10px',
+  borderRadius: 12, background: bg, color: fg, whiteSpace: 'nowrap',
+})
+
+/* ------------------------- rendered preview ------------------------- */
+
+export function Preview({ draft }) {
+  const body = draft.body || {}
+  const sections = body.sections || []
+  const faqs = body.faqs || []
+  const hasTodo = (draft.personal_note || '').includes(TODO_MARK)
+  return (
+    <div style={{ background: '#fff', border: `1px solid ${BORDER}`, borderRadius: 12, padding: 20, marginBottom: 16 }}>
+      <div style={{ marginBottom: 10 }}>
+        <span style={pill('#e3efe7', GREEN)}>{draft.category}</span>
+      </div>
+      <h1 style={{ fontFamily: SERIF, fontSize: 26, margin: '0 0 10px', color: GREEN, lineHeight: 1.25 }}>{draft.title}</h1>
+      <p style={{ fontSize: 17, lineHeight: 1.6, color: '#3d3428', margin: '0 0 8px' }}>{draft.lede}</p>
+      <p style={{ fontSize: 12, color: MUTED, margin: '0 0 16px' }}>
+        <b>Google snippet:</b> {draft.description}
+      </p>
+
+      <div style={{
+        borderLeft: `4px solid ${hasTodo ? TOMATO : GREEN}`, background: hasTodo ? '#fff7f3' : '#f4f8f4',
+        padding: '12px 14px', borderRadius: '0 8px 8px 0', marginBottom: 18,
+      }}>
+        <div style={{ fontSize: 11, fontWeight: 800, color: MUTED, textTransform: 'uppercase', letterSpacing: '.05em', marginBottom: 4 }}>
+          Personal note {hasTodo && <span style={{ color: TOMATO }}>— write yours before approving</span>}
+        </div>
+        <div style={{ fontSize: 14, fontStyle: hasTodo ? 'normal' : 'italic', color: hasTodo ? TOMATO : '#3d3428' }}>
+          {draft.personal_note || <span style={{ color: TOMATO }}>(empty)</span>}
+        </div>
+      </div>
+
+      {sections.map((s, i) => (
+        <div key={i} style={{ marginBottom: 16 }}>
+          <h2 style={{ fontFamily: SERIF, fontSize: 19, color: GREEN, margin: '0 0 8px' }}>{s.h2}</h2>
+          {(s.paragraphs || []).map((p, j) => (
+            <p key={j} style={{ fontSize: 15, lineHeight: 1.7, color: '#3d3428', margin: '0 0 10px' }}>{p}</p>
+          ))}
+        </div>
+      ))}
+
+      {faqs.length > 0 && (
+        <div style={{ marginTop: 20 }}>
+          <h2 style={{ fontFamily: SERIF, fontSize: 19, color: GREEN, margin: '0 0 8px' }}>FAQs</h2>
+          {faqs.map((f, i) => (
+            <details key={i} style={{ borderBottom: '1px solid #efe7d6', padding: '10px 0' }}>
+              <summary style={{ fontWeight: 700, fontSize: 14, cursor: 'pointer' }}>{f.q}</summary>
+              <p style={{ fontSize: 14, color: '#3d3428', margin: '8px 0 0', lineHeight: 1.6 }}>{f.a}</p>
+            </details>
+          ))}
+        </div>
+      )}
+
+      <div style={{ marginTop: 18, fontSize: 12, color: MUTED }}>
+        <b>Allergen claims:</b> {(draft.allergen_claims || []).join(', ') || 'none declared'}
+      </div>
+
+      {(draft.pin_variants || []).length > 0 && (
+        <div style={{ marginTop: 18 }}>
+          <div style={{ fontSize: 11, fontWeight: 800, color: MUTED, textTransform: 'uppercase', letterSpacing: '.05em', marginBottom: 8 }}>
+            Pinterest variants ({draft.pin_variants.length})
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 10 }}>
+            {draft.pin_variants.map((v, i) => (
+              <div key={i} style={{ border: `1px solid ${BORDER}`, borderRadius: 10, padding: 12, background: CREAM }}>
+                <div style={{ fontWeight: 700, fontSize: 13, marginBottom: 6 }}>{v.title}</div>
+                <div style={{ fontSize: 12, color: MUTED, lineHeight: 1.5 }}>{v.description}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
+
+/* ------------------------- structured editor ------------------------- */
+
+function SectionsEditor({ sections, setSections }) {
+  const update = (i, patch) => setSections(sections.map((s, j) => (j === i ? { ...s, ...patch } : s)))
+  return (
+    <div>
+      <div style={label}>Sections</div>
+      {sections.map((s, i) => (
+        <div key={i} style={{ border: `1px solid ${BORDER}`, borderRadius: 10, padding: 12, marginBottom: 10, background: '#fff' }}>
+          <input
+            style={{ ...input, fontWeight: 700, marginBottom: 8 }}
+            value={s.h2}
+            placeholder="Section heading"
+            onChange={(e) => update(i, { h2: e.target.value })}
+          />
+          <textarea
+            style={{ ...input, minHeight: 110, marginBottom: 8 }}
+            value={(s.paragraphs || []).join('\n\n')}
+            placeholder="Paragraphs — separate with a blank line"
+            onChange={(e) => update(i, { paragraphs: e.target.value.split(/\n\s*\n/).map((x) => x.trim()).filter(Boolean) })}
+          />
+          <button
+            style={{ background: 'none', border: 'none', color: TOMATO, fontWeight: 700, cursor: 'pointer', fontSize: 13, padding: 4 }}
+            onClick={() => setSections(sections.filter((_, j) => j !== i))}
+          >
+            ✕ Remove section
+          </button>
+        </div>
+      ))}
+      <button
+        style={{ background: 'none', border: `1px dashed ${GREEN}`, color: GREEN, fontWeight: 700, borderRadius: 8, padding: '10px 16px', cursor: 'pointer', fontSize: 14, width: '100%', marginBottom: 12 }}
+        onClick={() => setSections([...sections, { h2: '', paragraphs: [] }])}
+      >
+        + Add section
+      </button>
+    </div>
+  )
+}
+
+function FaqsEditor({ faqs, setFaqs }) {
+  const update = (i, patch) => setFaqs(faqs.map((f, j) => (j === i ? { ...f, ...patch } : f)))
+  return (
+    <div>
+      <div style={label}>FAQs</div>
+      {faqs.map((f, i) => (
+        <div key={i} style={{ border: `1px solid ${BORDER}`, borderRadius: 10, padding: 12, marginBottom: 10, background: '#fff' }}>
+          <input style={{ ...input, fontWeight: 700, marginBottom: 8 }} value={f.q} placeholder="Question"
+            onChange={(e) => update(i, { q: e.target.value })} />
+          <textarea style={{ ...input, minHeight: 70, marginBottom: 8 }} value={f.a} placeholder="Answer"
+            onChange={(e) => update(i, { a: e.target.value })} />
+          <button
+            style={{ background: 'none', border: 'none', color: TOMATO, fontWeight: 700, cursor: 'pointer', fontSize: 13, padding: 4 }}
+            onClick={() => setFaqs(faqs.filter((_, j) => j !== i))}
+          >
+            ✕ Remove FAQ
+          </button>
+        </div>
+      ))}
+      <button
+        style={{ background: 'none', border: `1px dashed ${GREEN}`, color: GREEN, fontWeight: 700, borderRadius: 8, padding: '10px 16px', cursor: 'pointer', fontSize: 14, width: '100%', marginBottom: 12 }}
+        onClick={() => setFaqs([...faqs, { q: '', a: '' }])}
+      >
+        + Add FAQ
+      </button>
+    </div>
+  )
+}
+
+/* ------------------------- main console ------------------------- */
+
 export default function ReviewConsole() {
   const { user, loading: authLoading, configured, signInWithGoogle } = useAuth()
-  const [admin, setAdmin] = useState(null) // null = unknown, true/false
+  const [admin, setAdmin] = useState(null)
   const [drafts, setDrafts] = useState([])
   const [loading, setLoading] = useState(true)
   const [openId, setOpenId] = useState(null)
-  const [form, setForm] = useState({})
-  const [verified, setVerified] = useState(false)
+  const [mode, setMode] = useState('preview') // preview | edit
+  const [form, setForm] = useState(null)
+  const [claimChecks, setClaimChecks] = useState({})
+  const [showJson, setShowJson] = useState(false)
   const [busy, setBusy] = useState(false)
   const [msg, setMsg] = useState('')
 
@@ -57,7 +236,6 @@ export default function ReviewConsole() {
     }
   }, [])
 
-  // admin check: is this login email in pipeline_admins?
   useEffect(() => {
     if (authLoading) return
     if (!configured || !user?.email) {
@@ -87,7 +265,10 @@ export default function ReviewConsole() {
 
   const openDraft = (d) => {
     setOpenId(d.id)
-    setVerified(false)
+    setMode('preview')
+    setClaimChecks({})
+    setShowJson(false)
+    const body = d.body || {}
     setForm({
       title: d.title || '',
       description: d.description || '',
@@ -95,24 +276,30 @@ export default function ReviewConsole() {
       category: d.category || 'Meal Prep',
       image: d.image || '',
       personal_note: d.personal_note || '',
-      bodyJson: JSON.stringify(d.body || { sections: [], faqs: [] }, null, 2),
+      sections: (body.sections || []).map((s) => ({ h2: s.h2 || '', paragraphs: s.paragraphs || [] })),
+      faqs: (body.faqs || []).map((f) => ({ q: f.q || '', a: f.a || '' })),
     })
   }
 
   const current = useMemo(() => drafts.find((d) => d.id === openId), [drafts, openId])
 
+  // ---- approval checklist (client-side; server re-checks) ----
+  const flagged = current?.flagged_claims || []
+  const claimsOk = flagged.every((_, i) => claimChecks[i])
+  const noteText = (form?.personal_note || '').trim()
+  const noteOk = noteText.length > 0 && !noteText.includes(TODO_MARK)
+  const imageOk = (form?.image || '').trim().length > 0
+  const blockers = []
+  if (flagged.length > 0 && !claimsOk) blockers.push(`${flagged.length - Object.values(claimChecks).filter(Boolean).length} numeric claim(s) not verified yet`)
+  if (!noteOk) blockers.push(noteText.includes(TODO_MARK) ? 'personal note is still the placeholder — write your own note' : 'personal note is empty')
+  if (!imageOk) blockers.push('hero image path not set (pins need it)')
+
   async function act(kind) {
-    if (!current || busy) return
+    if (!current || !form || busy) return
     setBusy(true)
     setMsg('')
     try {
       const sb = await getSupabase()
-      let body
-      try {
-        body = JSON.parse(form.bodyJson)
-      } catch {
-        throw new Error('Body JSON is invalid — fix it before saving')
-      }
       const edited = {
         title: form.title.trim(),
         description: form.description.trim(),
@@ -120,20 +307,18 @@ export default function ReviewConsole() {
         category: form.category,
         image: form.image.trim(),
         personal_note: form.personal_note,
-        body,
+        body: { sections: form.sections, faqs: form.faqs },
       }
       if (!edited.title) throw new Error('Title cannot be empty')
-
       if (kind === 'approve') {
-        if ((current.flagged_claims || []).length > 0 && !verified) {
-          throw new Error('This draft has flagged numeric claims — tick "I verified the numbers" to approve')
-        }
-        if (!edited.personal_note.trim()) throw new Error('personal_note is empty — the draft cannot be approved without it')
-        if (!edited.image.trim()) throw new Error('image path is empty — set the hero image before approving (pins need it)')
+        if (blockers.length > 0) throw new Error('Cannot approve yet: ' + blockers.join('; '))
       }
-
-      // log the diff BEFORE writing (audit trail)
-      const diff = diffObjects(current, edited)
+      const before = {
+        title: current.title, description: current.description, lede: current.lede,
+        category: current.category, image: current.image, personal_note: current.personal_note,
+        body: current.body,
+      }
+      const diff = diffObjects(before, edited)
       const patch = { ...edited }
       if (kind === 'approve') {
         patch.status = 'approved'
@@ -156,12 +341,13 @@ export default function ReviewConsole() {
       }
       setMsg(
         kind === 'approve'
-          ? `Approved — the publisher will pick it up on the next run.`
+          ? 'Approved — the publisher will pick it up on the next run.'
           : kind === 'reject'
-            ? `Rejected.`
-            : `Edits saved (still pending review).`
+            ? 'Rejected.'
+            : 'Edits saved (still pending review).'
       )
       setOpenId(null)
+      setForm(null)
       await load()
     } catch (e) {
       setMsg(`Error: ${e.message}`)
@@ -170,22 +356,12 @@ export default function ReviewConsole() {
     }
   }
 
-  const input = {
-    width: '100%', padding: '8px 10px', margin: '4px 0 10px', border: '1px solid #d8cfc2',
-    borderRadius: 8, fontSize: 14, fontFamily: 'inherit', background: '#fffdf8',
-  }
-  const label = { fontSize: 12, fontWeight: 700, color: '#6b5f4d', textTransform: 'uppercase', letterSpacing: '.04em' }
-  const btn = (bg) => ({
-    padding: '9px 18px', borderRadius: 8, border: 'none', cursor: 'pointer',
-    background: bg, color: '#fff', fontWeight: 700, fontSize: 14, marginRight: 8,
-  })
-
   if (authLoading || loading) return <div style={{ padding: 40 }}>Loading review console…</div>
 
   if (!configured || !user) {
     return (
       <div style={{ padding: 40, maxWidth: 560 }}>
-        <h1>Review Console</h1>
+        <h1 style={{ fontFamily: SERIF }}>Review Console</h1>
         <p>Sign in with the owner Google account to review drafts.</p>
         <button style={btn('#1a7a3c')} onClick={signInWithGoogle}>Sign in with Google</button>
       </div>
@@ -195,22 +371,23 @@ export default function ReviewConsole() {
   if (!admin) {
     return (
       <div style={{ padding: 40, maxWidth: 560 }}>
-        <h1>Review Console</h1>
+        <h1 style={{ fontFamily: SERIF }}>Review Console</h1>
         <p>This account ({user.email}) is not a pipeline admin.</p>
-        <p style={{ fontSize: 13, color: '#6b5f4d' }}>
-          The owner must run this once in Supabase SQL Editor:<br />
-          <code>insert into public.pipeline_admins (email) values ('{user.email}') on conflict do nothing;</code>
-        </p>
       </div>
     )
   }
 
   return (
-    <div style={{ padding: '24px', maxWidth: 960, margin: '0 auto' }}>
+    <div>
       <Seo title="Review Console — internal" description="Internal content review console." noindex />
-      <h1 style={{ marginBottom: 4 }}>Review Console</h1>
-      <p style={{ color: '#6b5f4d', marginTop: 0 }}>
-        {drafts.length} draft{drafts.length === 1 ? '' : 's'} waiting for review. Nothing publishes without your approval.
+      <div style={{ display: 'flex', alignItems: 'baseline', gap: 12, flexWrap: 'wrap' }}>
+        <h1 style={{ fontFamily: SERIF, margin: '0 0 4px', fontSize: 22 }}>Review queue</h1>
+        <span style={pill(blockers.length > 0 && openId ? '#fbe9e1' : '#e3efe7', blockers.length > 0 && openId ? '#c24a24' : GREEN)}>
+          {drafts.length} waiting
+        </span>
+      </div>
+      <p style={{ color: MUTED, marginTop: 0, fontSize: 14 }}>
+        Nothing publishes without your approval. Open a draft, read the preview, check the numbers, write your note.
       </p>
       {msg && (
         <div style={{ padding: '10px 14px', borderRadius: 8, marginBottom: 16, background: msg.startsWith('Error') ? '#fdecea' : '#e9f7ef', fontSize: 14 }}>
@@ -218,74 +395,130 @@ export default function ReviewConsole() {
         </div>
       )}
 
-      {drafts.map((d) => (
-        <div key={d.id} style={{ border: '1px solid #e3d9c8', borderRadius: 12, padding: 16, marginBottom: 12, background: '#fffdf8' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12 }}>
-            <div>
-              <div style={{ fontWeight: 700 }}>{d.title}</div>
-              <div style={{ fontSize: 12, color: '#6b5f4d' }}>
-                {d.category} · {(d.flagged_claims || []).length} flagged claim{(d.flagged_claims || []).length === 1 ? '' : 's'} · {new Date(d.created_at).toLocaleString()}
+      {drafts.map((d) => {
+        const open = openId === d.id
+        const fc = (d.flagged_claims || []).length
+        return (
+          <div key={d.id} style={{ border: `1px solid ${BORDER}`, borderRadius: 12, padding: 16, marginBottom: 12, background: CREAM }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12 }}>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ fontWeight: 700, fontSize: 15 }}>{d.title}</div>
+                <div style={{ fontSize: 12, color: MUTED, marginTop: 4, display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
+                  <span style={pill('#e3efe7', GREEN)}>{d.category}</span>
+                  {fc > 0 && <span style={pill('#fff3d6', '#8a6d1b')}>{fc} number{fc === 1 ? '' : 's'} to verify</span>}
+                  {(d.personal_note || '').includes(TODO_MARK) && <span style={pill('#fbe9e1', '#c24a24')}>note needed</span>}
+                  <span>{ago(d.created_at)}</span>
+                </div>
               </div>
+              <button style={{ ...btn(open ? '#6b5f4d' : GREEN), margin: 0, minHeight: 44, flex: 'none' }}
+                onClick={() => (open ? (setOpenId(null), setForm(null)) : openDraft(d))}>
+                {open ? 'Close' : 'Review'}
+              </button>
             </div>
-            <button style={btn('#2f5d3a')} onClick={() => (openId === d.id ? setOpenId(null) : openDraft(d))}>
-              {openId === d.id ? 'Close' : 'Review'}
-            </button>
-          </div>
 
-          {openId === d.id && (
-            <div style={{ marginTop: 16, borderTop: '1px dashed #e3d9c8', paddingTop: 16 }}>
-              {(d.flagged_claims || []).length > 0 && (
-                <div style={{ background: '#fff4e0', border: '1px solid #e8b93e', borderRadius: 8, padding: 12, marginBottom: 16 }}>
-                  <div style={{ fontWeight: 700, marginBottom: 8 }}>⚠ Verify these numeric claims before approving:</div>
-                  {d.flagged_claims.map((f, i) => (
-                    <div key={i} style={{ fontSize: 13, marginBottom: 6 }}>
-                      <b>{f.claim}</b> — <span style={{ color: '#6b5f4d' }}>…{f.context}…</span>
-                    </div>
+            {open && current && form && (
+              <div style={{ marginTop: 16, borderTop: `1px dashed ${BORDER}`, paddingTop: 16 }}>
+                <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
+                  {['preview', 'edit'].map((m) => (
+                    <button key={m}
+                      onClick={() => setMode(m)}
+                      style={{
+                        padding: '10px 18px', borderRadius: 8, cursor: 'pointer', fontWeight: 700, fontSize: 14,
+                        background: mode === m ? GREEN : '#fff', color: mode === m ? '#fff' : GREEN,
+                        border: `1px solid ${GREEN}`, minHeight: 44,
+                      }}>
+                      {m === 'preview' ? '👁 Preview' : '✏ Edit'}
+                    </button>
                   ))}
-                  <label style={{ display: 'block', marginTop: 10, fontSize: 14 }}>
-                    <input type="checkbox" checked={verified} onChange={(e) => setVerified(e.target.checked)} />{' '}
-                    I verified every number above against a reliable source
-                  </label>
                 </div>
-              )}
 
-              <div style={label}>Title</div>
-              <input style={input} value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} />
-              <div style={label}>Meta description</div>
-              <input style={input} value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />
-              <div style={label}>Lede</div>
-              <textarea style={{ ...input, minHeight: 56 }} value={form.lede} onChange={(e) => setForm({ ...form, lede: e.target.value })} />
-              <div style={{ display: 'flex', gap: 12 }}>
-                <div style={{ flex: 1 }}>
-                  <div style={label}>Category</div>
-                  <select style={input} value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })}>
-                    {CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
-                  </select>
+                {mode === 'preview' ? (
+                  <Preview draft={{ ...current, ...form, body: { sections: form.sections, faqs: form.faqs } }} />
+                ) : (
+                  <div>
+                    <div style={label}>Title</div>
+                    <input style={input} value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} />
+                    <div style={label}>Meta description (Google snippet)</div>
+                    <input style={input} value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} />
+                    <div style={label}>Lede</div>
+                    <textarea style={{ ...input, minHeight: 60 }} value={form.lede} onChange={(e) => setForm({ ...form, lede: e.target.value })} />
+                    <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+                      <div style={{ flex: '1 1 160px' }}>
+                        <div style={label}>Category</div>
+                        <select style={input} value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })}>
+                          {CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
+                        </select>
+                      </div>
+                      <div style={{ flex: '2 1 220px' }}>
+                        <div style={label}>Hero image path</div>
+                        <input style={input} value={form.image} placeholder="/images/my-post.webp"
+                          onChange={(e) => setForm({ ...form, image: e.target.value })} />
+                      </div>
+                    </div>
+                    <div style={label}>Personal note {(form.personal_note || '').includes(TODO_MARK) && <span style={{ color: TOMATO }}>— replace the placeholder with your own words</span>}</div>
+                    <textarea style={{ ...input, minHeight: 80 }} value={form.personal_note}
+                      onChange={(e) => setForm({ ...form, personal_note: e.target.value })} />
+                    <SectionsEditor sections={form.sections} setSections={(s) => setForm({ ...form, sections: s })} />
+                    <FaqsEditor faqs={form.faqs} setFaqs={(f) => setForm({ ...form, faqs: f })} />
+                    <button
+                      onClick={() => setShowJson(!showJson)}
+                      style={{ background: 'none', border: 'none', color: MUTED, fontSize: 13, cursor: 'pointer', padding: '8px 0', textDecoration: 'underline' }}
+                    >
+                      {showJson ? 'Hide raw JSON' : 'Advanced: show raw body JSON'}
+                    </button>
+                    {showJson && (
+                      <pre style={{ background: '#2b2b2b', color: '#d6d6d6', padding: 12, borderRadius: 8, fontSize: 11, overflowX: 'auto', maxHeight: 300, overflowY: 'auto' }}>
+                        {JSON.stringify({ sections: form.sections, faqs: form.faqs }, null, 2)}
+                      </pre>
+                    )}
+                  </div>
+                )}
+
+                {/* approval checklist */}
+                <div style={{ border: `1px solid ${BORDER}`, borderRadius: 10, padding: 14, margin: '8px 0 4px', background: '#fff' }}>
+                  <div style={{ fontWeight: 800, fontSize: 13, marginBottom: 10, textTransform: 'uppercase', letterSpacing: '.05em', color: MUTED }}>
+                    Before you approve
+                  </div>
+                  {flagged.length > 0 ? (
+                    <div style={{ marginBottom: 10 }}>
+                      {flagged.map((f, i) => (
+                        <label key={i} style={{ display: 'flex', gap: 10, alignItems: 'flex-start', fontSize: 13, marginBottom: 8, cursor: 'pointer' }}>
+                          <input type="checkbox" checked={!!claimChecks[i]} style={{ width: 20, height: 20, marginTop: 2, flex: 'none' }}
+                            onChange={(e) => setClaimChecks({ ...claimChecks, [i]: e.target.checked })} />
+                          <span><b>{f.claim}</b> <span style={{ color: MUTED }}>…{(f.context || '').slice(0, 110)}…</span></span>
+                        </label>
+                      ))}
+                    </div>
+                  ) : (
+                    <div style={{ fontSize: 13, color: MUTED, marginBottom: 10 }}>No numeric claims flagged in this draft.</div>
+                  )}
+                  <div style={{ fontSize: 13, marginBottom: 6 }}>
+                    {noteOk ? '✅' : '⬜'} Personal note written by you
+                    {!noteOk && <span style={{ color: TOMATO }}> — {noteText.includes(TODO_MARK) ? 'still the placeholder' : 'empty'}</span>}
+                  </div>
+                  <div style={{ fontSize: 13 }}>
+                    {imageOk ? '✅' : '⬜'} Hero image path set
+                    {!imageOk && <span style={{ color: TOMATO }}> — required for pins</span>}
+                  </div>
                 </div>
-                <div style={{ flex: 2 }}>
-                  <div style={label}>Hero image path (e.g. /images/slug.webp)</div>
-                  <input style={input} value={form.image} onChange={(e) => setForm({ ...form, image: e.target.value })} placeholder="/images/my-post.webp" />
+
+                <div style={{ position: 'sticky', bottom: 0, background: CREAM, padding: '12px 0 4px', borderTop: `1px solid ${BORDER}`, marginTop: 12 }}>
+                  <button style={btn(GREEN, busy || blockers.length > 0)} disabled={busy || blockers.length > 0} onClick={() => act('approve')}>
+                    Approve{blockers.length > 0 ? ` (${blockers.length} to fix)` : ''}
+                  </button>
+                  <button style={btn('#8a6d3b', busy)} disabled={busy} onClick={() => act('edit')}>Save edits</button>
+                  <button style={btn('#b03a2e', busy)} disabled={busy} onClick={() => act('reject')}>Reject</button>
+                  {blockers.length > 0 && (
+                    <div style={{ fontSize: 12, color: TOMATO, marginTop: 4 }}>Fix above to enable approval: {blockers.join('; ')}</div>
+                  )}
                 </div>
               </div>
-              <div style={label}>Personal note (required — the human signal)</div>
-              <textarea style={{ ...input, minHeight: 64 }} value={form.personal_note} onChange={(e) => setForm({ ...form, personal_note: e.target.value })} />
-              <div style={label}>Body JSON (sections + faqs)</div>
-              <textarea style={{ ...input, minHeight: 220, fontFamily: 'monospace', fontSize: 12 }} value={form.bodyJson} onChange={(e) => setForm({ ...form, bodyJson: e.target.value })} />
+            )}
+          </div>
+        )
+      })}
 
-              <div style={{ marginTop: 8 }}>
-                <button style={btn('#1a7a3c')} disabled={busy} onClick={() => act('approve')}>Approve</button>
-                <button style={btn('#8a6d3b')} disabled={busy} onClick={() => act('edit')}>Save edits</button>
-                <button style={btn('#b03a2e')} disabled={busy} onClick={() => act('reject')}>Reject</button>
-              </div>
-              <div style={{ fontSize: 12, color: '#6b5f4d', marginTop: 10 }}>
-                Allergen claims: {(d.allergen_claims || []).join(', ') || 'none declared'}
-              </div>
-            </div>
-          )}
-        </div>
-      ))}
-
-      {drafts.length === 0 && <p style={{ color: '#6b5f4d' }}>Queue is empty. Run the keyword miner + draft generator to fill it.</p>}
+      {drafts.length === 0 && <p style={{ color: MUTED }}>Queue is empty. Run the keyword miner + draft generator to fill it.</p>}
     </div>
   )
 }

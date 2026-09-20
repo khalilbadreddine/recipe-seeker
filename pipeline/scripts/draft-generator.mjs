@@ -207,6 +207,9 @@ async function main() {
 
     const [saved] = await db.insert('drafts', draft);
     await db.update('keyword_candidates', `id=eq.${cand.id}`, { status: 'drafted' });
+    // Observability: record which provider/model wrote this draft (no schema change).
+    const llmInfo = gen._llm ? ` via ${gen._llm.provider}/${gen._llm.model}` : '';
+    await logEvent(`Draft "${gen.title}" saved as pending_review${llmInfo}`);
     console.log(`[drafts] saved as pending_review: ${saved.id} (candidate marked drafted)`);
     created++;
   }
