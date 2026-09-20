@@ -73,19 +73,9 @@ function Kicker({ children }) {
 
 /* ============================== OVERVIEW ============================== */
 
-export function OverviewView({ data, goTab }) {
+export function OverviewView({ data, goTab, onApproveReady, onReviewOldest, approving }) {
   const { copied, copy } = useCopy()
   const { funnel, health, events, attention } = data
-
-  const quickActions = [
-    ['⛏ Run keyword miner', 'node pipeline/scripts/keyword-miner.mjs'],
-    ['✍ Generate drafts (AI)', 'node pipeline/scripts/draft-generator.mjs'],
-    ['🧪 Test generator (no save)', 'DRY_RUN=1 node pipeline/scripts/draft-generator.mjs'],
-    ['🚀 Publish approved', 'node pipeline/scripts/publisher.mjs'],
-    ['📌 Schedule pins', 'node pipeline/scripts/pin-scheduler.mjs'],
-    ['📌 List Pinterest boards', 'node pipeline/scripts/pin-scheduler.mjs --boards'],
-    ['🤖 Test AI chain', 'node pipeline/scripts/test-llm.mjs'],
-  ]
 
   return (
     <div>
@@ -193,14 +183,24 @@ export function OverviewView({ data, goTab }) {
 
       <SectionTitle>Quick actions</SectionTitle>
       <p className="mt-0 mb-3 text-[13px] text-[#6b5f4d]">
-        Scripts run in your terminal from the repo root — tap a button to copy the exact command.
+        Real actions — they run right here, on your phone. No terminal needed.
       </p>
       <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-        {quickActions.map(([label, cmd]) => (
-          <GhostBtn key={label} className="justify-start !font-semibold" onClick={() => copy(cmd, label)}>
-            {copied === label ? '✓ Copied!' : label}
-          </GhostBtn>
-        ))}
+        <GhostBtn className="justify-start !font-semibold" onClick={onApproveReady} disabled={approving}>
+          {approving ? '⏳ Approving…' : '✅ Approve all ready'}
+        </GhostBtn>
+        <p className="-mt-1 mb-1 text-[12px] text-[#6b5f4d]">
+          Approves pending drafts that pass every check (image set, your own note, no unverified claims). Anything needing eyes stays in review.
+        </p>
+        <GhostBtn className="justify-start !font-semibold" onClick={onReviewOldest}>
+          🔍 Review oldest pending
+        </GhostBtn>
+        <GhostBtn className="justify-start !font-semibold" onClick={() => goTab('keywords')}>
+          ➕ Keywords — add your own
+        </GhostBtn>
+        <GhostBtn className="justify-start !font-semibold" onClick={() => copy('node pipeline/scripts/publisher.mjs', 'pub-cmd')}>
+          {copied === 'pub-cmd' ? '✓ Copied!' : '💻 Copy: publish from a computer'}
+        </GhostBtn>
       </div>
     </div>
   )
@@ -406,18 +406,56 @@ export function PinsView({ pins }) {
 
 /* ============================== KEYWORDS ============================== */
 
-export function KeywordsView({ keywords }) {
-  const { copied, copy } = useCopy()
+export function KeywordsView({ keywords, onAdd }) {
+  const [val, setVal] = useState('')
+  const [busy, setBusy] = useState(false)
+  const [err, setErr] = useState('')
+
+  async function submit(e) {
+    e.preventDefault()
+    if (busy) return
+    setBusy(true)
+    setErr('')
+    try {
+      await onAdd(val)
+      setVal('')
+    } catch (ex) {
+      setErr(ex.message)
+    } finally {
+      setBusy(false)
+    }
+  }
+
   return (
     <div className="mt-4">
+      <Card className="mb-3 !p-3.5">
+        <Kicker>Add your own keyword</Kicker>
+        <p className="mt-1 mb-2.5 text-[13px] text-[#6b5f4d]">
+          Got an idea from Pinterest or TikTok? Add it here — the AI drafts from it next.
+          (The Pinterest miner needs trial approval; the news backup runs automatically.)
+        </p>
+        <form onSubmit={submit} className="flex gap-2">
+          <input
+            value={val}
+            onChange={(e) => setVal(e.target.value)}
+            placeholder="e.g. high protein lentil soup"
+            className="min-h-[44px] flex-1 rounded-xl border border-cream-dark bg-white px-3.5 text-[15px] text-[#1c2b23] outline-none placeholder:text-[#a89a83] focus:border-forest"
+          />
+          <button
+            type="submit"
+            disabled={busy}
+            className="min-h-[44px] flex-none rounded-xl bg-forest px-5 text-[15px] font-bold text-white disabled:opacity-50"
+          >
+            {busy ? '…' : 'Add'}
+          </button>
+        </form>
+        {err && <p className="mt-2 text-[13px] text-ember-dark">{err}</p>}
+      </Card>
       {(keywords || []).length === 0 && (
         <EmptyState
           icon="🔍"
           title="No keywords yet"
-          text="The miner finds trending Pinterest keywords and scores them. Run it to fill this list."
-          actionLabel="⛏ Copy: run the miner"
-          actionDoneLabel="✓ Copied!"
-          onAction={() => copy('node pipeline/scripts/keyword-miner.mjs', 'miner-kw')}
+          text="Add your first keyword above, or wait for the automatic news scan."
         />
       )}
       {(keywords || []).map((k, i) => (
@@ -609,6 +647,7 @@ export default function Dashboard() {
   const [tabLoading, setTabLoading] = useState(false)
   const [reviewFocus, setReviewFocus] = useState(null)
   const [movingId, setMovingId] = useState(null)
+  const [approving, setApproving] = useState(false)
 
   const [overview, setOverview] = useState(null)
   const [drafts, setDrafts] = useState(null)
@@ -775,6 +814,105 @@ export default function Dashboard() {
     }
   }, [user, loadOverview, loadContent])
 
+  /** Bulk-approve every pending draft that passes the full checklist
+   *  (image set, own personal note, zero unverified claims). Same rules as the
+   *  Review approve button — anything needing eyes stays pending. */
+  const approveAllReady = useCallback(async () => {
+    setApproving(true)
+    setMsg('')
+    try {
+      const sb = await getSupabase()
+      if (!sb) throw new Error('Supabase not configured')
+      const { data, error } = await sb
+        .from('drafts')
+        .select('id,title,personal_note,image,flagged_claims')
+        .eq('status', 'pending_review')
+      if (error) throw error
+      const ready = (data || []).filter((d) => {
+        const note = (d.personal_note || '').trim()
+        return (
+          (d.image || '').trim().length > 0 &&
+          note.length > 0 &&
+          !note.includes('TODO_KHALIL') &&
+          (d.flagged_claims || []).length === 0
+        )
+      })
+      const skipped = (data || []).length - ready.length
+      if (ready.length === 0) {
+        setMsg(
+          skipped > 0
+            ? `Nothing to bulk-approve — ${skipped} draft${skipped === 1 ? '' : 's'} need${skipped === 1 ? 's' : ''} your eyes first (claims, note, or image).`
+            : 'No pending drafts.'
+        )
+        return
+      }
+      const now = new Date().toISOString()
+      for (const d of ready) {
+        const { error: e } = await sb
+          .from('drafts')
+          .update({ status: 'approved', reviewer_id: user.id, reviewed_at: now })
+          .eq('id', d.id)
+        if (e) throw e
+        await sb.from('draft_revisions').insert({
+          draft_id: d.id,
+          edited_by: user.id,
+          diff: { status: { before: 'pending_review', after: 'approved' }, via: 'bulk-approve-ready' },
+        })
+      }
+      setMsg(
+        `✓ Approved ${ready.length} draft${ready.length === 1 ? '' : 's'}.${skipped > 0 ? ` ${skipped} skipped — need${skipped === 1 ? 's' : ''} manual check.` : ''}`
+      )
+      const sb2 = await getSupabase()
+      if (sb2) await loadOverview(sb2)
+    } catch (e) {
+      setMsg(`Couldn't bulk-approve: ${e.message}`)
+    } finally {
+      setApproving(false)
+    }
+  }, [user, loadOverview])
+
+  /** Jump to the oldest pending draft in Review. */
+  const reviewOldestPending = useCallback(async () => {
+    setMsg('')
+    try {
+      const sb = await getSupabase()
+      if (!sb) throw new Error('Supabase not configured')
+      const { data, error } = await sb
+        .from('drafts')
+        .select('id')
+        .eq('status', 'pending_review')
+        .order('created_at', { ascending: true })
+        .limit(1)
+      if (error) throw error
+      if (data && data[0]) {
+        setReviewFocus(data[0].id)
+        setTab('review')
+      } else {
+        setMsg('No pending drafts — nothing to review.')
+      }
+    } catch (e) {
+      setMsg(`Couldn't open review: ${e.message}`)
+    }
+  }, [])
+
+  /** Manually add a keyword candidate (your own idea, no miner needed). */
+  const addKeyword = useCallback(async (kw) => {
+    const sb = await getSupabase()
+    if (!sb) throw new Error('Supabase not configured')
+    const text = (kw || '').trim().toLowerCase()
+    if (!text) throw new Error('Type a keyword first')
+    const runId = 'manual-' + new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19)
+    const { error } = await sb
+      .from('keyword_candidates')
+      .insert({ keyword: text, status: 'new', source_run_id: runId })
+    if (error) throw error
+    const sb2 = await getSupabase()
+    if (sb2) {
+      await loadKeywords(sb2)
+      await loadOverview(sb2)
+    }
+  }, [loadKeywords, loadOverview])
+
   const loadTab = useCallback(async (id) => {
     const sb = await getSupabase()
     if (!sb) return
@@ -884,7 +1022,13 @@ export default function Dashboard() {
       {tabLoading && <p className="mt-3 text-[13px] text-[#6b5f4d]">Loading…</p>}
 
       {tab === 'overview' && overview && (
-        <OverviewView data={overview} goTab={goTab} />
+        <OverviewView
+          data={overview}
+          goTab={goTab}
+          onApproveReady={approveAllReady}
+          onReviewOldest={reviewOldestPending}
+          approving={approving}
+        />
       )}
       {tab === 'review' && (
         <div className="mt-4">
@@ -900,7 +1044,7 @@ export default function Dashboard() {
         />
       )}
       {tab === 'pins' && <PinsView pins={pins} />}
-      {tab === 'keywords' && <KeywordsView keywords={keywords} />}
+      {tab === 'keywords' && <KeywordsView keywords={keywords} onAdd={addKeyword} />}
       {tab === 'ai' && <AiView generations={generations} />}
       {tab === 'activity' && <ActivityView events={activity} />}
       {tab === 'settings' && <SettingsView health={health} />}

@@ -1,0 +1,38 @@
+# Keyword News Scan — weekly backup keyword miner (Google News RSS).
+#
+# Why: the Pinterest keyword miner needs Pinterest API trial approval and is
+# rate-limited. This backup needs NO api key — it reads Google News RSS (US)
+# for nutrition-first queries and writes trending phrases to
+# `keyword_candidates` with status='new'.
+#
+# Required repository secrets (Settings -> Secrets and variables -> Actions):
+#   SUPABASE_URL, SUPABASE_SERVICE_KEY
+# Without them the job fails safely and writes nothing.
+#
+# Trigger: Sundays at 06:00 UTC (07:00 Morocco), or manually via "Run workflow".
+
+name: keyword-news-weekly
+
+on:
+  schedule:
+    - cron: '0 6 * * 0'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  mine:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Run news keyword miner
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+        run: node pipeline/scripts/keyword-miner-news.mjs
