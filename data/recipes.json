@@ -4,6 +4,12 @@
     "tagline": "Find recipes by what your body needs.",
     "canonicalBase": "https://recipe-seeker-client.vercel.app"
   },
+  "meta": {
+    "includeDrafts": false,
+    "publishedRecipes": 50,
+    "draftRecipes": 0,
+    "draftSlugs": []
+  },
   "recipes": [
     {
       "slug": "salmon-kale-pesto-pasta",
