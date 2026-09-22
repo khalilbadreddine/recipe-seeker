@@ -4985,11 +4985,11 @@ export const recipes = [
       },
       {
         title: "Cook the quinoa",
-        text: "While the squash roasts, combine the rinsed quinoa with 370 ml water and a pinch of salt in a saucepan. Bring to a boil, cover, and simmer on low for 15 minutes. Take off the heat, rest 5 minutes covered, then fluff with a fork.",
+        text: "While the squash roasts, combine the rinsed quinoa with 325 ml water and a pinch of salt in a saucepan. Bring to a boil, cover, and simmer on low for 15 minutes. Take off the heat, rest 5 minutes covered, then fluff with a fork.",
       },
       {
         title: "Crisp the chickpeas",
-        text: "Pat the chickpeas very dry with a clean towel. When the squash has about 15 minutes left, scatter the chickpeas onto the hot tray, drizzle with the remaining olive oil and sprinkle with a pinch of salt. Roast 12 to 15 minutes until crisp-edged. In the last 2 minutes, toss the minced garlic over the hot chickpeas so it mellows in the residual heat.",
+        text: "Pat the chickpeas very dry with a clean towel. When the tray goes into the oven, scatter the chickpeas in a single layer around the squash (they share the tray), drizzle with the remaining olive oil and sprinkle with a pinch of salt. If the tray looks crowded, use a second tray — the chickpeas need space to crisp. Roast 25 to 30 minutes, tossing everything once halfway, until the chickpeas are crisp-edged and golden. In the last 2 minutes, toss the minced garlic over the hot chickpeas so it mellows in the residual heat.",
       },
       {
         title: "Massage the kale, whisk the dressing",
@@ -5016,7 +5016,7 @@ export const recipes = [
       },
       {
         q: "How do I get the chickpeas actually crispy?",
-        a: "Three things: pat them very dry before they go on the tray, spread them in a single layer with space around them, and add them to the already-hot tray for the last 12 to 15 minutes of roasting.",
+        a: "Three things: pat them very dry before they go on the tray, spread them in a single layer with space around them, and roast them for the full 25 to 30 minutes alongside the squash — not just the last few minutes.",
       },
       {
         q: "Can I make this ahead for lunches?",
