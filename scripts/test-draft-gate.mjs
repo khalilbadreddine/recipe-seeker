@@ -95,19 +95,18 @@ function injectDraft() {
   copyFileSync(SEED, SEED_BAK);
   let seed = readFileSync(SEED, 'utf8');
   // Append the synthetic draft just before the closing of the recipes array.
-  // The recipes array ends with "}\n]" right before "export const nutrients".
+  // The recipes array ends with "]" right before "export const nutrients".
   const marker = 'export const nutrients';
   const idx = seed.indexOf(marker);
   if (idx === -1) throw new Error('seed marker not found');
   const before = seed.slice(0, idx);
   const recipesClose = before.lastIndexOf(']');
   if (recipesClose === -1) throw new Error('recipes array close not found');
-  seed =
-    seed.slice(0, recipesClose) +
-    ',' +
-    SYNTHETIC_DRAFT +
-    '\n' +
-    seed.slice(recipesClose);
+  // Strip any trailing comma from the last real recipe so the inserted comma
+  // never creates an elision (array hole), which would crash validation.
+  const head = seed.slice(0, recipesClose).replace(/,\s*$/, '');
+  const draftText = SYNTHETIC_DRAFT.trim().replace(/,\s*$/, '');
+  seed = head + ',\n' + draftText + ',\n' + seed.slice(recipesClose);
   writeFileSync(SEED, seed);
 }
 
