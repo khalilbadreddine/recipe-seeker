@@ -7,8 +7,10 @@
   "meta": {
     "includeDrafts": false,
     "publishedRecipes": 50,
-    "draftRecipes": 0,
-    "draftSlugs": []
+    "draftRecipes": 1,
+    "draftSlugs": [
+      "butternut-squash-quinoa-bowl"
+    ]
   },
   "recipes": [
     {
