@@ -4924,7 +4924,128 @@ export const recipes = [
     source: "cached-verified",
     datePublished: "2026-09-17",
     dateModified: "2026-09-17",
-  }
+  },
+  {
+    slug: "butternut-squash-quinoa-bowl",
+    title: "Roasted Butternut Squash and Quinoa Bowl",
+    description:
+      "Roasted butternut squash, quinoa, crisp chickpeas, kale, and a maple-tahini dressing make a hearty plant-forward bowl for lunch or dinner.",
+    image: "/images/butternut-squash-quinoa-bowl.webp",
+    imageAlt: "Bowl of roasted butternut squash cubes, quinoa, chickpeas and kale with tahini drizzle and pumpkin seeds",
+    prepTime: "PT20M",
+    cookTime: "PT30M",
+    totalTime: "PT50M",
+    prepMinutes: 20,
+    cookMinutes: 30,
+    totalMinutes: 50,
+    servings: 4,
+    calories: 454,
+    nutrition: {
+      calories: { amount: 454, unit: "kcal", dv: 23 },
+      protein: { amount: 22.7, unit: "g", dv: 45 },
+      fat: { amount: 25.6, unit: "g", dv: 33 },
+      carbs: { amount: 90.8, unit: "g", dv: 33 },
+      fiber: { amount: 9.4, unit: "g", dv: 34 },
+      sugar: { amount: 10.9, unit: "g", dv: 22 },
+      sodium: { amount: 564, unit: "mg", dv: 25 },
+      iron: { amount: 6.5, unit: "mg", dv: 36 },
+      calcium: { amount: 265, unit: "mg", dv: 20 },
+      vitaminC: { amount: 69, unit: "mg", dv: 77 },
+      potassium: { amount: 1366, unit: "mg", dv: 29 },
+      magnesium: { amount: 256, unit: "mg", dv: 61 },
+      folate: { amount: 171, unit: "mcg", dv: 43 },
+      vitaminA: { amount: 1125, unit: "mcg", dv: 125 },
+    },
+    keyNutrients: [
+      { key: "fiber", label: "9g Fiber" },
+      { key: "potassium", label: "1366mg Potassium" },
+      { key: "magnesium", label: "256mg Magnesium" },
+      { key: "folate", label: "171mcg Folate" },
+    ],
+    ingredients: [
+      { amount: "800 g", item: "butternut squash, peeled and cut into 2 cm cubes (about 1 medium)" },
+      { amount: "185 g", item: "quinoa, rinsed (1 cup)" },
+      { amount: "480 g", item: "cooked chickpeas, drained and rinsed (2 cans)" },
+      { amount: "100 g", item: "kale, stems removed and chopped" },
+      { amount: "60 g", item: "tahini (1/4 cup)" },
+      { amount: "2 tbsp", item: "olive oil, divided" },
+      { amount: "2 tbsp", item: "maple syrup" },
+      { amount: "1", item: "lemon, juiced (about 2 tbsp)" },
+      { amount: "30 g", item: "pumpkin seeds (3 tbsp)" },
+      { amount: "2 cloves", item: "garlic, 1 grated and 1 minced, divided" },
+      { amount: "1/2 tsp", item: "fine sea salt, divided" },
+      { amount: "1 tsp", item: "ground cumin" },
+      { amount: "1/2 tsp", item: "smoked paprika" },
+      { amount: "to taste", item: "black pepper" },
+    ],
+    steps: [
+      {
+        title: "Roast the squash",
+        text: "Heat the oven to 220\u00b0C (425\u00b0F). Toss the squash cubes with 1 tablespoon of the olive oil, the cumin, smoked paprika, half the salt and the black pepper. Spread on a large rimmed sheet pan in a single layer with space between the cubes. Roast 25 to 30 minutes, flipping once halfway, until browned at the edges and a knife slides in easily.",
+      },
+      {
+        title: "Cook the quinoa",
+        text: "While the squash roasts, combine the rinsed quinoa with 325 ml water and a pinch of salt in a saucepan. Bring to a boil, cover, and simmer on low for 15 minutes. Take off the heat, rest 5 minutes covered, then fluff with a fork.",
+      },
+      {
+        title: "Crisp the chickpeas",
+        text: "Pat the chickpeas very dry with a clean towel. When the tray goes into the oven, scatter the chickpeas in a single layer around the squash (they share the tray), drizzle with the remaining olive oil and sprinkle with a pinch of salt. If the tray looks crowded, use a second tray — the chickpeas need space to crisp. Roast 25 to 30 minutes, tossing everything once halfway, until the chickpeas are crisp-edged and golden. In the last 2 minutes, toss the minced garlic over the hot chickpeas so it mellows in the residual heat.",
+      },
+      {
+        title: "Massage the kale, whisk the dressing",
+        text: "Put the kale in a large bowl with the remaining salt and half the lemon juice. Scrunch with your hands for about 30 seconds until it darkens and softens. In a small bowl, whisk the tahini, maple syrup, remaining lemon juice, grated garlic and 3 to 4 tablespoons of warm water until pourable. It often seizes into a stiff paste first; keep whisking and it usually smooths out.",
+      },
+      {
+        title: "Assemble",
+        text: "Divide the quinoa among 4 bowls. Top with the roasted squash and crispy chickpeas, then the massaged kale. Drizzle generously with the maple-tahini dressing and scatter the pumpkin seeds over everything. Serve warm.",
+      },
+    ],
+    tags: {
+      nutrients: ["fiber", "potassium", "magnesium", "folate"],
+      diets: ["vegan", "gluten-free"],
+      meals: ["lunch", "dinner"],
+    },
+    faqs: [
+      {
+        q: "Do I have to rinse the quinoa?",
+        a: "Yes, and it takes 30 seconds. Quinoa's outer coating (saponin) tastes bitter and soapy if you skip the rinse. Rinse under cold water in a fine-mesh sieve until the water runs clear.",
+      },
+      {
+        q: "Can I buy pre-cut squash to save time?",
+        a: "Yes. An 800 g bag of pre-cut butternut works. The cubes are often larger, so give them about 5 extra minutes and check that a knife slides in easily.",
+      },
+      {
+        q: "How do I get the chickpeas actually crispy?",
+        a: "Three things: pat them very dry before they go on the tray, spread them in a single layer with space around them, and roast them for the full 25 to 30 minutes alongside the squash — not just the last few minutes.",
+      },
+      {
+        q: "Can I make this ahead for lunches?",
+        a: "Yes. Keep the components separate in the fridge up to 4 days: squash and chickpeas in one container, quinoa in another, kale and dressing apart. Reheat the squash and chickpeas in a hot oven (200\u00b0C / 400\u00b0F, about 10 minutes) so they crisp again instead of going soft in the microwave. The dressing keeps 5 days; whisk before using.",
+      },
+      {
+        q: "Can I freeze leftovers?",
+        a: "For best texture, freeze only the roasted squash and quinoa (up to 2 months); make the kale and dressing fresh when serving.",
+      },
+      {
+        q: "Can I swap the squash for sweet potato?",
+        a: "Yes \u2014 sweet potato can usually replace squash by weight; begin checking doneness at the same time, since cube size and moisture can vary.",
+      },
+    ],
+    whyItHelps: {
+      goal: "A substantial plant-forward dinner",
+      text: "This bowl combines fiber-containing ingredients\u2014squash, quinoa, chickpeas, and kale\u2014with protein from chickpeas, quinoa, tahini, and pumpkin seeds. It is designed as a substantial plant-forward lunch or dinner.",
+    },
+    source: "cached-verified",
+    kitchenTested: false,
+    editorialException: {
+      reason:
+        "Owner's explicit order (2026-09-22): publish on evidence-review basis instead of a kitchen test. Draft was hardened against six published butternut squash quinoa bowls (Foolproof Living, Jar Of Lemons, Purely Kaylie, This Savory Vegan, Heinen's, Boo Boo's Bakery): chickpea roast time corrected 12-15 min -> full 25-30 min, quinoa water 370 ml (1:2) -> 325 ml (1:1.75). Draft warning stays rendered on the page; kitchen test can still replace this exception later.",
+      date: "2026-09-22",
+      approvedBy: "khalilbadreddine",
+    },
+    datePublished: "2026-09-22",
+    dateModified: "2026-09-22",
+  },
 ];
 
 /**
@@ -5003,7 +5124,7 @@ export const nutrients = [
       ["Oats, dry", "1/2 cup", "4 g"],
       ["Whole-wheat bread", "2 slices", "4 g"],
     ],
-    recipeSlugs: ["black-bean-corn-tacos", "lentil-curry-stew", "berry-overnight-oats", "red-lentil-soup-lemon", "quinoa-black-bean-bowl", "chickpea-spinach-curry", "sweet-potato-bean-bowl", "strawberry-chia-pudding", "lentil-bolognese", "black-bean-quinoa-burgers", "roasted-chickpea-snack-mix", "hummus-rainbow-veggie-wraps", "edamame-quinoa-power-salad", "edamame-veggie-fried-rice", "blueberry-almond-smoothie", "savory-mushroom-oatmeal"],
+    recipeSlugs: ["black-bean-corn-tacos", "lentil-curry-stew", "berry-overnight-oats", "red-lentil-soup-lemon", "quinoa-black-bean-bowl", "chickpea-spinach-curry", "sweet-potato-bean-bowl", "strawberry-chia-pudding", "lentil-bolognese", "black-bean-quinoa-burgers", "roasted-chickpea-snack-mix", "hummus-rainbow-veggie-wraps", "edamame-quinoa-power-salad", "edamame-veggie-fried-rice", "blueberry-almond-smoothie", "savory-mushroom-oatmeal", "butternut-squash-quinoa-bowl"],
   },
   {
     key: "vitaminC",
