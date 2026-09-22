@@ -40,6 +40,14 @@ const DIET_MAP = {
   'Low-Carb': 'https://schema.org/LowCalorieDiet',
 }
 
+/** Exact nutrition disclaimer required on every recipe page. It names the data
+ * source, so no separate "Nutrition source" line is needed. */
+const NUTRITION_DISCLAIMER =
+  'Nutrition is an estimate calculated from USDA FoodData Central ingredient data and may vary by ingredient brand, preparation, and portion size.'
+
+/** Exact kitchen-test warning for recipes that have not been cooked and verified. */
+const KITCHEN_TEST_WARNING = 'Draft recipe requiring kitchen testing before publication.'
+
 function buildRecipeLd(recipe, canonical) {
   const nutrition = {}
   Object.entries(recipe.nutrition).forEach(([key, v]) => {
@@ -236,6 +244,14 @@ export default function RecipePage() {
         </Reveal>
         <Reveal as="p" immediate variant="up" delay={90} className="mt-4 max-w-3xl text-lg leading-relaxed text-forest/75">{recipe.description}</Reveal>
 
+        {recipe.kitchenTested === false && (
+          <Reveal immediate variant="up" delay={110} className="mt-4 max-w-3xl">
+            <p className="rounded-xl border border-ember/40 bg-ember/5 px-4 py-3 text-sm font-semibold text-ember-dark" role="note">
+              {KITCHEN_TEST_WARNING}
+            </p>
+          </Reveal>
+        )}
+
         <Reveal immediate variant="up" delay={130} className="mt-5">
           <FavoriteButton slug={recipe.slug} title={recipe.title} />
         </Reveal>
@@ -283,6 +299,7 @@ export default function RecipePage() {
           </Reveal>
           <Reveal variant="up" delay={120}>
             <NutritionTable nutrition={recipe.nutrition} servings={recipe.servings} />
+            <p className="mt-3 text-xs leading-relaxed text-forest/75">{NUTRITION_DISCLAIMER}</p>
           </Reveal>
         </div>
 
@@ -306,7 +323,6 @@ export default function RecipePage() {
               </li>
             ))}
           </ol>
-          <p className="mt-4 text-xs text-forest/75">Source: {recipe.source}</p>
         </Reveal>
 
         <Reveal variant="up" as="section" aria-labelledby="why-heading" className="mt-14 rounded-[2rem] bg-forest px-6 py-10 text-cream sm:px-10">

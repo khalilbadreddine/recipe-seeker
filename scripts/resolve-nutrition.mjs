@@ -6,6 +6,20 @@
  *   - data/recipes.json               (consumed by the Express API)
  *   - client/src/data/recipes.json    (bundled by the client at build time)
  *
+ * DRAFT POLICY (see docs/kitchen-test-gate.md):
+ * A recipe with `kitchenTested: false` is a non-publishable draft. Drafts are
+ * validated like any other recipe (shape, nutrition, claims) but are EXCLUDED
+ * from both artifacts unless INCLUDE_DRAFTS=true is set — which keeps them
+ * out of production listings, site search, the XML sitemap, prerendered
+ * routes, Recipe JSON-LD, nutrient hubs, related-recipe modules, llms.txt,
+ * and Pinterest destination URLs. Everything downstream derives from the
+ * client bundle, so this one filter is the single enforcement point.
+ * Run `INCLUDE_DRAFTS=true npm run data:build` for a private preview build.
+ * The build REFUSES INCLUDE_DRAFTS=true in CI or deployed environments
+ * (CI, VERCEL, VERCEL_ENV=preview/production, NODE_ENV=production) —
+ * policy enforced by code, not just documentation. See "Enforcement" in
+ * docs/kitchen-test-gate.md and `npm run test:draft-gate`.
+ *
  * Run from the repo root: `npm run data:build`
  *
  * Nutrition data flow: the seed's per-serving `nutrition` values were
@@ -26,6 +40,28 @@ const posts = JSON.parse(
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.join(__dirname, '..');
+
+// --- deployment guard: drafts are local-preview only -----------------------
+// INCLUDE_DRAFTS=true must never take effect in CI or any deployed build.
+// Documentation alone does not enforce this, so the build fails hard here.
+// See docs/kitchen-test-gate.md § "Enforcement".
+const DEPLOYED_ENV_INDICATORS = [
+  ['CI', (v) => v === 'true' || v === '1'],
+  ['VERCEL', (v) => v === 'true' || v === '1'],
+  ['VERCEL_ENV', (v) => v === 'preview' || v === 'production'],
+  ['NODE_ENV', (v) => v === 'production'],
+];
+if (process.env.INCLUDE_DRAFTS === 'true') {
+  const hit = DEPLOYED_ENV_INDICATORS.find(([name, test]) => test(process.env[name]));
+  if (hit) {
+    console.error(
+      'INCLUDE_DRAFTS=true is forbidden in CI or deployed builds. ' +
+      'Draft recipes may be previewed locally only. ' +
+      `(blocked by ${hit[0]}=${process.env[hit[0]]})`
+    );
+    process.exit(1);
+  }
+}
 
 const CANONICAL_BASE = (() => {
   // Single source of truth: keep whatever canonicalBase is already in data/recipes.json
@@ -49,10 +85,28 @@ const VALID_SOURCES = new Set(['cached-verified', 'estimate-refresh-when-key-arr
 
 const failures = [];
 const fail = (msg) => failures.push(msg);
+const warnings = [];
+const warn = (msg) => warnings.push(msg);
+
+// Evidence required to flip a recipe from draft to publishable.
+// See docs/kitchen-test-gate.md for what each field must contain.
+const KITCHEN_TEST_EVIDENCE_FIELDS = [
+  'tester',               // name or role of the person who cooked it
+  'date',                 // test date (YYYY-MM-DD)
+  'confirmedQuantities',  // ingredient quantities verified as written
+  'confirmedTimes',       // prep/cook/total time verified as written
+  'confirmedServings',    // serving count verified as written
+  'changesFromDraft',     // what changed vs the draft (or "none")
+  'finalPhoto',           // path to the real-dish photo, or a note why none exists
+];
 
 function assertShape() {
   // --- counts ------------------------------------------------------------
-  if (recipes.length !== 50) fail(`expected 50 recipes, got ${recipes.length}`);
+  // NOTE: no fixed recipe count here. A hardcoded count couples the build to
+  // the seed size and breaks the policy/recipe split (the policy branch ships
+  // 50 recipes; recipe drafts arrive in separate PRs). Per-recipe validation
+  // below plus the duplicate-slug check is the real safety net.
+  if (recipes.length === 0) fail('no recipes in seed');
   if (nutrients.length !== 12) fail(`expected 12 nutrient hubs, got ${nutrients.length}`);
   if (guides.length !== 2) fail(`expected 2 guides, got ${guides.length}`);
 
@@ -77,8 +131,36 @@ function assertShape() {
         }
       }
     }
-    if (!Array.isArray(r.faqs) || r.faqs.length < 8) {
-      fail(`recipe ${r.slug}: need 8+ FAQs, got ${(r.faqs || []).length}`);
+    // FAQs are OPTIONAL. Quality bar, not a count bar:
+    // - 0 FAQs if the recipe is already fully clear; 2-4 is typical.
+    // - Up to 6 only where readers genuinely need troubleshooting,
+    //   substitutions, storage, dietary clarification, or make-ahead guidance.
+    // - Each FAQ must answer a question NOT already clearly answered in the
+    //   ingredients, instructions, notes, or storage guidance, and must add
+    //   material practical value. Never add FAQs for SEO/schema padding.
+    // (A minimum-FAQ rule was removed: floors pressure authors into inventing
+    //  questions, the classic AI-slop pattern. See docs/kitchen-test-gate.md.)
+    if (!Array.isArray(r.faqs)) {
+      fail(`recipe ${r.slug}: faqs must be an array (may be empty)`);
+    } else if (r.faqs.length > 6) {
+      warn(`recipe ${r.slug}: ${r.faqs.length} FAQs exceeds the guideline max of 6 — trim to genuine reader questions`);
+    }
+    // Kitchen-test gate: an untested recipe is a non-publishable draft.
+    // `kitchenTested: false` → excluded from all public artifacts (see header).
+    // `kitchenTested: true`  → requires documented evidence (fields above).
+    // Missing field         → treated as published (pre-policy recipes); new
+    //                          recipes must set it explicitly.
+    if (r.kitchenTested === true) {
+      const kt = r.kitchenTest || {};
+      for (const f of KITCHEN_TEST_EVIDENCE_FIELDS) {
+        if (kt[f] === undefined || kt[f] === null || kt[f] === '') {
+          fail(`recipe ${r.slug}: kitchenTested=true requires kitchenTest.${f} (see docs/kitchen-test-gate.md)`);
+        }
+      }
+    } else if (r.kitchenTested === false) {
+      if (r.kitchenTest !== undefined) {
+        warn(`recipe ${r.slug}: draft recipe carries a kitchenTest object — evidence is only meaningful with kitchenTested=true`);
+      }
     }
     if (!VALID_SOURCES.has(r.source)) {
       fail(`recipe ${r.slug}: source must be one of ${[...VALID_SOURCES].join(', ')}`);
@@ -143,6 +225,27 @@ if (failures.length > 0) {
   for (const f of failures) console.error('  - ' + f);
   process.exit(1);
 }
+if (warnings.length > 0) {
+  console.warn('seed validation warnings:');
+  for (const w of warnings) console.warn('  ! ' + w);
+}
+
+// --- draft gating ----------------------------------------------------------
+// Drafts (kitchenTested === false) are validated above but excluded from the
+// artifacts, so they never reach listings, search, sitemap, hubs, related
+// modules, or JSON-LD. INCLUDE_DRAFTS=true re-includes them for private
+// preview builds only — never for production.
+const INCLUDE_DRAFTS = process.env.INCLUDE_DRAFTS === 'true';
+const drafts = recipes.filter((r) => r.kitchenTested === false);
+const published = recipes.filter((r) => r.kitchenTested !== false);
+const outRecipes = INCLUDE_DRAFTS ? recipes : published;
+const draftSlugs = new Set(drafts.map((r) => r.slug));
+const stripDraftRefs = (slugs) =>
+  (slugs || []).filter((s) => INCLUDE_DRAFTS || !draftSlugs.has(s));
+const outNutrients = nutrients.map((n) => ({ ...n, recipeSlugs: stripDraftRefs(n.recipeSlugs) }));
+const outGuides = guides.map((g) => ({ ...g, relatedRecipes: stripDraftRefs(g.relatedRecipes) }));
+const outPosts = posts.map((p) => ({ ...p, relatedRecipes: stripDraftRefs(p.relatedRecipes) }));
+const missingTestFlag = recipes.filter((r) => r.kitchenTested === undefined).length;
 
 const artifact = {
   site: {
@@ -150,10 +253,18 @@ const artifact = {
     tagline: 'Find recipes by what your body needs.',
     canonicalBase: CANONICAL_BASE,
   },
-  recipes,
-  nutrients,
-  guides,
-  posts,
+  meta: {
+    // Note: no generatedAt timestamp here — the artifact must be byte-identical
+    // across runs so builds stay reproducible and don't dirty the tree.
+    includeDrafts: INCLUDE_DRAFTS,
+    publishedRecipes: published.length,
+    draftRecipes: drafts.length,
+    draftSlugs: drafts.map((r) => r.slug),
+  },
+  recipes: outRecipes,
+  nutrients: outNutrients,
+  guides: outGuides,
+  posts: outPosts,
 };
 
 const targets = [
@@ -167,10 +278,17 @@ for (const t of targets) {
   console.log(`wrote ${path.relative(ROOT, t)}`);
 }
 
-// Honesty report: how many recipes are estimates vs API-verified.
-const estimated = recipes.filter((r) => r.source === 'estimate-refresh-when-key-arrives');
-const verified = recipes.filter((r) => r.source === 'cached-verified');
+// Honesty report: how many recipes are estimates vs API-verified (published only).
+const estimated = published.filter((r) => r.source === 'estimate-refresh-when-key-arrives');
+const verified = published.filter((r) => r.source === 'cached-verified');
 console.log(
-  `OK: ${recipes.length} recipes, ${nutrients.length} nutrient hubs, ${guides.length} guides, ${posts.length} posts — ` +
-  `${verified.length} cached-verified, ${estimated.length} estimate-refresh-when-key-arrives`
+  `OK: ${recipes.length} recipes in seed (${published.length} published, ${drafts.length} draft${drafts.length === 1 ? '' : 's'}${INCLUDE_DRAFTS ? ' — INCLUDED via INCLUDE_DRAFTS=true (preview only)' : ' excluded from artifacts'}), ` +
+  `${nutrients.length} nutrient hubs, ${guides.length} guides, ${posts.length} posts — ` +
+  `${verified.length} cached-verified, ${estimated.length} estimate-refresh-when-key-arrives (published only)`
 );
+if (missingTestFlag > 0) {
+  console.log(`note: ${missingTestFlag} recipes have no kitchenTested field (pre-policy; treated as published)`);
+}
+if (drafts.length > 0 && !INCLUDE_DRAFTS) {
+  console.log(`drafts excluded: ${drafts.map((r) => r.slug).join(', ')}`);
+}

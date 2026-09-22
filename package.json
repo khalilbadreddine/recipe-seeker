@@ -13,6 +13,7 @@
     "data:build": "node scripts/resolve-nutrition.mjs",
     "seo:build": "node scripts/generate-seo.mjs",
     "seo:check": "node scripts/check-seo.mjs client/dist",
+    "test:draft-gate": "node scripts/test-draft-gate.mjs",
     "server:dev": "npm --prefix server run dev",
     "server:start": "npm --prefix server run start",
     "build": "npm run data:build && npm run seo:build && npm --prefix client run build",
