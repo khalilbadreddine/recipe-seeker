@@ -5037,6 +5037,12 @@ export const recipes = [
     },
     source: "cached-verified",
     kitchenTested: false,
+    editorialException: {
+      reason:
+        "Owner's explicit order (2026-09-22): publish on evidence-review basis instead of a kitchen test. Draft was hardened against six published butternut squash quinoa bowls (Foolproof Living, Jar Of Lemons, Purely Kaylie, This Savory Vegan, Heinen's, Boo Boo's Bakery): chickpea roast time corrected 12-15 min -> full 25-30 min, quinoa water 370 ml (1:2) -> 325 ml (1:1.75). Draft warning stays rendered on the page; kitchen test can still replace this exception later.",
+      date: "2026-09-22",
+      approvedBy: "khalilbadreddine",
+    },
     datePublished: "2026-09-22",
     dateModified: "2026-09-22",
   },

@@ -150,6 +150,10 @@ function assertShape() {
     // `kitchenTested: true`  → requires documented evidence (fields above).
     // Missing field         → treated as published (pre-policy recipes); new
     //                          recipes must set it explicitly.
+    // Exception: `editorialException: { reason, date, approvedBy }` on a
+    // kitchenTested:false recipe lets it ship WITH the draft warning rendered
+    // on the page. Used only with the owner's explicit order; recorded, never
+    // silent. See docs/kitchen-test-gate.md.
     if (r.kitchenTested === true) {
       const kt = r.kitchenTest || {};
       for (const f of KITCHEN_TEST_EVIDENCE_FIELDS) {
@@ -160,6 +164,15 @@ function assertShape() {
     } else if (r.kitchenTested === false) {
       if (r.kitchenTest !== undefined) {
         warn(`recipe ${r.slug}: draft recipe carries a kitchenTest object — evidence is only meaningful with kitchenTested=true`);
+      }
+      const ex = r.editorialException;
+      if (ex !== undefined) {
+        for (const f of ['reason', 'date', 'approvedBy']) {
+          if (ex[f] === undefined || ex[f] === null || ex[f] === '') {
+            fail(`recipe ${r.slug}: editorialException requires ${f} (see docs/kitchen-test-gate.md)`);
+          }
+        }
+        warn(`recipe ${r.slug}: shipping untested under editorialException approved by ${ex.approvedBy} on ${ex.date}`);
       }
     }
     if (!VALID_SOURCES.has(r.source)) {
@@ -235,11 +248,15 @@ if (warnings.length > 0) {
 // artifacts, so they never reach listings, search, sitemap, hubs, related
 // modules, or JSON-LD. INCLUDE_DRAFTS=true re-includes them for private
 // preview builds only — never for production.
+// Exception: a draft carrying a valid editorialException ships WITH the draft
+// warning rendered on its page. Only ever used with the owner's explicit
+// order; recorded, never silent. See docs/kitchen-test-gate.md.
 const INCLUDE_DRAFTS = process.env.INCLUDE_DRAFTS === 'true';
+const draftExcluded = (r) => r.kitchenTested === false && r.editorialException === undefined;
 const drafts = recipes.filter((r) => r.kitchenTested === false);
-const published = recipes.filter((r) => r.kitchenTested !== false);
+const published = recipes.filter((r) => !draftExcluded(r));
 const outRecipes = INCLUDE_DRAFTS ? recipes : published;
-const draftSlugs = new Set(drafts.map((r) => r.slug));
+const draftSlugs = new Set(drafts.filter(draftExcluded).map((r) => r.slug));
 const stripDraftRefs = (slugs) =>
   (slugs || []).filter((s) => INCLUDE_DRAFTS || !draftSlugs.has(s));
 const outNutrients = nutrients.map((n) => ({ ...n, recipeSlugs: stripDraftRefs(n.recipeSlugs) }));
@@ -290,5 +307,5 @@ if (missingTestFlag > 0) {
   console.log(`note: ${missingTestFlag} recipes have no kitchenTested field (pre-policy; treated as published)`);
 }
 if (drafts.length > 0 && !INCLUDE_DRAFTS) {
-  console.log(`drafts excluded: ${drafts.map((r) => r.slug).join(', ')}`);
+  console.log(`drafts excluded: ${drafts.filter(draftExcluded).map((r) => r.slug).join(', ')}`);
 }

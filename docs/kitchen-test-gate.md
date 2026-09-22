@@ -97,3 +97,21 @@ inventing questions (AI slop).
 - The data build warns (does not fail) when a recipe exceeds 6 FAQs. The 50
   pre-policy recipes carry 8–10 FAQs each; trimming them is a separate content
   decision, tracked for a future PR — not done silently here.
+
+## Editorial exception (owner-ordered publish without a kitchen test)
+
+An untested recipe may ship only under an explicit, recorded exception —
+never silently:
+
+```js
+editorialException: {
+  reason: "<why the owner ordered publication without a kitchen test>",
+  date: "YYYY-MM-DD",
+  approvedBy: "<owner handle>",
+}
+```
+
+The data build fails if any of the three fields is missing, and warns loudly
+when an exception is used. The recipe ships WITH the draft warning rendered
+on its page, so readers always see the honest label. A kitchen test can
+replace the exception later — it never converts to a silent publish.
