@@ -5046,6 +5046,119 @@ export const recipes = [
     datePublished: "2026-09-22",
     dateModified: "2026-09-22",
   },
+  {
+    slug: "apple-pie-overnight-oats",
+    title: "Apple Pie Overnight Oats",
+    description:
+      "Prep these cinnamon-spiced oats tonight for a grab-and-go breakfast that tastes like dessert — no morning cooking required.",
+    image: "/images/apple-pie-overnight-oats.webp",
+    imageAlt:
+      "Two glass jars of apple pie overnight oats topped with diced apple, cinnamon and chopped walnuts",
+    prepTime: "PT10M",
+    cookTime: "PT0M",
+    totalTime: "PT8H10M",
+    prepMinutes: 10,
+    cookMinutes: 0,
+    totalMinutes: 490,
+    servings: 2,
+    calories: 411,
+    nutrition: {
+      calories: { amount: 411, unit: "kcal", dv: 21 },
+      protein: { amount: 28, unit: "g", dv: 56 },
+      fat: { amount: 9.3, unit: "g", dv: 12 },
+      carbs: { amount: 55.8, unit: "g", dv: 20 },
+      fiber: { amount: 8.8, unit: "g", dv: 31 },
+      sugar: { amount: 16.2, unit: "g", dv: 32 },
+      sodium: { amount: 220, unit: "mg", dv: 10 },
+      iron: { amount: 2.8, unit: "mg", dv: 16 },
+      calcium: { amount: 423, unit: "mg", dv: 33 },
+      vitaminC: { amount: 8.6, unit: "mg", dv: 10 },
+      potassium: { amount: 674, unit: "mg", dv: 14 },
+      magnesium: { amount: 141, unit: "mg", dv: 34 },
+      folate: { amount: 68, unit: "mcg", dv: 17 },
+      vitaminA: { amount: 268, unit: "mcg", dv: 30 },
+      omega3: { amount: 1.1, unit: "g", dv: 69 },
+    },
+    keyNutrients: [
+      { key: "protein", label: "28g Protein" },
+      { key: "calcium", label: "423mg Calcium" },
+      { key: "magnesium", label: "141mg Magnesium" },
+      { key: "fiber", label: "9g Fiber" },
+    ],
+    ingredients: [
+      { amount: "90 g", item: "rolled oats (1 cup)" },
+      { amount: "240 ml", item: "milk of choice — 2% dairy used for the nutrition calculation (1 cup)" },
+      { amount: "180 g", item: "plain Greek yogurt, 2% (3/4 cup)" },
+      { amount: "27 g", item: "unflavored or vanilla protein powder, whey or plant (1 scoop)" },
+      { amount: "120 g", item: "apple, diced small (1 small; Honeycrisp or Fuji)" },
+      { amount: "12 g", item: "chia seeds (1 tbsp)" },
+      { amount: "1 tsp", item: "ground cinnamon" },
+      { amount: "1/4 tsp", item: "ground nutmeg" },
+      { amount: "1 pinch", item: "fine sea salt" },
+      { amount: "1-2 tsp", item: "maple syrup or honey, optional — not included in the nutrition panel" },
+    ],
+    steps: [
+      {
+        title: "Whisk the base",
+        text: "In a bowl, whisk the milk, yogurt, protein powder, cinnamon, nutmeg and salt until smooth, with no lumps. Whisk the powder with a splash of milk first if yours tends to clump.",
+      },
+      {
+        title: "Add oats, chia and apple",
+        text: "Stir in the rolled oats, chia seeds and diced apple until everything is evenly coated.",
+      },
+      {
+        title: "Taste, then sweeten",
+        text: "Taste the mixture. Add maple syrup or honey only if needed — the apple and a vanilla powder often cover it.",
+      },
+      {
+        title: "Jar and chill",
+        text: "Divide between two jars, seal, and refrigerate at least 4 hours — overnight is ideal. The oats soften and the chia thickens everything into a pudding.",
+      },
+      {
+        title: "Serve",
+        text: "Stir, loosen with a splash of milk if too thick, and top with chopped walnuts, extra apple slices or a drizzle of nut butter. Eat cold, or microwave 60 seconds if you prefer it warm.",
+      },
+    ],
+    tags: {
+      nutrients: ["protein", "calcium", "magnesium", "fiber"],
+      diets: ["vegetarian"],
+      meals: ["breakfast"],
+    },
+    faqs: [
+      {
+        q: "How much protein is in each jar?",
+        a: "About 28 grams per jar, calculated from USDA FoodData Central ingredient data — mostly from the Greek yogurt and protein powder.",
+      },
+      {
+        q: "How long do these last in the fridge?",
+        a: "Up to 4 days in sealed jars. The texture thickens each day — thin with a splash of milk before eating.",
+      },
+      {
+        q: "Can I make these vegan?",
+        a: "Yes. Use soy yogurt (the highest-protein plant option), plant milk, and a vegan protein powder. Maple syrup instead of honey.",
+      },
+      {
+        q: "Do I have to eat them cold?",
+        a: "No. Microwave 60–90 seconds, stirring halfway. Top with walnuts after heating so they stay crunchy.",
+      },
+      {
+        q: "Can I use steel-cut oats?",
+        a: "Only if you pre-cook them. Raw steel-cut oats won't soften enough overnight — stick with old-fashioned rolled oats.",
+      },
+      {
+        q: "Can I prep the apple the night before?",
+        a: "Yes. Dice and toss with a squeeze of lemon juice to prevent browning, then fold into the mix. Or dice fresh each morning for maximum crunch.",
+      },
+    ],
+    whyItHelps: {
+      goal: "A protein-centered make-ahead breakfast",
+      text: "This jar layers rolled oats, Greek yogurt, protein powder, chia and diced apple with cinnamon and nutmeg, and soaks overnight into a pudding. Per the USDA FoodData Central ingredient calculation, one jar lands at about 28g protein, 423mg calcium and 141mg magnesium — ready in the fridge with zero morning cooking.",
+    },
+    source: "cached-verified",
+    kitchenTested: false,
+    datePublished: "2026-09-23",
+    dateModified: "2026-09-23",
+  },
 ];
 
 /**
