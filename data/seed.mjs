@@ -5159,6 +5159,126 @@ export const recipes = [
     datePublished: "2026-09-23",
     dateModified: "2026-09-23",
   },
+  {
+    slug: "pumpkin-protein-muffins",
+    title: "Pumpkin Protein Muffins",
+    description:
+      "Moist pumpkin protein muffins made with Greek yogurt and protein powder. Meal-prep friendly and naturally sweetened.",
+    image: "/images/pumpkin-protein-muffins.webp",
+    imageAlt:
+      "Overhead shot of pumpkin muffins with pumpkin seeds on a rustic wooden board",
+    prepTime: "PT15M",
+    cookTime: "PT22M",
+    totalTime: "PT37M",
+    prepMinutes: 15,
+    cookMinutes: 22,
+    totalMinutes: 37,
+    servings: 12,
+    calories: 94,
+    nutrition: {
+      calories: { amount: 94, unit: "kcal", dv: 5 },
+      protein: { amount: 6.3, unit: "g", dv: 13 },
+      fat: { amount: 1.8, unit: "g", dv: 2 },
+      carbs: { amount: 13, unit: "g", dv: 5 },
+      fiber: { amount: 1.2, unit: "g", dv: 4 },
+      sugar: { amount: 5.2, unit: "g", dv: 10 },
+      sodium: { amount: 168, unit: "mg", dv: 7 },
+      iron: { amount: 0.9, unit: "mg", dv: 5 },
+      calcium: { amount: 98, unit: "mg", dv: 8 },
+      vitaminC: { amount: 2.7, unit: "mg", dv: 3 },
+      potassium: { amount: 156, unit: "mg", dv: 3 },
+      magnesium: { amount: 31, unit: "mg", dv: 7 },
+      folate: { amount: 22, unit: "mcg", dv: 6 },
+      vitaminA: { amount: 225, unit: "mcg", dv: 25 },
+      omega3: { amount: 0, unit: "g", dv: 0 },
+    },
+    keyNutrients: [
+      { key: "vitaminA", label: "225mcg Vitamin A" },
+      { key: "protein", label: "6.3g Protein" },
+      { key: "calcium", label: "98mg Calcium" },
+      { key: "fiber", label: "1.2g Fiber" },
+    ],
+    ingredients: [
+      { amount: "245 g", item: "canned pumpkin puree, not pie filling (1 cup)" },
+      { amount: "92 g", item: "oat flour (1 cup; certified gluten-free if needed)" },
+      { amount: "122 g", item: "plain Greek yogurt, 2% (1/2 cup)" },
+      { amount: "60 g", item: "unflavored or vanilla protein powder (1/2 cup) — nutrition calculated with whey isolate; values vary by brand" },
+      { amount: "80 g", item: "maple syrup (1/4 cup)" },
+      { amount: "100 g", item: "eggs, 2 large" },
+      { amount: "1 tsp", item: "baking powder" },
+      { amount: "1/2 tsp", item: "baking soda" },
+      { amount: "1 tsp", item: "ground cinnamon" },
+      { amount: "1/2 tsp", item: "ground nutmeg" },
+      { amount: "1/4 tsp", item: "ground ginger" },
+      { amount: "1/4 tsp", item: "fine sea salt" },
+      { amount: "1/3 cup", item: "chocolate chips or chopped walnuts, optional — not included in the nutrition panel" },
+    ],
+    steps: [
+      {
+        title: "Heat the oven",
+        text: "Preheat to 350°F (175°C). Line a 12-cup muffin tin with liners or use silicone liners.",
+      },
+      {
+        title: "Whisk the wet ingredients",
+        text: "In a large bowl, whisk the pumpkin puree, Greek yogurt, maple syrup and eggs until smooth.",
+      },
+      {
+        title: "Combine the dry ingredients",
+        text: "In a separate bowl, stir together the oat flour, protein powder, baking powder, baking soda, cinnamon, nutmeg, ginger and salt.",
+      },
+      {
+        title: "Fold, don't overmix",
+        text: "Fold the dry mix into the wet until just combined — stop as soon as the flour disappears. Overmixing makes dense muffins. Fold in the chocolate chips or walnuts now if using.",
+      },
+      {
+        title: "Fill and bake",
+        text: "Divide the batter evenly among the 12 cups, about 3/4 full. Bake 20–22 minutes, until a toothpick inserted in the center comes out clean.",
+      },
+      {
+        title: "Cool",
+        text: "Cool 5 minutes in the tin, then transfer to a wire rack to cool completely.",
+      },
+    ],
+    tags: {
+      nutrients: ["vitaminA", "protein", "fiber"],
+      diets: ["vegetarian"],
+      meals: ["breakfast"],
+    },
+    faqs: [
+      {
+        q: "How much protein per muffin?",
+        a: "About 6.3 grams per muffin, calculated from USDA FoodData Central ingredient data — the exact amount depends on your protein powder brand and scoop size.",
+      },
+      {
+        q: "Can I make these vegan?",
+        a: "Yes. Swap the eggs for two flax eggs (2 tbsp ground flax + 6 tbsp water, rested 5 minutes), use plant-based yogurt and protein powder, and replace maple syrup with date syrup or another liquid sweetener.",
+      },
+      {
+        q: "Why are my muffins gummy?",
+        a: "Usually overmixing or too much wet ingredient. Measure pumpkin puree by weight if you can (about 240g), and stop mixing as soon as the flour disappears.",
+      },
+      {
+        q: "Do they taste like protein powder?",
+        a: "Not if you use a clean, unflavored or lightly vanilla powder. The pumpkin and spices mask any chalkiness. Avoid strongly flavored powders (chocolate, cookies-and-cream) unless you want that profile.",
+      },
+      {
+        q: "Can I use almond flour instead of oat flour?",
+        a: "You can, but the texture shifts — almond flour makes them more tender and crumbly, less springy. Reduce the baking powder slightly (to 3/4 tsp) and add an extra tablespoon of oat flour or tapioca starch for structure.",
+      },
+      {
+        q: "How should I store them?",
+        a: "Room temperature for two days, fridge for five, freezer for three months. Freeze individually on a tray, then bag them — microwave 20–30 seconds straight from the freezer.",
+      },
+    ],
+    whyItHelps: {
+      goal: "A make-ahead fall breakfast",
+      text: "These muffins fold canned pumpkin puree, Greek yogurt and protein powder into spiced oat-flour batter and bake into grab-and-go breakfasts. Per the USDA FoodData Central ingredient calculation, one muffin lands at about 94 kcal with 6.3g protein and 225mcg vitamin A — they freeze well, so a Sunday batch covers the week.",
+    },
+    source: "cached-verified",
+    kitchenTested: false,
+    datePublished: "2026-09-25",
+    dateModified: "2026-09-25",
+  },
 ];
 
 /**
