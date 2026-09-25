@@ -5159,6 +5159,116 @@ export const recipes = [
     datePublished: "2026-09-23",
     dateModified: "2026-09-23",
   },
+  {
+    slug: "pumpkin-spice-overnight-oats",
+    title: "Pumpkin Spice Overnight Oats for a Cozy Breakfast",
+    description:
+      "Learn how to make pumpkin spice overnight oats with simple ingredients and easy storage tips.",
+    image: "/images/pumpkin-spice-overnight-oats.webp",
+    imageAlt:
+      "Two glass jars of pumpkin spice overnight oats topped with cinnamon and chopped pecans",
+    prepTime: "PT10M",
+    cookTime: "PT0M",
+    totalTime: "PT8H10M",
+    prepMinutes: 10,
+    cookMinutes: 0,
+    totalMinutes: 490,
+    servings: 2,
+    calories: 262,
+    nutrition: {
+      calories: { amount: 262, unit: "kcal", dv: 13 },
+      protein: { amount: 7.8, unit: "g", dv: 16 },
+      fat: { amount: 4.6, unit: "g", dv: 6 },
+      carbs: { amount: 49.6, unit: "g", dv: 18 },
+      fiber: { amount: 8.5, unit: "g", dv: 30 },
+      sugar: { amount: 11.6, unit: "g", dv: 23 },
+      sodium: { amount: 175, unit: "mg", dv: 8 },
+      iron: { amount: 4.2, unit: "mg", dv: 23 },
+      calcium: { amount: 295, unit: "mg", dv: 23 },
+      vitaminC: { amount: 5.4, unit: "mg", dv: 6 },
+      potassium: { amount: 526, unit: "mg", dv: 11 },
+      magnesium: { amount: 101, unit: "mg", dv: 24 },
+      folate: { amount: 31, unit: "mcg", dv: 8 },
+      vitaminA: { amount: 953, unit: "mcg", dv: 106 },
+      omega3: { amount: 0.1, unit: "g", dv: 6 },
+    },
+    keyNutrients: [
+      { key: "vitaminA", label: "953mcg Vitamin A" },
+      { key: "fiber", label: "9g Fiber" },
+      { key: "calcium", label: "295mg Calcium" },
+      { key: "iron", label: "4.2mg Iron" },
+    ],
+    ingredients: [
+      { amount: "90 g", item: "rolled oats (1 cup; use certified gluten-free if needed)" },
+      { amount: "245 g", item: "canned pumpkin puree, not pie filling (1 cup)" },
+      { amount: "240 ml", item: "unsweetened almond milk, or any milk of choice (1 cup)" },
+      { amount: "20 g", item: "maple syrup (1 tbsp), optional — included in the nutrition calculation" },
+      { amount: "1 tsp", item: "pumpkin pie spice" },
+      { amount: "1/4 tsp", item: "vanilla extract" },
+      { amount: "1 pinch", item: "fine sea salt" },
+    ],
+    steps: [
+      {
+        title: "Combine the base",
+        text: "In a bowl, stir together the oats, pumpkin puree, milk, maple syrup, pumpkin pie spice, vanilla and salt until evenly combined and no dry oat pockets remain.",
+      },
+      {
+        title: "Check the texture",
+        text: "The mixture should look thick but pourable. Canned pumpkin varies — splash in a little extra milk if it's very stiff.",
+      },
+      {
+        title: "Jar and chill",
+        text: "Divide between two jars or airtight containers, seal, and refrigerate at least 4 hours — overnight is ideal. The oats soften and the mixture thickens into a pudding.",
+      },
+      {
+        title: "Stir in the morning",
+        text: "Give the oats a good stir. Loosen with a splash of milk if too thick, and thin the second jar the same way on its day.",
+      },
+      {
+        title: "Serve",
+        text: "Eat cold, or microwave 30–45 seconds if you prefer it warm. Top with chopped nuts, seeds, or a drizzle of nut butter just before eating.",
+      },
+    ],
+    tags: {
+      nutrients: ["vitaminA", "fiber", "calcium", "iron"],
+      diets: ["vegetarian"],
+      meals: ["breakfast"],
+    },
+    faqs: [
+      {
+        q: "How long do pumpkin spice overnight oats last in the fridge?",
+        a: "They stay fresh for up to four days when stored in a sealed container.",
+      },
+      {
+        q: "Can I make these oats with regular dairy milk?",
+        a: "Yes, you can use any milk you prefer; the recipe works with dairy or plant-based milks.",
+      },
+      {
+        q: "Are these oats gluten-free?",
+        a: "They are gluten-free only if you use certified gluten-free rolled oats; otherwise regular oats contain gluten.",
+      },
+      {
+        q: "Do I need to cook the oats?",
+        a: "No cooking is required; the oats soften by absorbing liquid while they chill overnight.",
+      },
+      {
+        q: "Can I freeze pumpkin spice overnight oats?",
+        a: "Freezing is not recommended because the texture can become grainy after thawing; it's best to keep them refrigerated and consume within four days.",
+      },
+      {
+        q: "Can I use fresh pumpkin instead of canned?",
+        a: "Yes — roast and puree it first. Canned puree is thicker and more consistent; don't use pumpkin pie filling (it has added sugar and spices).",
+      },
+    ],
+    whyItHelps: {
+      goal: "A cozy make-ahead fall breakfast",
+      text: "This jar stirs rolled oats, canned pumpkin puree, almond milk, maple syrup and pumpkin pie spice, then chills overnight into a thick, spoonable breakfast. Per the USDA FoodData Central ingredient calculation, one jar lands at about 262 kcal, 8.5g fiber, 295mg calcium and 953mcg vitamin A — ready in the fridge with zero morning cooking.",
+    },
+    source: "cached-verified",
+    kitchenTested: false,
+    datePublished: "2026-09-24",
+    dateModified: "2026-09-24",
+  },
 ];
 
 /**
