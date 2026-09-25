@@ -6,11 +6,13 @@
   },
   "meta": {
     "includeDrafts": false,
-    "publishedRecipes": 51,
-    "draftRecipes": 2,
+    "publishedRecipes": 53,
+    "draftRecipes": 4,
     "draftSlugs": [
       "butternut-squash-quinoa-bowl",
-      "apple-pie-overnight-oats"
+      "apple-pie-overnight-oats",
+      "pumpkin-spice-overnight-oats",
+      "pumpkin-protein-muffins"
     ]
   },
   "recipes": [
@@ -11630,6 +11632,463 @@
       },
       "datePublished": "2026-09-22",
       "dateModified": "2026-09-22"
+    },
+    {
+      "slug": "pumpkin-spice-overnight-oats",
+      "title": "Pumpkin Spice Overnight Oats for a Cozy Breakfast",
+      "description": "Learn how to make pumpkin spice overnight oats with simple ingredients and easy storage tips.",
+      "image": "/images/pumpkin-spice-overnight-oats.webp",
+      "imageAlt": "Two glass jars of pumpkin spice overnight oats topped with cinnamon and chopped pecans",
+      "prepTime": "PT10M",
+      "cookTime": "PT0M",
+      "totalTime": "PT8H10M",
+      "prepMinutes": 10,
+      "cookMinutes": 0,
+      "totalMinutes": 490,
+      "servings": 2,
+      "calories": 262,
+      "nutrition": {
+        "calories": {
+          "amount": 262,
+          "unit": "kcal",
+          "dv": 13
+        },
+        "protein": {
+          "amount": 7.8,
+          "unit": "g",
+          "dv": 16
+        },
+        "fat": {
+          "amount": 4.6,
+          "unit": "g",
+          "dv": 6
+        },
+        "carbs": {
+          "amount": 49.6,
+          "unit": "g",
+          "dv": 18
+        },
+        "fiber": {
+          "amount": 8.5,
+          "unit": "g",
+          "dv": 30
+        },
+        "sugar": {
+          "amount": 11.6,
+          "unit": "g",
+          "dv": 23
+        },
+        "sodium": {
+          "amount": 175,
+          "unit": "mg",
+          "dv": 8
+        },
+        "iron": {
+          "amount": 4.2,
+          "unit": "mg",
+          "dv": 23
+        },
+        "calcium": {
+          "amount": 295,
+          "unit": "mg",
+          "dv": 23
+        },
+        "vitaminC": {
+          "amount": 5.4,
+          "unit": "mg",
+          "dv": 6
+        },
+        "potassium": {
+          "amount": 526,
+          "unit": "mg",
+          "dv": 11
+        },
+        "magnesium": {
+          "amount": 101,
+          "unit": "mg",
+          "dv": 24
+        },
+        "folate": {
+          "amount": 31,
+          "unit": "mcg",
+          "dv": 8
+        },
+        "vitaminA": {
+          "amount": 953,
+          "unit": "mcg",
+          "dv": 106
+        },
+        "omega3": {
+          "amount": 0.1,
+          "unit": "g",
+          "dv": 6
+        }
+      },
+      "keyNutrients": [
+        {
+          "key": "vitaminA",
+          "label": "953mcg Vitamin A"
+        },
+        {
+          "key": "fiber",
+          "label": "9g Fiber"
+        },
+        {
+          "key": "calcium",
+          "label": "295mg Calcium"
+        },
+        {
+          "key": "iron",
+          "label": "4.2mg Iron"
+        }
+      ],
+      "ingredients": [
+        {
+          "amount": "90 g",
+          "item": "rolled oats (1 cup; use certified gluten-free if needed)"
+        },
+        {
+          "amount": "245 g",
+          "item": "canned pumpkin puree, not pie filling (1 cup)"
+        },
+        {
+          "amount": "240 ml",
+          "item": "unsweetened almond milk, or any milk of choice (1 cup)"
+        },
+        {
+          "amount": "20 g",
+          "item": "maple syrup (1 tbsp), optional — included in the nutrition calculation"
+        },
+        {
+          "amount": "1 tsp",
+          "item": "pumpkin pie spice"
+        },
+        {
+          "amount": "1/4 tsp",
+          "item": "vanilla extract"
+        },
+        {
+          "amount": "1 pinch",
+          "item": "fine sea salt"
+        }
+      ],
+      "steps": [
+        {
+          "title": "Combine the base",
+          "text": "In a bowl, stir together the oats, pumpkin puree, milk, maple syrup, pumpkin pie spice, vanilla and salt until evenly combined and no dry oat pockets remain."
+        },
+        {
+          "title": "Check the texture",
+          "text": "The mixture should look thick but pourable. Canned pumpkin varies — splash in a little extra milk if it's very stiff."
+        },
+        {
+          "title": "Jar and chill",
+          "text": "Divide between two jars or airtight containers, seal, and refrigerate at least 4 hours — overnight is ideal. The oats soften and the mixture thickens into a pudding."
+        },
+        {
+          "title": "Stir in the morning",
+          "text": "Give the oats a good stir. Loosen with a splash of milk if too thick, and thin the second jar the same way on its day."
+        },
+        {
+          "title": "Serve",
+          "text": "Eat cold, or microwave 30–45 seconds if you prefer it warm. Top with chopped nuts, seeds, or a drizzle of nut butter just before eating."
+        }
+      ],
+      "tags": {
+        "nutrients": [
+          "vitaminA",
+          "fiber",
+          "calcium",
+          "iron"
+        ],
+        "diets": [
+          "vegetarian"
+        ],
+        "meals": [
+          "breakfast"
+        ]
+      },
+      "faqs": [
+        {
+          "q": "How long do pumpkin spice overnight oats last in the fridge?",
+          "a": "They stay fresh for up to four days when stored in a sealed container."
+        },
+        {
+          "q": "Can I make these oats with regular dairy milk?",
+          "a": "Yes, you can use any milk you prefer; the recipe works with dairy or plant-based milks."
+        },
+        {
+          "q": "Are these oats gluten-free?",
+          "a": "They are gluten-free only if you use certified gluten-free rolled oats; otherwise regular oats contain gluten."
+        },
+        {
+          "q": "Do I need to cook the oats?",
+          "a": "No cooking is required; the oats soften by absorbing liquid while they chill overnight."
+        },
+        {
+          "q": "Can I freeze pumpkin spice overnight oats?",
+          "a": "Freezing is not recommended because the texture can become grainy after thawing; it's best to keep them refrigerated and consume within four days."
+        },
+        {
+          "q": "Can I use fresh pumpkin instead of canned?",
+          "a": "Yes — roast and puree it first. Canned puree is thicker and more consistent; don't use pumpkin pie filling (it has added sugar and spices)."
+        }
+      ],
+      "whyItHelps": {
+        "goal": "A cozy make-ahead fall breakfast",
+        "text": "This jar stirs rolled oats, canned pumpkin puree, almond milk, maple syrup and pumpkin pie spice, then chills overnight into a thick, spoonable breakfast. Per the USDA FoodData Central ingredient calculation, one jar lands at about 262 kcal, 8.5g fiber, 295mg calcium and 953mcg vitamin A — ready in the fridge with zero morning cooking."
+      },
+      "source": "cached-verified",
+      "kitchenTested": false,
+      "editorialException": {
+        "reason": "Owner's explicit order (2026-09-25): publish on evidence-review basis instead of a kitchen test. Nutrition resolved from USDA FoodData Central ingredient data (262 kcal, 7.8g protein, 8.5g fiber per jar). Draft warning stays rendered on the page; kitchen test can still replace this exception later.",
+        "date": "2026-09-25",
+        "approvedBy": "khalilbadreddine"
+      },
+      "datePublished": "2026-09-24",
+      "dateModified": "2026-09-24"
+    },
+    {
+      "slug": "pumpkin-protein-muffins",
+      "title": "Pumpkin Protein Muffins",
+      "description": "Moist pumpkin protein muffins made with Greek yogurt and protein powder. Meal-prep friendly and naturally sweetened.",
+      "image": "/images/pumpkin-protein-muffins.webp",
+      "imageAlt": "Overhead shot of pumpkin muffins with pumpkin seeds on a rustic wooden board",
+      "prepTime": "PT15M",
+      "cookTime": "PT22M",
+      "totalTime": "PT37M",
+      "prepMinutes": 15,
+      "cookMinutes": 22,
+      "totalMinutes": 37,
+      "servings": 12,
+      "calories": 94,
+      "nutrition": {
+        "calories": {
+          "amount": 94,
+          "unit": "kcal",
+          "dv": 5
+        },
+        "protein": {
+          "amount": 6.3,
+          "unit": "g",
+          "dv": 13
+        },
+        "fat": {
+          "amount": 1.8,
+          "unit": "g",
+          "dv": 2
+        },
+        "carbs": {
+          "amount": 13,
+          "unit": "g",
+          "dv": 5
+        },
+        "fiber": {
+          "amount": 1.2,
+          "unit": "g",
+          "dv": 4
+        },
+        "sugar": {
+          "amount": 5.2,
+          "unit": "g",
+          "dv": 10
+        },
+        "sodium": {
+          "amount": 168,
+          "unit": "mg",
+          "dv": 7
+        },
+        "iron": {
+          "amount": 0.9,
+          "unit": "mg",
+          "dv": 5
+        },
+        "calcium": {
+          "amount": 98,
+          "unit": "mg",
+          "dv": 8
+        },
+        "vitaminC": {
+          "amount": 2.7,
+          "unit": "mg",
+          "dv": 3
+        },
+        "potassium": {
+          "amount": 156,
+          "unit": "mg",
+          "dv": 3
+        },
+        "magnesium": {
+          "amount": 31,
+          "unit": "mg",
+          "dv": 7
+        },
+        "folate": {
+          "amount": 22,
+          "unit": "mcg",
+          "dv": 6
+        },
+        "vitaminA": {
+          "amount": 225,
+          "unit": "mcg",
+          "dv": 25
+        },
+        "omega3": {
+          "amount": 0,
+          "unit": "g",
+          "dv": 0
+        }
+      },
+      "keyNutrients": [
+        {
+          "key": "vitaminA",
+          "label": "225mcg Vitamin A"
+        },
+        {
+          "key": "protein",
+          "label": "6.3g Protein"
+        },
+        {
+          "key": "calcium",
+          "label": "98mg Calcium"
+        },
+        {
+          "key": "fiber",
+          "label": "1.2g Fiber"
+        }
+      ],
+      "ingredients": [
+        {
+          "amount": "245 g",
+          "item": "canned pumpkin puree, not pie filling (1 cup)"
+        },
+        {
+          "amount": "92 g",
+          "item": "oat flour (1 cup; certified gluten-free if needed)"
+        },
+        {
+          "amount": "122 g",
+          "item": "plain Greek yogurt, 2% (1/2 cup)"
+        },
+        {
+          "amount": "60 g",
+          "item": "unflavored or vanilla protein powder (1/2 cup) — nutrition calculated with whey isolate; values vary by brand"
+        },
+        {
+          "amount": "80 g",
+          "item": "maple syrup (1/4 cup)"
+        },
+        {
+          "amount": "100 g",
+          "item": "eggs, 2 large"
+        },
+        {
+          "amount": "1 tsp",
+          "item": "baking powder"
+        },
+        {
+          "amount": "1/2 tsp",
+          "item": "baking soda"
+        },
+        {
+          "amount": "1 tsp",
+          "item": "ground cinnamon"
+        },
+        {
+          "amount": "1/2 tsp",
+          "item": "ground nutmeg"
+        },
+        {
+          "amount": "1/4 tsp",
+          "item": "ground ginger"
+        },
+        {
+          "amount": "1/4 tsp",
+          "item": "fine sea salt"
+        },
+        {
+          "amount": "1/3 cup",
+          "item": "chocolate chips or chopped walnuts, optional — not included in the nutrition panel"
+        }
+      ],
+      "steps": [
+        {
+          "title": "Heat the oven",
+          "text": "Preheat to 350°F (175°C). Line a 12-cup muffin tin with liners or use silicone liners."
+        },
+        {
+          "title": "Whisk the wet ingredients",
+          "text": "In a large bowl, whisk the pumpkin puree, Greek yogurt, maple syrup and eggs until smooth."
+        },
+        {
+          "title": "Combine the dry ingredients",
+          "text": "In a separate bowl, stir together the oat flour, protein powder, baking powder, baking soda, cinnamon, nutmeg, ginger and salt."
+        },
+        {
+          "title": "Fold, don't overmix",
+          "text": "Fold the dry mix into the wet until just combined — stop as soon as the flour disappears. Overmixing makes dense muffins. Fold in the chocolate chips or walnuts now if using."
+        },
+        {
+          "title": "Fill and bake",
+          "text": "Divide the batter evenly among the 12 cups, about 3/4 full. Bake 20–22 minutes, until a toothpick inserted in the center comes out clean."
+        },
+        {
+          "title": "Cool",
+          "text": "Cool 5 minutes in the tin, then transfer to a wire rack to cool completely."
+        }
+      ],
+      "tags": {
+        "nutrients": [
+          "vitaminA",
+          "protein",
+          "fiber"
+        ],
+        "diets": [
+          "vegetarian"
+        ],
+        "meals": [
+          "breakfast"
+        ]
+      },
+      "faqs": [
+        {
+          "q": "How much protein per muffin?",
+          "a": "About 6.3 grams per muffin, calculated from USDA FoodData Central ingredient data — the exact amount depends on your protein powder brand and scoop size."
+        },
+        {
+          "q": "Can I make these vegan?",
+          "a": "Yes. Swap the eggs for two flax eggs (2 tbsp ground flax + 6 tbsp water, rested 5 minutes), use plant-based yogurt and protein powder, and replace maple syrup with date syrup or another liquid sweetener."
+        },
+        {
+          "q": "Why are my muffins gummy?",
+          "a": "Usually overmixing or too much wet ingredient. Measure pumpkin puree by weight if you can (about 240g), and stop mixing as soon as the flour disappears."
+        },
+        {
+          "q": "Do they taste like protein powder?",
+          "a": "Not if you use a clean, unflavored or lightly vanilla powder. The pumpkin and spices mask any chalkiness. Avoid strongly flavored powders (chocolate, cookies-and-cream) unless you want that profile."
+        },
+        {
+          "q": "Can I use almond flour instead of oat flour?",
+          "a": "You can, but the texture shifts — almond flour makes them more tender and crumbly, less springy. Reduce the baking powder slightly (to 3/4 tsp) and add an extra tablespoon of oat flour or tapioca starch for structure."
+        },
+        {
+          "q": "How should I store them?",
+          "a": "Room temperature for two days, fridge for five, freezer for three months. Freeze individually on a tray, then bag them — microwave 20–30 seconds straight from the freezer."
+        }
+      ],
+      "whyItHelps": {
+        "goal": "A make-ahead fall breakfast",
+        "text": "These muffins fold canned pumpkin puree, Greek yogurt and protein powder into spiced oat-flour batter and bake into grab-and-go breakfasts. Per the USDA FoodData Central ingredient calculation, one muffin lands at about 94 kcal with 6.3g protein and 225mcg vitamin A — they freeze well, so a Sunday batch covers the week."
+      },
+      "source": "cached-verified",
+      "kitchenTested": false,
+      "editorialException": {
+        "reason": "Owner's explicit order (2026-09-25): publish on evidence-review basis instead of a kitchen test. Nutrition resolved from USDA FoodData Central ingredient data (94 kcal, 6.3g protein, 225mcg vitamin A per muffin). Draft warning stays rendered on the page; kitchen test can still replace this exception later.",
+        "date": "2026-09-25",
+        "approvedBy": "khalilbadreddine"
+      },
+      "datePublished": "2026-09-25",
+      "dateModified": "2026-09-25"
     }
   ],
   "nutrients": [
