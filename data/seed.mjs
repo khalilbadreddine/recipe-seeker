@@ -5401,6 +5401,124 @@ export const recipes = [
     datePublished: "2026-09-25",
     dateModified: "2026-09-25",
   },
+  {
+    slug: "high-protein-sweet-potato-lentil-soup",
+    title: "High Protein Sweet Potato Lentil Soup",
+    description:
+      "A hearty, protein-packed sweet potato lentil soup that's perfect for meal prep and busy weeknights.",
+    image: "/images/high-protein-sweet-potato-lentil-soup.webp",
+    imageAlt:
+      "A bowl of sweet potato lentil soup with wilted spinach, topped with fresh cilantro and a lemon wedge",
+    prepTime: "PT15M",
+    cookTime: "PT25M",
+    totalTime: "PT40M",
+    prepMinutes: 15,
+    cookMinutes: 25,
+    totalMinutes: 40,
+    servings: 4,
+    calories: 375,
+    nutrition: {
+      calories: { amount: 375, unit: "kcal", dv: 19 },
+      protein: { amount: 17, unit: "g", dv: 33 },
+      fat: { amount: 5.6, unit: "g", dv: 7 },
+      carbs: { amount: 69, unit: "g", dv: 25 },
+      fiber: { amount: 12, unit: "g", dv: 44 },
+      sugar: { amount: 16, unit: "g", dv: 32 },
+      sodium: { amount: 1193, unit: "mg", dv: 52 },
+      iron: { amount: 7, unit: "mg", dv: 39 },
+      calcium: { amount: 147, unit: "mg", dv: 11 },
+      vitaminC: { amount: 36, unit: "mg", dv: 40 },
+      potassium: { amount: 1242, unit: "mg", dv: 26 },
+      magnesium: { amount: 96, unit: "mg", dv: 23 },
+      folate: { amount: 166, unit: "mcg", dv: 42 },
+      vitaminA: { amount: 1286, unit: "mcg", dv: 143 },
+      omega3: { amount: 0.2, unit: "g", dv: 11 },
+    },
+    keyNutrients: [
+      { key: "vitaminA", label: "1286mcg Vitamin A" },
+      { key: "fiber", label: "12g Fiber" },
+      { key: "protein", label: "17g Protein" },
+      { key: "iron", label: "7mg Iron" },
+    ],
+    ingredients: [
+      { amount: "1 tbsp", item: "olive oil" },
+      { amount: "1 medium", item: "onion, diced" },
+      { amount: "2", item: "carrots, diced" },
+      { amount: "2 stalks", item: "celery, diced" },
+      { amount: "3 cloves", item: "garlic, minced" },
+      { amount: "1 tsp", item: "ground cumin" },
+      { amount: "1 tsp", item: "smoked paprika" },
+      { amount: "1/4 tsp", item: "cayenne (optional)" },
+      { amount: "1 cup", item: "red lentils, rinsed" },
+      { amount: "1 large (about 1 lb)", item: "sweet potato, peeled and cubed" },
+      { amount: "4 cups", item: "low-sodium vegetable broth" },
+      { amount: "1 (14 oz) can", item: "diced tomatoes" },
+      { amount: "2 cups", item: "fresh spinach or kale" },
+      { amount: "to taste", item: "salt and black pepper" },
+      { amount: "for serving", item: "lemon wedges and fresh cilantro" },
+    ],
+    steps: [
+      {
+        title: "Sweat the aromatics",
+        text: "Heat the oil in a large pot over medium heat. Add the onion, carrot and celery and cook 5–6 minutes until softened.",
+      },
+      {
+        title: "Bloom the spices",
+        text: "Stir in the garlic, cumin, smoked paprika and cayenne and cook 30 seconds until fragrant.",
+      },
+      {
+        title: "Add lentils and sweet potato",
+        text: "Add the lentils, sweet potato, broth and diced tomatoes. Bring to a boil, then reduce to a simmer.",
+      },
+      {
+        title: "Simmer",
+        text: "Cook 20–25 minutes, stirring occasionally, until the lentils are broken down and the sweet potato is tender.",
+      },
+      {
+        title: "Wilt the greens",
+        text: "Stir in the spinach or kale and cook 1–2 minutes until wilted. Season with salt and pepper.",
+      },
+      {
+        title: "Serve",
+        text: "Ladle into bowls and finish with a squeeze of lemon and fresh cilantro. If it thickens on standing, thin with broth or water when reheating.",
+      },
+    ],
+    tags: {
+      nutrients: ["vitaminA", "fiber", "protein", "iron"],
+      diets: ["vegan", "gluten-free", "dairy-free"],
+      meals: ["dinner", "lunch"],
+    },
+    faqs: [
+      {
+        q: "How much protein is in each serving?",
+        a: "Each bowl provides a substantial amount of plant-based protein from the lentils. Exact numbers vary by portion size and specific ingredients used.",
+      },
+      {
+        q: "Can I make this in an Instant Pot?",
+        a: "Yes. Sauté aromatics on sauté mode, add remaining ingredients except greens, pressure cook on high for 8 minutes with natural release. Stir in greens after opening.",
+      },
+      {
+        q: "Why did my soup turn out so thick?",
+        a: "Red lentils break down completely and absorb liquid as they cool. Just thin with broth or water when reheating — it's normal.",
+      },
+      {
+        q: "Is this soup gluten-free?",
+        a: "Yes, all ingredients are naturally gluten-free. Check your vegetable broth label to be certain.",
+      },
+      {
+        q: "Can I use green or brown lentils instead?",
+        a: "They hold their shape longer and need 10–15 more minutes of simmering. The texture will be less creamy but still delicious.",
+      },
+    ],
+    whyItHelps: {
+      goal: "A plant-based high-protein meal-prep soup",
+      text: "This soup simmers red lentils, sweet potato, carrots and celery in vegetable broth with cumin and smoked paprika, finishing with fresh spinach. Per the USDA FoodData Central ingredient calculation, one bowl lands at about 375 kcal with 17g protein, 12g fiber and 1286mcg vitamin A — it freezes well, so a big pot covers the week.",
+    },
+    source: "cached-verified",
+    kitchenTested: false,
+    datePublished: "2026-09-27",
+    dateModified: "2026-09-27",
+  },
 ];
 
 /**
