@@ -5401,6 +5401,121 @@ export const recipes = [
     datePublished: "2026-09-25",
     dateModified: "2026-09-25",
   },
+  {
+    slug: "high-protein-apple-cider-chicken-skillet",
+    title: "High-Protein Apple Cider Chicken Skillet",
+    description:
+      "One-pan chicken thighs in a tangy apple cider glaze — ready in 30 minutes and packed with protein for busy weeknights.",
+    image: "/images/high-protein-apple-cider-chicken-skillet.webp",
+    imageAlt:
+      "Bone-in chicken thighs in a cast-iron skillet coated in a glossy apple cider glaze, garnished with thyme and parsley",
+    prepTime: "PT10M",
+    cookTime: "PT30M",
+    totalTime: "PT40M",
+    prepMinutes: 10,
+    cookMinutes: 30,
+    totalMinutes: 40,
+    servings: 4,
+    calories: 465,
+    nutrition: {
+      calories: { amount: 465, unit: "kcal", dv: 23 },
+      protein: { amount: 25, unit: "g", dv: 50 },
+      fat: { amount: 33.8, unit: "g", dv: 43 },
+      carbs: { amount: 12.9, unit: "g", dv: 5 },
+      fiber: { amount: 0.7, unit: "g", dv: 3 },
+      sugar: { amount: 10, unit: "g", dv: 20 },
+      sodium: { amount: 650, unit: "mg", dv: 28 },
+      iron: { amount: 1, unit: "mg", dv: 7 },
+      calcium: { amount: 29, unit: "mg", dv: 2 },
+      vitaminC: { amount: 3, unit: "mg", dv: 3 },
+      potassium: { amount: 397, unit: "mg", dv: 8 },
+      magnesium: { amount: 35, unit: "mg", dv: 8 },
+      folate: { amount: 10, unit: "mcg", dv: 3 },
+      vitaminA: { amount: 82, unit: "mcg", dv: 9 },
+      omega3: { amount: 0.2, unit: "g", dv: 16 },
+    },
+    keyNutrients: [
+      { key: "protein", label: "25g Protein" },
+      { key: "fat", label: "33.8g Fat" },
+      { key: "potassium", label: "397mg Potassium" },
+      { key: "vitaminA", label: "82mcg Vitamin A" },
+    ],
+    ingredients: [
+      { amount: "2 lb", item: "bone-in, skin-on chicken thighs" },
+      { amount: "1 tsp", item: "kosher salt, divided" },
+      { amount: "1/2 tsp", item: "black pepper" },
+      { amount: "1 tbsp", item: "olive oil" },
+      { amount: "1 small", item: "yellow onion, thinly sliced" },
+      { amount: "2 cloves", item: "garlic, minced" },
+      { amount: "3/4 cup", item: "apple cider vinegar" },
+      { amount: "2 tbsp", item: "honey or maple syrup" },
+      { amount: "1 tbsp", item: "Dijon mustard" },
+      { amount: "4 sprigs", item: "fresh thyme (or 1 tsp dried)" },
+      { amount: "2 tbsp", item: "unsalted butter, cold, cut into pieces" },
+      { amount: "to taste", item: "chopped parsley for serving" },
+    ],
+    steps: [
+      {
+        title: "Season and sear",
+        text: "Pat the thighs dry and season with 1/2 tsp salt and the pepper. Heat the oil in a 12-inch skillet over medium-high. Sear thighs skin-side down 6–7 minutes until deep golden, flip and cook 3 minutes more, then remove to a plate.",
+      },
+      {
+        title: "Soften the aromatics",
+        text: "Reduce the heat to medium. Add the onion and cook 4 minutes until softened, then add the garlic and cook 30 seconds.",
+      },
+      {
+        title: "Build the glaze",
+        text: "Deglaze with the apple cider vinegar, scraping up the browned bits. Stir in the honey, Dijon and thyme and simmer 3 minutes until slightly reduced.",
+      },
+      {
+        title: "Simmer the chicken",
+        text: "Return the thighs to the pan skin-side up and spoon the sauce over them. Simmer 10–12 minutes until the thighs reach 175°F.",
+      },
+      {
+        title: "Finish with butter",
+        text: "Remove from the heat and swirl in the cold butter until the sauce turns glossy. Rest 5 minutes before serving.",
+      },
+      {
+        title: "Serve",
+        text: "Garnish with chopped parsley and spoon the glaze over each thigh. Keeps up to 4 days refrigerated — the sauce thickens nicely overnight.",
+      },
+    ],
+    tags: {
+      nutrients: ["protein", "fat", "potassium", "vitaminA"],
+      diets: ["gluten-free"],
+      meals: ["dinner"],
+    },
+    faqs: [
+      {
+        q: "How long does this take start to finish?",
+        a: "About 30 minutes active time, plus 5 minutes rest.",
+      },
+      {
+        q: "Can I make it ahead for meal prep?",
+        a: "Yes — it reheats well and the sauce thickens nicely overnight. Store up to 4 days in the fridge.",
+      },
+      {
+        q: "Is this actually high in protein?",
+        a: "Each thigh supplies a solid protein portion; pair with a grain or legume side to hit higher per-meal targets.",
+      },
+      {
+        q: "What if my glaze burns?",
+        a: "Lower the heat and add a tablespoon of water or broth. The fond on the pan is flavor — deglaze, don't scrub.",
+      },
+      {
+        q: "Can I use apple juice instead of cider vinegar?",
+        a: "You'll lose the tang that balances the honey. If substituting, use half juice, half white wine vinegar.",
+      },
+    ],
+    whyItHelps: {
+      goal: "A high-protein one-pan weeknight dinner",
+      text: "This skillet sears bone-in chicken thighs, then simmers them in a reduction of apple cider vinegar, honey and Dijon mustard, finished with butter for a glossy glaze. Per the USDA FoodData Central ingredient calculation, one serving lands at about 465 kcal with 25g protein — on the table in about 40 minutes, mostly hands-off.",
+    },
+    source: "cached-verified",
+    kitchenTested: false,
+    datePublished: "2026-09-27",
+    dateModified: "2026-09-27",
+  },
 ];
 
 /**
