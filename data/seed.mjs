@@ -5401,6 +5401,123 @@ export const recipes = [
     datePublished: "2026-09-25",
     dateModified: "2026-09-25",
   },
+  {
+    slug: "high-protein-pumpkin-turkey-chili",
+    title: "High Protein Pumpkin Turkey Chili",
+    description:
+      "A cozy, protein-packed chili with ground turkey and pumpkin — ready in 45 minutes and perfect for meal prep.",
+    image: "/images/high-protein-pumpkin-turkey-chili.webp",
+    imageAlt:
+      "Rustic bowl of thick pumpkin turkey chili topped with Greek yogurt, cilantro and a lime wedge, on a cream tablecloth with a deep-green napkin",
+    prepTime: "PT10M",
+    cookTime: "PT30M",
+    totalTime: "PT40M",
+    prepMinutes: 10,
+    cookMinutes: 30,
+    totalMinutes: 40,
+    servings: 6,
+    calories: 213,
+    nutrition: {
+      calories: { amount: 213, unit: "kcal", dv: 11 },
+      protein: { amount: 20, unit: "g", dv: 40 },
+      fat: { amount: 7.8, unit: "g", dv: 10 },
+      carbs: { amount: 18.3, unit: "g", dv: 7 },
+      fiber: { amount: 5.2, unit: "g", dv: 19 },
+      sugar: { amount: 3.6, unit: "g", dv: 7 },
+      sodium: { amount: 263, unit: "mg", dv: 11 },
+      iron: { amount: 3.2, unit: "mg", dv: 18 },
+      calcium: { amount: 75, unit: "mg", dv: 7 },
+      vitaminC: { amount: 29, unit: "mg", dv: 32 },
+      potassium: { amount: 664, unit: "mg", dv: 14 },
+    },
+    keyNutrients: [
+      { key: "protein", label: "20g Protein" },
+      { key: "fiber", label: "5.2g Fiber" },
+      { key: "vitaminC", label: "29mg Vitamin C" },
+      { key: "potassium", label: "664mg Potassium" },
+    ],
+    ingredients: [
+      { amount: "1 lb", item: "lean ground turkey (93% or 99%)" },
+      { amount: "1 cup", item: "canned pumpkin purée (not pie filling)" },
+      { amount: "1 large", item: "onion, diced" },
+      { amount: "3 cloves", item: "garlic, minced" },
+      { amount: "1", item: "red bell pepper, diced" },
+      { amount: "2 tbsp", item: "chili powder" },
+      { amount: "1 tsp", item: "ground cumin" },
+      { amount: "1 tsp", item: "smoked paprika" },
+      { amount: "1/2 tsp", item: "cinnamon" },
+      { amount: "14.5 oz", item: "canned diced tomatoes, no salt added" },
+      { amount: "2 cups", item: "low-sodium chicken broth" },
+      { amount: "1 cup", item: "canned black beans, rinsed and drained (optional, for extra fiber)" },
+      { amount: "to taste", item: "salt and pepper" },
+      { amount: "as desired", item: "toppings: Greek yogurt, chopped cilantro, avocado, shredded cheese" },
+    ],
+    steps: [
+      {
+        title: "Brown the turkey",
+        text: "Heat a large pot over medium heat. Add turkey, breaking it up, and cook until browned, about 5–7 minutes. Drain excess fat if needed.",
+      },
+      {
+        title: "Soften the aromatics",
+        text: "Add onion, bell pepper, and garlic. Cook until softened, 3–4 minutes.",
+      },
+      {
+        title: "Bloom the spices",
+        text: "Stir in chili powder, cumin, smoked paprika, and cinnamon. Cook 30 seconds until fragrant.",
+      },
+      {
+        title: "Simmer",
+        text: "Add pumpkin purée, diced tomatoes, and chicken broth. Bring to a simmer, then reduce heat, cover, and cook 25–30 minutes, stirring occasionally.",
+      },
+      {
+        title: "Add the beans",
+        text: "Stir in the black beans in the last 5 minutes if using.",
+      },
+      {
+        title: "Season and serve",
+        text: "Season with salt and pepper. Serve hot with desired toppings. Makes 6 servings (about 1½ cups each).",
+      },
+    ],
+    tags: {
+      nutrients: ["protein", "fiber", "vitaminC"],
+      diets: ["gluten-free", "dairy-free"],
+      meals: ["dinner"],
+    },
+    faqs: [
+      {
+        q: "How long does this chili take to make?",
+        a: "About 45 minutes from start to finish, including prep and simmer time.",
+      },
+      {
+        q: "Can I make this in a slow cooker or Instant Pot?",
+        a: "Yes. Brown the turkey and sauté vegetables first, then transfer to a slow cooker on low for 6–8 hours or high for 3–4 hours. For Instant Pot, use sauté mode, then pressure cook on high for 10 minutes with natural release.",
+      },
+      {
+        q: "Is this chili actually high in protein?",
+        a: "Each 1½-cup serving provides about 20 grams of protein with the optional beans (about 18 grams without), mostly from the lean turkey — calculated from USDA FoodData Central ingredient data.",
+      },
+      {
+        q: "Can I freeze this chili?",
+        a: "Absolutely. It freezes well for up to 3 months. Thaw overnight in the fridge before reheating.",
+      },
+      {
+        q: "What toppings work best?",
+        a: "Greek yogurt adds extra protein and tang. Avocado, cilantro, shredded cheese, or a squeeze of lime are all great options.",
+      },
+      {
+        q: "Can I make this ahead for lunches?",
+        a: "Yes — it keeps 4 days in the fridge and freezes up to 3 months. Portion into individual containers and store toppings separately for grab-and-go lunches.",
+      },
+    ],
+    whyItHelps: {
+      goal: "A high-protein fall dinner",
+      text: "This chili simmers lean ground turkey with pumpkin purée, black beans and smoky spices in one pot. Per the USDA FoodData Central ingredient calculation, one 1½-cup serving lands at about 213 kcal with 20g protein, 5.2g fiber and 29mg vitamin C — a cozy fall dinner that freezes beautifully for future lunches.",
+    },
+    source: "cached-verified",
+    kitchenTested: false,
+    datePublished: "2026-09-28",
+    dateModified: "2026-09-28",
+  },
 ];
 
 /**
