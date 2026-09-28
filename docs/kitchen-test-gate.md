@@ -1,4 +1,22 @@
-# Kitchen-Test Gate — Recipe Publishing Policy
+# Kitchen-Test Gate — SUPERSEDED
+
+> **Superseded 2026-09-28 by owner order.** The kitchen-test draft gate was
+> removed: Khalil will not kitchen-test recipes, and the red "Draft recipe
+> requiring kitchen testing before publication" warning scared readers away.
+>
+> **Current policy:** Neo researches/curates recipes from reputable sources
+> (never invented), resolves nutrition from USDA FoodData Central ingredient
+> data, and ships via PR — Khalil only reviews/merges. Every recipe in
+> `data/seed.mjs` is published. No "untested" warnings are rendered anywhere.
+> A positive **"Tested in our kitchen ✓"** badge is shown only when
+> `kitchenTested: true` with documented evidence in `kitchenTest`
+> (enforced by `scripts/resolve-nutrition.mjs`).
+>
+> The rest of this document is kept for historical context only.
+
+---
+
+# Kitchen-Test Gate — Recipe Publishing Policy (historical)
 
 **Rule: an untested recipe must not become a live production recipe merely
 because it displays a warning.** A warning is transparency, not a substitute
@@ -28,90 +46,3 @@ bundle, one filter enforces all of:
 - `sitemap.xml`
 - Recipe JSON-LD (no page → no structured data)
 - nutrient hubs (`/nutrients/*`)
-- "You Might Also Like" related-recipe modules
-- `llms.txt` / `llms-full.txt`
-- Pinterest destination URLs (never publish a pin to a draft URL)
-
-## Private preview
-
-To review a draft recipe as a rendered page:
-
-```bash
-INCLUDE_DRAFTS=true npm run data:build
-npm run build   # or: npm --prefix client run build
-```
-
-This is for **local preview only**. Never set `INCLUDE_DRAFTS=true` on a
-production build or deployment.
-
-## Enforcement (not just documentation)
-
-The data build **refuses** `INCLUDE_DRAFTS=true` when any deployment/CI
-indicator is present and exits non-zero with:
-
-> INCLUDE_DRAFTS=true is forbidden in CI or deployed builds. Draft recipes may
-> be previewed locally only.
-
-Blocked indicators: `CI=true|1`, `VERCEL=true|1`, `VERCEL_ENV=preview`,
-`VERCEL_ENV=production`, `NODE_ENV=production`.
-
-Reproducible proof: `npm run test:draft-gate` — asserts a normal production
-build excludes drafts, a local preview includes them, and each blocked
-environment combination fails with the exact policy error.
-
-## Approval evidence (`kitchenTest`)
-
-Flipping `kitchenTested` to `true` requires a `kitchenTest` object with all of:
-
-- `tester` — name or role of the person who cooked it
-- `date` — test date (YYYY-MM-DD)
-- `confirmedQuantities` — ingredient quantities verified as written
-- `confirmedTimes` — prep/cook/total time verified as written
-- `confirmedServings` — serving count verified as written
-- `changesFromDraft` — what changed vs the draft (or `"none"`)
-- `finalPhoto` — path to a photo of the real cooked dish, or a note explaining
-  why no photo is available
-
-The data build **fails** if any field is missing. After the test, update the
-recipe's quantities/times/notes to match what was actually cooked, then set
-`kitchenTested: true` with the evidence.
-
-## Language rules while `kitchenTested: false`
-
-Do not describe a draft as "ready for publication", "ready for Pinterest",
-"ready for production", or any equivalent. It is a draft until the gate above
-is complete.
-
-## FAQ policy (no floors)
-
-FAQs are **optional**. There is no minimum — a minimum pressures authors into
-inventing questions (AI slop).
-
-- 0 FAQs if the recipe is already fully clear; 2–4 is typical.
-- Up to **6** only where readers genuinely need troubleshooting, substitutions,
-  storage, dietary clarification, or make-ahead guidance.
-- Each FAQ must answer a question **not** already clearly answered in the
-  ingredients, instructions, notes, or storage guidance, and must add material
-  practical value.
-- Never add FAQs for SEO or schema padding.
-- The data build warns (does not fail) when a recipe exceeds 6 FAQs. The 50
-  pre-policy recipes carry 8–10 FAQs each; trimming them is a separate content
-  decision, tracked for a future PR — not done silently here.
-
-## Editorial exception (owner-ordered publish without a kitchen test)
-
-An untested recipe may ship only under an explicit, recorded exception —
-never silently:
-
-```js
-editorialException: {
-  reason: "<why the owner ordered publication without a kitchen test>",
-  date: "YYYY-MM-DD",
-  approvedBy: "<owner handle>",
-}
-```
-
-The data build fails if any of the three fields is missing, and warns loudly
-when an exception is used. The recipe ships WITH the draft warning rendered
-on its page, so readers always see the honest label. A kitchen test can
-replace the exception later — it never converts to a silent publish.

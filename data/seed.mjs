@@ -5036,13 +5036,6 @@ export const recipes = [
       text: "This bowl combines fiber-containing ingredients\u2014squash, quinoa, chickpeas, and kale\u2014with protein from chickpeas, quinoa, tahini, and pumpkin seeds. It is designed as a substantial plant-forward lunch or dinner.",
     },
     source: "cached-verified",
-    kitchenTested: false,
-    editorialException: {
-      reason:
-        "Owner's explicit order (2026-09-22): publish on evidence-review basis instead of a kitchen test. Draft was hardened against six published butternut squash quinoa bowls (Foolproof Living, Jar Of Lemons, Purely Kaylie, This Savory Vegan, Heinen's, Boo Boo's Bakery): chickpea roast time corrected 12-15 min -> full 25-30 min, quinoa water 370 ml (1:2) -> 325 ml (1:1.75). Draft warning stays rendered on the page; kitchen test can still replace this exception later.",
-      date: "2026-09-22",
-      approvedBy: "khalilbadreddine",
-    },
     datePublished: "2026-09-22",
     dateModified: "2026-09-22",
   },
@@ -5155,7 +5148,6 @@ export const recipes = [
       text: "This jar layers rolled oats, Greek yogurt, protein powder, chia and diced apple with cinnamon and nutmeg, and soaks overnight into a pudding. Per the USDA FoodData Central ingredient calculation, one jar lands at about 28g protein, 423mg calcium and 141mg magnesium — ready in the fridge with zero morning cooking.",
     },
     source: "cached-verified",
-    kitchenTested: false,
     datePublished: "2026-09-23",
     dateModified: "2026-09-23",
   },
@@ -5265,13 +5257,6 @@ export const recipes = [
       text: "This jar stirs rolled oats, canned pumpkin puree, almond milk, maple syrup and pumpkin pie spice, then chills overnight into a thick, spoonable breakfast. Per the USDA FoodData Central ingredient calculation, one jar lands at about 262 kcal, 8.5g fiber, 295mg calcium and 953mcg vitamin A — ready in the fridge with zero morning cooking.",
     },
     source: "cached-verified",
-    kitchenTested: false,
-    editorialException: {
-      reason:
-        "Owner's explicit order (2026-09-25): publish on evidence-review basis instead of a kitchen test. Nutrition resolved from USDA FoodData Central ingredient data (262 kcal, 7.8g protein, 8.5g fiber per jar). Draft warning stays rendered on the page; kitchen test can still replace this exception later.",
-      date: "2026-09-25",
-      approvedBy: "khalilbadreddine",
-    },
     datePublished: "2026-09-24",
     dateModified: "2026-09-24",
   },
@@ -5391,13 +5376,6 @@ export const recipes = [
       text: "These muffins fold canned pumpkin puree, Greek yogurt and protein powder into spiced oat-flour batter and bake into grab-and-go breakfasts. Per the USDA FoodData Central ingredient calculation, one muffin lands at about 94 kcal with 6.3g protein and 225mcg vitamin A — they freeze well, so a Sunday batch covers the week.",
     },
     source: "cached-verified",
-    kitchenTested: false,
-    editorialException: {
-      reason:
-        "Owner's explicit order (2026-09-25): publish on evidence-review basis instead of a kitchen test. Nutrition resolved from USDA FoodData Central ingredient data (94 kcal, 6.3g protein, 225mcg vitamin A per muffin). Draft warning stays rendered on the page; kitchen test can still replace this exception later.",
-      date: "2026-09-25",
-      approvedBy: "khalilbadreddine",
-    },
     datePublished: "2026-09-25",
     dateModified: "2026-09-25",
   },
