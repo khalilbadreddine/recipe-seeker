@@ -5401,6 +5401,121 @@ export const recipes = [
     datePublished: "2026-09-25",
     dateModified: "2026-09-25",
   },
+  {
+    slug: "pumpkin-apple-protein-baked-oatmeal",
+    title: "Pumpkin Apple Protein Baked Oatmeal",
+    description:
+      "A cozy, protein-packed baked oatmeal with pumpkin, apple, and warm spices — perfect for meal-prep breakfasts.",
+    image: "/images/pumpkin-apple-protein-baked-oatmeal.webp",
+    imageAlt:
+      "Warm slice of baked pumpkin-apple oatmeal studded with apple pieces on a cream plate, with pecans, cinnamon sticks and pumpkin in the background",
+    prepTime: "PT10M",
+    cookTime: "PT35M",
+    totalTime: "PT45M",
+    prepMinutes: 10,
+    cookMinutes: 35,
+    totalMinutes: 45,
+    servings: 8,
+    calories: 184,
+    nutrition: {
+      calories: { amount: 184, unit: "kcal", dv: 9 },
+      protein: { amount: 9.7, unit: "g", dv: 19 },
+      fat: { amount: 3.9, unit: "g", dv: 5 },
+      carbs: { amount: 29, unit: "g", dv: 11 },
+      fiber: { amount: 3.9, unit: "g", dv: 14 },
+      sugar: { amount: 9, unit: "g", dv: 18 },
+      sodium: { amount: 112, unit: "mg", dv: 5 },
+      iron: { amount: 1.9, unit: "mg", dv: 11 },
+      calcium: { amount: 125, unit: "mg", dv: 12 },
+      vitaminC: { amount: 2, unit: "mg", dv: 2 },
+      potassium: { amount: 345, unit: "mg", dv: 7 },
+    },
+    keyNutrients: [
+      { key: "protein", label: "9.7g Protein" },
+      { key: "fiber", label: "3.9g Fiber" },
+      { key: "calcium", label: "125mg Calcium" },
+      { key: "potassium", label: "345mg Potassium" },
+    ],
+    ingredients: [
+      { amount: "2 cups", item: "rolled oats (certified gluten-free if needed)" },
+      { amount: "1 cup", item: "pumpkin puree (not pie filling)" },
+      { amount: "1 medium", item: "apple, peeled and diced small" },
+      { amount: "1 scoop (about 30g)", item: "vanilla or unflavored protein powder" },
+      { amount: "2 large", item: "eggs (or flax eggs for vegan)" },
+      { amount: "1 cup", item: "milk of choice (dairy or plant-based)" },
+      { amount: "1/4 cup", item: "maple syrup or honey" },
+      { amount: "1 tsp", item: "baking powder" },
+      { amount: "1 tsp", item: "pumpkin pie spice" },
+      { amount: "1/2 tsp", item: "cinnamon" },
+      { amount: "1/4 tsp", item: "salt" },
+      { amount: "optional", item: "chopped walnuts or pecans for topping" },
+    ],
+    steps: [
+      {
+        title: "Prep",
+        text: "Preheat oven to 375°F (190°C). Grease an 8x8-inch baking dish.",
+      },
+      {
+        title: "Whisk the wet mix",
+        text: "In a large bowl, whisk eggs, milk, pumpkin, maple syrup, and protein powder until smooth.",
+      },
+      {
+        title: "Fold in the oats",
+        text: "Stir in oats, baking powder, spices, and salt. Fold in diced apple.",
+      },
+      {
+        title: "Bake",
+        text: "Pour into prepared dish and smooth the top. Sprinkle with nuts if using. Bake 30–35 minutes, until edges are golden and a toothpick inserted in the center comes out mostly clean.",
+      },
+      {
+        title: "Cool and slice",
+        text: "Cool 10 minutes before slicing into 8 squares.",
+      },
+      {
+        title: "Store",
+        text: "Cool completely, then store slices in an airtight container in the fridge for up to 5 days. Reheat individual portions in the microwave for 30–45 seconds.",
+      },
+    ],
+    tags: {
+      nutrients: ["protein", "fiber", "calcium"],
+      diets: ["gluten-free", "dairy-free", "vegan"],
+      meals: ["breakfast"],
+    },
+    faqs: [
+      {
+        q: "How long does this take to make?",
+        a: "About 10 minutes of prep, then 30–35 minutes baking. Total time under 45 minutes.",
+      },
+      {
+        q: "Can I make this without protein powder?",
+        a: "Yes — omit the powder and add an extra 1/4 cup oats or 2 tbsp almond flour to absorb the liquid. Protein content will be lower but still present from oats, eggs, and milk.",
+      },
+      {
+        q: "How do I know when it's done?",
+        a: "Edges pull away from the pan slightly, top is golden, and a toothpick in the center comes out with just a few moist crumbs (not wet batter).",
+      },
+      {
+        q: "Is this actually high in protein?",
+        a: "Each slice provides a meaningful amount of protein from the combined sources — protein powder, eggs, oats, and milk. Exact grams depend on your specific ingredients and slice size. Per the USDA FoodData Central ingredient calculation, one slice of 8 lands at about 184 kcal with 9.7g protein.",
+      },
+      {
+        q: "Can I use steel-cut oats?",
+        a: "Not recommended — they won't soften fully in the bake time. Stick with rolled or quick oats.",
+      },
+      {
+        q: "Can I double this for a crowd?",
+        a: "Yes — bake in a 9x13-inch dish and add 5–10 minutes. Slice into 12 squares; the per-slice nutrition will be roughly half of the 8-slice numbers.",
+      },
+    ],
+    whyItHelps: {
+      goal: "A protein-forward meal-prep breakfast",
+      text: "This baked oatmeal layers rolled oats with pumpkin puree, diced apple and a scoop of protein powder, then bakes into grab-and-go slices. Per the USDA FoodData Central ingredient calculation (dairy milk; plant-based milk shifts the numbers slightly), one slice of 8 lands at about 184 kcal with 9.7g protein and 3.9g fiber — warm, spiced, and ready for the week's mornings.",
+    },
+    source: "cached-verified",
+    kitchenTested: false,
+    datePublished: "2026-09-28",
+    dateModified: "2026-09-28",
+  },
 ];
 
 /**
