@@ -45,8 +45,9 @@ const DIET_MAP = {
 const NUTRITION_DISCLAIMER =
   'Nutrition is an estimate calculated from USDA FoodData Central ingredient data and may vary by ingredient brand, preparation, and portion size.'
 
-/** Exact kitchen-test warning for recipes that have not been cooked and verified. */
-const KITCHEN_TEST_WARNING = 'Draft recipe requiring kitchen testing before publication.'
+/** Positive badge shown only for recipes genuinely cooked in our kitchen.
+ * No negative "untested" warnings are rendered — see policy change 2026-09-28. */
+const KITCHEN_TESTED_BADGE = 'Tested in our kitchen'
 
 function buildRecipeLd(recipe, canonical) {
   const nutrition = {}
@@ -244,10 +245,10 @@ export default function RecipePage() {
         </Reveal>
         <Reveal as="p" immediate variant="up" delay={90} className="mt-4 max-w-3xl text-lg leading-relaxed text-forest/75">{recipe.description}</Reveal>
 
-        {recipe.kitchenTested === false && (
+        {recipe.kitchenTested === true && (
           <Reveal immediate variant="up" delay={110} className="mt-4 max-w-3xl">
-            <p className="rounded-xl border border-ember/40 bg-ember/5 px-4 py-3 text-sm font-semibold text-ember-dark" role="note">
-              {KITCHEN_TEST_WARNING}
+            <p className="inline-flex items-center gap-2 rounded-full border border-forest/30 bg-forest/5 px-4 py-2 text-sm font-semibold text-forest" role="note">
+              <span aria-hidden="true">✓</span> {KITCHEN_TESTED_BADGE}
             </p>
           </Reveal>
         )}
