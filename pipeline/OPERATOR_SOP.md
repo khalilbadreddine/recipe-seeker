@@ -43,16 +43,20 @@ Research → Review → Approve → Publish → Verify → Report. Never skip a 
 
 Why so strict: one wrong nutrition number destroys reader trust permanently. Trust is the only moat here.
 
-## 6. Publishing checklist
+## 6. Publishing checklist (branch + PR — Website Growth Manager SOP, 2026-09-22)
 
-1. `publisher.mjs` (approved drafts only) →
-2. commit `client/src/data/recipes.json` →
-3. push to `main` on `khalilbadreddine/recipe-seeker` →
-4. Vercel auto-deploys →
-5. **fetch each live URL, expect 200** →
-6. only then report it as published.
+Khalil's standing order: **no direct deploys.** Every content/code change ships
+as a dedicated branch + pull request for his review; he merges. Never push to
+`main`, never merge `main`, without his explicit approval.
 
-A failed push is not a publish. A 200 you didn't check is not verified. Say exactly what happened.
+1. Build the recipe entry in `data/seed.mjs` (USDA-computed nutrition, reputable
+   source attributed, review gates in §5 all green) →
+2. `npm run data:build` → regenerates `data/recipes.json` + `client/src/data/recipes.json` →
+3. commit on a dedicated branch (`agent/YYYY-MM-DD/<slug>`) →
+4. push the branch → open a PR (via the github skill's `push_branch_pr.py`) →
+5. report the PR link. **An open PR is "ready for Khalil", not published.**
+
+A failed branch push is not a PR. A PR you didn't link is not delivered. Say exactly what happened.
 
 ## 7. Content & SEO standards (per post)
 
@@ -97,7 +101,7 @@ Content gaps vs. competitors, rising trends that fit the nutrition angle, affili
 
 ## 13. Reporting
 
-- Morning brief in Moroccan Darija: what got published (verified URLs only), what needs Khalil (with exact reasons), today's 4 pins, keyword decisions, Monday hawtat.
+- Morning brief in Moroccan Darija: PRs ready for Khalil (links, never claim "published" before he merges + a verified 200), what needs Khalil (with exact reasons), today's 4 pins, keyword decisions, Monday hawtat.
 - Short beats long. Numbers beat adjectives. Never claim work you didn't verify.
 
 ## 14. Hero images — Neo handles them
@@ -112,3 +116,4 @@ Content gaps vs. competitors, rising trends that fit the nutrition angle, affili
 
 - **1.0 (2026-09-20):** Initial SOP. Sources: 2026 Pinterest fresh-pin strategy research, pro food-blog publishing workflows (human gate before publish, single source of truth), YMYL nutrition content standards. Wired into the daily operator cron.
 - **1.1 (2026-09-20):** Khalil's directives — Neo IS the researcher (scrapers/miners dropped); Neo generates hero images (max 2/day) or sources free-license + modifies, no HF token wait; admin panel frozen (maintenance only).
+- **1.2 (2026-09-29):** Website Growth Manager SOP migration (owner order 2026-09-22, proposed via PR): publishing is branch + PR for owner review — no direct pushes or merges to `main`, no direct production deploys; morning brief reports PRs as "ready for Khalil" instead of claiming publication.
