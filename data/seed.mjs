@@ -5415,7 +5415,7 @@ export const recipes = [
       { key: "iron", label: "3.9mg Iron" },
     ],
     ingredients: [
-      { amount: "2 cups (480 g)", item: "unsweetened soy milk — about 8 g protein per cup; oat or almond milk work but lower the protein total" },
+      { amount: "2 cups (486 g)", item: "unsweetened soy milk — about 8 g protein per cup; oat or almond milk work but lower the protein total" },
       { amount: "1/2 cup (122 g)", item: "canned pumpkin purée (not pumpkin pie filling)" },
       { amount: "1/4 cup (40 g)", item: "chia seeds" },
       { amount: "1 scoop (~30 g)", item: "unflavored or vanilla whey or plant protein powder — nutrition calculated with generic whey; values vary by brand. Check the label if you need certified gluten-free" },
