@@ -5379,6 +5379,215 @@ export const recipes = [
     datePublished: "2026-09-25",
     dateModified: "2026-09-25",
   },
+  {
+    slug: "high-protein-pumpkin-chia-pudding",
+    title: "High Protein Pumpkin Chia Pudding",
+    description:
+      "A make-ahead breakfast with pumpkin, chia seeds, and a protein boost — ready in minutes, keeps 4–5 days in the fridge.",
+    image: "/images/high-protein-pumpkin-chia-pudding.webp",
+    imageAlt:
+      "Glass jar of pumpkin chia pudding topped with toasted pumpkin seeds and a dusting of cinnamon, on a cream cloth with a deep-green napkin",
+    prepTime: "PT5M",
+    cookTime: "PT0M",
+    totalTime: "PT3H5M",
+    prepMinutes: 5,
+    cookMinutes: 0,
+    totalMinutes: 185,
+    servings: 2,
+    calories: 303,
+    nutrition: {
+      calories: { amount: 303, unit: "kcal", dv: 15 },
+      protein: { amount: 24.3, unit: "g", dv: 49 },
+      fat: { amount: 13.3, unit: "g", dv: 17 },
+      carbs: { amount: 24, unit: "g", dv: 9 },
+      fiber: { amount: 9.1, unit: "g", dv: 32 },
+      sugar: { amount: 9.7, unit: "g", dv: 19 },
+      sodium: { amount: 118, unit: "mg", dv: 5 },
+      iron: { amount: 3.9, unit: "mg", dv: 21 },
+      calcium: { amount: 468, unit: "mg", dv: 36 },
+      vitaminC: { amount: 2.6, unit: "mg", dv: 3 },
+      potassium: { amount: 684, unit: "mg", dv: 15 },
+    },
+    keyNutrients: [
+      { key: "protein", label: "24g Protein" },
+      { key: "fiber", label: "9.1g Fiber" },
+      { key: "calcium", label: "468mg Calcium" },
+      { key: "iron", label: "3.9mg Iron" },
+    ],
+    ingredients: [
+      { amount: "2 cups (480 g)", item: "unsweetened soy milk — about 8 g protein per cup; oat or almond milk work but lower the protein total" },
+      { amount: "1/2 cup (122 g)", item: "canned pumpkin purée (not pumpkin pie filling)" },
+      { amount: "1/4 cup (40 g)", item: "chia seeds" },
+      { amount: "1 scoop (~30 g)", item: "unflavored or vanilla whey or plant protein powder — nutrition calculated with generic whey; values vary by brand. Check the label if you need certified gluten-free" },
+      { amount: "1 tbsp (20 g)", item: "maple syrup" },
+      { amount: "1 tsp", item: "pumpkin pie spice" },
+      { amount: "1/2 tsp", item: "vanilla extract" },
+      { amount: "1 pinch", item: "salt" },
+    ],
+    steps: [
+      {
+        title: "Whisk the base",
+        text: "In a medium bowl, whisk the soy milk, pumpkin purée, protein powder, maple syrup, pumpkin pie spice, vanilla and salt until completely smooth. Dissolving the powder fully now keeps the pudding lump-free later.",
+      },
+      {
+        title: "Stir in the chia — twice",
+        text: "Stir in the chia seeds. Let the mixture sit for 2 minutes, then whisk again to break up any clumps. That second stir is the secret to a smooth pudding.",
+      },
+      {
+        title: "Chill overnight",
+        text: "Divide between two jars or containers, cover and refrigerate for at least 3 hours — overnight is best. The texture thickens further on day two.",
+      },
+      {
+        title: "Serve",
+        text: "Give it a good stir before eating and thin with a splash of milk if you like it looser. Top with toasted pumpkin seeds, a dollop of Greek yogurt or a drizzle of almond butter.",
+      },
+    ],
+    tags: {
+      nutrients: ["protein", "fiber", "calcium", "iron"],
+      diets: ["gluten-free"],
+      meals: ["breakfast", "snack"],
+    },
+    faqs: [
+      {
+        q: "How long does it take to make?",
+        a: "Two minutes of whisking, then at least 3 hours in the fridge. Overnight is best.",
+      },
+      {
+        q: "How much protein per serving?",
+        a: "About 24 grams per serving with unsweetened soy milk and whey protein powder, calculated from USDA FoodData Central ingredient data. It drops a few grams with oat or almond milk, or with a plant protein powder — check your powder's label.",
+      },
+      {
+        q: "Can I make it vegan?",
+        a: "Yes — use a plant milk and a vegan protein powder (pea, soy, or blend), with maple syrup instead of honey.",
+      },
+      {
+        q: "Why is my pudding lumpy?",
+        a: "Whisk again at the 2-minute mark after the chia starts absorbing liquid. That second whisk is the secret.",
+      },
+      {
+        q: "Does it taste like pumpkin pie?",
+        a: "Not really — it's more like spiced pumpkin oatmeal in pudding form. Less sweet, more breakfast.",
+      },
+      {
+        q: "Can I freeze it?",
+        a: "Don't — the chia texture breaks down oddly after thawing. It keeps 4–5 days in airtight containers in the fridge, so prep only what you'll eat that week.",
+      },
+    ],
+    whyItHelps: {
+      goal: "A high-protein fall breakfast",
+      text: "Two minutes of whisking the night before, and breakfast is waiting. Soy milk and protein powder carry the load here: per the USDA FoodData Central ingredient calculation, one jar lands at about 303 kcal with 24.3g protein, 9.1g fiber and 468mg calcium — a make-ahead fall breakfast with real staying power. Recipe method adapted from Eating Bird Food's Pumpkin Chia Pudding (Brittany Mullins); we swapped in soy milk and protein powder for the protein boost and calculated the nutrition from USDA FoodData Central ingredient data.",
+    },
+    source: "cached-verified",
+    kitchenTested: false,
+    datePublished: "2026-09-29",
+    dateModified: "2026-09-29",
+  },
+  {
+    slug: "high-fiber-roasted-butternut-squash-soup",
+    title: "High Fiber Roasted Butternut Squash Soup",
+    description:
+      "A cozy, fiber-rich roasted butternut squash soup that supports digestion and keeps you full. Simple ingredients, big flavor.",
+    image: "/images/high-fiber-roasted-butternut-squash-soup.webp",
+    imageAlt:
+      "Rustic ceramic bowl of velvety roasted butternut squash soup with a coconut milk swirl, toasted pumpkin seeds and fresh herbs, on a cream tablecloth with a deep-green napkin and roasted squash cubes",
+    prepTime: "PT15M",
+    cookTime: "PT40M",
+    totalTime: "PT55M",
+    prepMinutes: 15,
+    cookMinutes: 40,
+    totalMinutes: 55,
+    servings: 4,
+    calories: 316,
+    nutrition: {
+      calories: { amount: 316, unit: "kcal", dv: 16 },
+      protein: { amount: 9.9, unit: "g", dv: 20 },
+      fat: { amount: 11.4, unit: "g", dv: 15 },
+      carbs: { amount: 49.5, unit: "g", dv: 18 },
+      fiber: { amount: 9.3, unit: "g", dv: 33 },
+      sugar: { amount: 8.2, unit: "g", dv: 16 },
+      sodium: { amount: 720, unit: "mg", dv: 31 },
+      iron: { amount: 4.6, unit: "mg", dv: 26 },
+      calcium: { amount: 189, unit: "mg", dv: 15 },
+      vitaminC: { amount: 51.8, unit: "mg", dv: 58 },
+      potassium: { amount: 1276, unit: "mg", dv: 27 },
+    },
+    keyNutrients: [
+      { key: "fiber", label: "9.3g Fiber" },
+      { key: "vitaminC", label: "52mg Vitamin C" },
+      { key: "potassium", label: "1276mg Potassium" },
+      { key: "iron", label: "4.6mg Iron" },
+    ],
+    ingredients: [
+      { amount: "1 medium (about 907 g)", item: "butternut squash (about 2 lb), peeled, seeded and cubed" },
+      { amount: "1 medium (150 g)", item: "yellow onion, chopped" },
+      { amount: "2 cloves (6 g)", item: "garlic" },
+      { amount: "1 can (15 oz), drained", item: "white beans (cannellini), rinsed" },
+      { amount: "4 cups (946 g)", item: "low-sodium vegetable broth" },
+      { amount: "1 tsp (2 g)", item: "ground cumin" },
+      { amount: "1/2 tsp (1 g)", item: "smoked paprika" },
+      { amount: "1 cup (240 g)", item: "light coconut milk" },
+      { amount: "2 tbsp (27 g)", item: "olive oil" },
+      { amount: "to taste", item: "salt and freshly ground black pepper" },
+      { amount: "optional", item: "toasted pumpkin seeds, a drizzle of tahini, fresh herbs" },
+    ],
+    steps: [
+      {
+        title: "Roast the vegetables",
+        text: "Preheat the oven to 425°F (220°C). Toss the squash cubes, onion and garlic with the olive oil, salt and pepper. Spread on a sheet pan and roast 25–30 minutes, until caramelized and fork-tender.",
+      },
+      {
+        title: "Simmer",
+        text: "Transfer the roasted vegetables to a large pot. Add the drained white beans, vegetable broth, cumin and smoked paprika. Bring to a gentle simmer and cook 10 minutes.",
+      },
+      {
+        title: "Blend",
+        text: "Purée the soup until smooth with an immersion blender, or work in batches in a countertop blender with the lid vented so steam can escape.",
+      },
+      {
+        title: "Finish",
+        text: "Stir in the light coconut milk and heat through gently without boiling. Season with salt and pepper to taste.",
+      },
+      {
+        title: "Serve",
+        text: "Ladle into bowls and top with toasted pumpkin seeds, a drizzle of tahini and fresh herbs. Makes 4 generous servings.",
+      },
+    ],
+    tags: {
+      nutrients: ["fiber", "vitaminC", "potassium"],
+      diets: ["gluten-free", "dairy-free", "vegan"],
+      meals: ["dinner", "lunch"],
+    },
+    faqs: [
+      {
+        q: "How much fiber is in a serving?",
+        a: "About 9.3 grams per bowl, calculated from USDA FoodData Central ingredient data — roughly a third of the 28g daily value, mostly from the squash and white beans.",
+      },
+      {
+        q: "Can I make this soup ahead of time?",
+        a: "Yes. The flavors deepen overnight. Cool completely, then store in the fridge up to 4 days or freeze up to 3 months. Reheat gently on the stove, adding a splash of broth or water if it thickens.",
+      },
+      {
+        q: "Is this soup gluten-free and vegan?",
+        a: "As written, it is gluten-free, dairy-free, and vegan. Check your vegetable broth and toppings to be sure.",
+      },
+      {
+        q: "What can I serve with this soup?",
+        a: "A slice of whole-grain bread, a simple green salad, or a side of roasted chickpeas for extra crunch.",
+      },
+      {
+        q: "Can I use frozen butternut squash?",
+        a: "Absolutely. Roast frozen cubes straight from the bag — they may need a few extra minutes to caramelize.",
+      },
+    ],
+    whyItHelps: {
+      goal: "A high-fiber fall dinner",
+      text: "Cubed butternut squash, onion and garlic get roasted until caramelized, then blended with white beans, vegetable broth and light coconut milk for a naturally creamy soup. Per the USDA FoodData Central ingredient calculation, one bowl lands at about 316 kcal with 9.3g fiber, 52mg vitamin C and 1276mg potassium. Recipe method adapted from Ambitious Kitchen's Vegan White Bean & Roasted Butternut Squash Soup (Monique Volz); we cubed and sheet-pan roasted the squash and adjusted the spices, and calculated the nutrition from USDA FoodData Central ingredient data.",
+    },
+    source: "cached-verified",
+    kitchenTested: false,
+    datePublished: "2026-09-29",
+    dateModified: "2026-09-29",
+  },
 ];
 
 /**
