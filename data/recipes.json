@@ -5,7 +5,7 @@
     "canonicalBase": "https://recipe-seeker-client.vercel.app"
   },
   "meta": {
-    "recipes": 56
+    "recipes": 58
   },
   "recipes": [
     {
@@ -12679,6 +12679,402 @@
       "kitchenTested": false,
       "datePublished": "2026-09-29",
       "dateModified": "2026-09-29"
+    },
+    {
+      "slug": "high-protein-pumpkin-spice-shake",
+      "title": "High Protein Pumpkin Spice Shake",
+      "description": "Blend a high protein pumpkin spice shake with real pumpkin, Greek yogurt, and warm spices — 30g protein, ready in 5 minutes.",
+      "image": "/images/high-protein-pumpkin-spice-shake.webp",
+      "imageAlt": "Tall glass of creamy pumpkin spice shake topped with whipped cream and cinnamon, with a mini pumpkin and cinnamon sticks on a cream cloth",
+      "prepTime": "PT5M",
+      "cookTime": "PT0M",
+      "totalTime": "PT5M",
+      "prepMinutes": 5,
+      "cookMinutes": 0,
+      "totalMinutes": 5,
+      "servings": 1,
+      "calories": 301,
+      "nutrition": {
+        "calories": {
+          "amount": 301,
+          "unit": "kcal",
+          "dv": 15
+        },
+        "protein": {
+          "amount": 44.5,
+          "unit": "g",
+          "dv": 89
+        },
+        "fat": {
+          "amount": 3.3,
+          "unit": "g",
+          "dv": 4
+        },
+        "carbs": {
+          "amount": 25.6,
+          "unit": "g",
+          "dv": 9
+        },
+        "fiber": {
+          "amount": 4.8,
+          "unit": "g",
+          "dv": 17
+        },
+        "sugar": {
+          "amount": 16,
+          "unit": "g",
+          "dv": 32
+        },
+        "sodium": {
+          "amount": 401,
+          "unit": "mg",
+          "dv": 17
+        },
+        "iron": {
+          "amount": 2.7,
+          "unit": "mg",
+          "dv": 15
+        },
+        "calcium": {
+          "amount": 720,
+          "unit": "mg",
+          "dv": 55
+        },
+        "vitaminC": {
+          "amount": 5,
+          "unit": "mg",
+          "dv": 6
+        },
+        "potassium": {
+          "amount": 798,
+          "unit": "mg",
+          "dv": 17
+        }
+      },
+      "keyNutrients": [
+        {
+          "key": "protein",
+          "label": "44g Protein"
+        },
+        {
+          "key": "calcium",
+          "label": "720mg Calcium"
+        },
+        {
+          "key": "potassium",
+          "label": "798mg Potassium"
+        }
+      ],
+      "ingredients": [
+        {
+          "amount": "3/4 cup (184 g)",
+          "item": "plain nonfat Greek yogurt (or 1/2 cup low-fat cottage cheese)"
+        },
+        {
+          "amount": "1 scoop (~25-30 g)",
+          "item": "unflavored or vanilla whey protein isolate — nutrition calculated with a generic whey powder; values vary by brand. Check the label if you need certified gluten-free"
+        },
+        {
+          "amount": "1/2 cup (122 g)",
+          "item": "canned pumpkin purée (not pumpkin pie filling)"
+        },
+        {
+          "amount": "3/4 cup (183 g)",
+          "item": "unsweetened almond milk (or milk of choice)"
+        },
+        {
+          "amount": "1 tsp",
+          "item": "pumpkin pie spice"
+        },
+        {
+          "amount": "1 tsp",
+          "item": "maple syrup or honey (optional)"
+        },
+        {
+          "amount": "1/2 cup",
+          "item": "ice"
+        },
+        {
+          "amount": "1 pinch",
+          "item": "salt"
+        }
+      ],
+      "steps": [
+        {
+          "title": "Add liquids first",
+          "text": "Add liquids first (milk, then yogurt/cottage cheese) to the blender."
+        },
+        {
+          "title": "Add the rest",
+          "text": "Add protein powder, pumpkin, spice, sweetener, salt, and ice."
+        },
+        {
+          "title": "Blend",
+          "text": "Blend 30-45 seconds until smooth and thick. Scrape down sides if needed."
+        },
+        {
+          "title": "Taste and serve",
+          "text": "Taste and adjust spice or sweetness. Pour and drink immediately, or refrigerate up to 24 hours."
+        }
+      ],
+      "tags": {
+        "nutrients": [
+          "protein",
+          "calcium",
+          "potassium"
+        ],
+        "diets": [
+          "vegetarian"
+        ],
+        "meals": [
+          "breakfast",
+          "snack"
+        ]
+      },
+      "faqs": [
+        {
+          "q": "Can I use pumpkin pie filling instead of pumpkin puree?",
+          "a": "Not recommended. Pie filling contains added sugar and spices that throw off the balance. Use 100% pumpkin puree and control the spice yourself."
+        },
+        {
+          "q": "Does the protein powder make it gritty?",
+          "a": "Whey isolate blends smoothly. Plant proteins can be grainier — blend longer or use a high-speed blender. Adding ice helps emulsify."
+        },
+        {
+          "q": "How long does it keep in the fridge?",
+          "a": "Up to 24 hours for best texture. After that the pumpkin fiber continues absorbing liquid and it becomes pudding-thick — still edible, just eat with a spoon."
+        },
+        {
+          "q": "Is this actually high protein?",
+          "a": "Yes. The Greek yogurt + whey combination delivers roughly 30g protein per serving — a solid protein serving for a main meal."
+        },
+        {
+          "q": "Can I make it without a blender?",
+          "a": "Use an immersion blender in a tall jar, or whisk vigorously in a shaker bottle (though the pumpkin puree may leave small flecks). A blender gives the creamiest result."
+        }
+      ],
+      "whyItHelps": {
+        "goal": "protein",
+        "text": "Recipe method developed in-house for The Recipe Seeker: Greek yogurt and whey protein carry the 44g protein total while pumpkin and almond milk keep it light. Nutrition calculated from USDA FoodData Central ingredient data."
+      },
+      "source": "cached-verified",
+      "kitchenTested": false,
+      "datePublished": "2026-09-30",
+      "dateModified": "2026-09-30"
+    },
+    {
+      "slug": "high-fiber-pumpkin-baked-oatmeal-cups",
+      "title": "High Fiber Pumpkin Baked Oatmeal Cups",
+      "description": "Portable, make-ahead oatmeal cups packed with pumpkin, oats, and chia for a fiber-rich breakfast you can grab all week.",
+      "image": "/images/high-fiber-pumpkin-baked-oatmeal-cups.webp",
+      "imageAlt": "Freshly baked pumpkin oatmeal cups in a muffin tin, one broken open, with a mini pumpkin and cinnamon sticks on a cream cloth",
+      "prepTime": "PT10M",
+      "cookTime": "PT25M",
+      "totalTime": "PT35M",
+      "prepMinutes": 10,
+      "cookMinutes": 25,
+      "totalMinutes": 35,
+      "servings": 10,
+      "calories": 228,
+      "nutrition": {
+        "calories": {
+          "amount": 228,
+          "unit": "kcal",
+          "dv": 11
+        },
+        "protein": {
+          "amount": 8.4,
+          "unit": "g",
+          "dv": 17
+        },
+        "fat": {
+          "amount": 9.6,
+          "unit": "g",
+          "dv": 12
+        },
+        "carbs": {
+          "amount": 28.8,
+          "unit": "g",
+          "dv": 10
+        },
+        "fiber": {
+          "amount": 5.3,
+          "unit": "g",
+          "dv": 19
+        },
+        "sugar": {
+          "amount": 9.5,
+          "unit": "g",
+          "dv": 19
+        },
+        "sodium": {
+          "amount": 141,
+          "unit": "mg",
+          "dv": 6
+        },
+        "iron": {
+          "amount": 2.2,
+          "unit": "mg",
+          "dv": 12
+        },
+        "calcium": {
+          "amount": 114,
+          "unit": "mg",
+          "dv": 9
+        },
+        "vitaminC": {
+          "amount": 1.2,
+          "unit": "mg",
+          "dv": 1
+        },
+        "potassium": {
+          "amount": 296,
+          "unit": "mg",
+          "dv": 6
+        }
+      },
+      "keyNutrients": [
+        {
+          "key": "fiber",
+          "label": "5.3g Fiber"
+        },
+        {
+          "key": "protein",
+          "label": "8.4g Protein"
+        },
+        {
+          "key": "iron",
+          "label": "2.2mg Iron"
+        }
+      ],
+      "ingredients": [
+        {
+          "amount": "2 1/2 cups (225 g)",
+          "item": "rolled oats (certified gluten-free if needed)"
+        },
+        {
+          "amount": "1 cup (245 g)",
+          "item": "canned pumpkin purée (not pumpkin pie filling)"
+        },
+        {
+          "amount": "2 large",
+          "item": "eggs or 2 flax eggs (2 Tbsp ground flax + 6 Tbsp water, rested 5 min)"
+        },
+        {
+          "amount": "1 1/2 cups (366 g)",
+          "item": "milk of choice (dairy or plant)"
+        },
+        {
+          "amount": "1/3 cup (107 g)",
+          "item": "maple syrup or honey"
+        },
+        {
+          "amount": "3 Tbsp (36 g)",
+          "item": "chia seeds"
+        },
+        {
+          "amount": "2 Tbsp (20 g)",
+          "item": "ground flaxseed"
+        },
+        {
+          "amount": "1/2 cup (60 g)",
+          "item": "chopped walnuts, pecans, or pepitas"
+        },
+        {
+          "amount": "1 tsp",
+          "item": "baking powder"
+        },
+        {
+          "amount": "1 1/2 tsp",
+          "item": "cinnamon"
+        },
+        {
+          "amount": "1/2 tsp",
+          "item": "ginger"
+        },
+        {
+          "amount": "1/4 tsp",
+          "item": "nutmeg"
+        },
+        {
+          "amount": "1/4 tsp",
+          "item": "salt"
+        },
+        {
+          "amount": "Optional: 1/2 cup",
+          "item": "raisins or chocolate chips"
+        }
+      ],
+      "steps": [
+        {
+          "title": "Heat the oven",
+          "text": "Preheat oven to 375°F (190°C). Grease a 12-cup muffin tin or line with parchment liners."
+        },
+        {
+          "title": "Whisk the wet mix",
+          "text": "In a large bowl, whisk pumpkin, eggs, milk, maple syrup, chia seeds, and ground flaxseed until smooth."
+        },
+        {
+          "title": "Fold in the dry mix",
+          "text": "Stir in oats, baking powder, spices, and salt. Fold in the walnuts (and raisins or chocolate chips if using)."
+        },
+        {
+          "title": "Fill the tin",
+          "text": "Divide batter evenly among 10 muffin cups — they will be full."
+        },
+        {
+          "title": "Bake",
+          "text": "Bake 22-25 minutes, until tops are set and a toothpick comes out mostly clean."
+        },
+        {
+          "title": "Cool",
+          "text": "Cool in tin 10 minutes, then remove to a rack."
+        }
+      ],
+      "tags": {
+        "nutrients": [
+          "fiber",
+          "protein",
+          "iron"
+        ],
+        "diets": [
+          "vegetarian"
+        ],
+        "meals": [
+          "breakfast",
+          "snack"
+        ]
+      },
+      "faqs": [
+        {
+          "q": "How much fiber is in each cup?",
+          "a": "About 5.3g per cup, calculated from USDA FoodData Central ingredient data for oats, pumpkin, chia seeds, flaxseed, and walnuts. Exact amount varies with add-ins."
+        },
+        {
+          "q": "Can I make these without eggs?",
+          "a": "Yes — flax eggs work well. Mix 2 Tbsp ground flaxseed with 6 Tbsp water, let sit 5 minutes, then use in place of the two eggs."
+        },
+        {
+          "q": "Do they freeze well?",
+          "a": "Freeze cooled cups on a tray, then bag them. Reheat straight from frozen in the microwave — no need to thaw overnight."
+        },
+        {
+          "q": "Can I use quick oats instead of rolled oats?",
+          "a": "You can, but the texture will be softer and less chewy. Reduce milk by 1/4 cup if using quick oats."
+        },
+        {
+          "q": "Are these gluten-free?",
+          "a": "They are if you use certified gluten-free oats. Oats are naturally gluten-free but often processed on shared equipment."
+        }
+      ],
+      "whyItHelps": {
+        "goal": "fiber",
+        "text": "Recipe method developed in-house for The Recipe Seeker: oats, pumpkin, chia, flax, and walnuts stack to 5.3g fiber per cup with no refined sugar. Nutrition calculated from USDA FoodData Central ingredient data."
+      },
+      "source": "cached-verified",
+      "kitchenTested": false,
+      "datePublished": "2026-09-30",
+      "dateModified": "2026-09-30"
     }
   ],
   "nutrients": [
