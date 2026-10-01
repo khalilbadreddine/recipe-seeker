@@ -4939,13 +4939,13 @@ export const recipes = [
     cookMinutes: 30,
     totalMinutes: 50,
     servings: 4,
-    calories: 454,
+    calories: 686,
     nutrition: {
-      calories: { amount: 454, unit: "kcal", dv: 23 },
+      calories: { amount: 686, unit: "kcal", dv: 34 },
       protein: { amount: 22.7, unit: "g", dv: 45 },
       fat: { amount: 25.6, unit: "g", dv: 33 },
       carbs: { amount: 90.8, unit: "g", dv: 33 },
-      fiber: { amount: 9.4, unit: "g", dv: 34 },
+      fiber: { amount: 18.6, unit: "g", dv: 66 },
       sugar: { amount: 10.9, unit: "g", dv: 22 },
       sodium: { amount: 564, unit: "mg", dv: 25 },
       iron: { amount: 6.5, unit: "mg", dv: 36 },
@@ -4957,7 +4957,7 @@ export const recipes = [
       vitaminA: { amount: 1125, unit: "mcg", dv: 125 },
     },
     keyNutrients: [
-      { key: "fiber", label: "9g Fiber" },
+      { key: "fiber", label: "19g Fiber" },
       { key: "potassium", label: "1366mg Potassium" },
       { key: "magnesium", label: "256mg Magnesium" },
       { key: "folate", label: "171mcg Folate" },
@@ -5037,7 +5037,7 @@ export const recipes = [
     },
     source: "cached-verified",
     datePublished: "2026-09-22",
-    dateModified: "2026-09-22",
+    dateModified: "2026-10-01",
   },
   {
     slug: "apple-pie-overnight-oats",
@@ -5592,7 +5592,7 @@ export const recipes = [
     slug: "high-fiber-apple-crisp",
     title: "High Fiber Apple Crisp (Oat, Walnut & Flax Topping)",
     description:
-      "Warm cinnamon apples under a crunchy oat, walnut, and flaxseed crumble. 6.7g fiber per serving, sweetened only with maple syrup.",
+      "Warm cinnamon apples under a crunchy oat, walnut, and flaxseed crumble. 9.6g fiber per serving, sweetened only with maple syrup.",
     image: "/images/high-fiber-apple-crisp.webp",
     imageAlt: "Baked apple crisp with golden oat-walnut crumble in a cream ceramic dish, one serving in a bowl beside it, on a deep green cloth",
     prepTime: "PT15M",
@@ -5602,13 +5602,13 @@ export const recipes = [
     cookMinutes: 40,
     totalMinutes: 55,
     servings: 6,
-    calories: 236,
+    calories: 427,
     nutrition: {
-      calories: { amount: 236, unit: "kcal", dv: 12 },
+      calories: { amount: 427, unit: "kcal", dv: 21 },
       protein: { amount: 7.7, unit: "g", dv: 15 },
       fat: { amount: 22.1, unit: "g", dv: 28 },
       carbs: { amount: 58.6, unit: "g", dv: 21 },
-      fiber: { amount: 6.7, unit: "g", dv: 24 },
+      fiber: { amount: 9.6, unit: "g", dv: 34 },
       sugar: { amount: 34.4, unit: "g", dv: 69 },
       sodium: { amount: 6, unit: "mg", dv: 0 },
       iron: { amount: 1.8, unit: "mg", dv: 10 },
@@ -5617,7 +5617,7 @@ export const recipes = [
       potassium: { amount: 433, unit: "mg", dv: 9 },
     },
     keyNutrients: [
-      { key: "fiber", label: "6.7g Fiber" },
+      { key: "fiber", label: "9.6g Fiber" },
       { key: "protein", label: "7.7g Protein" },
       { key: "potassium", label: "433mg Potassium" },
     ],
@@ -5652,11 +5652,11 @@ export const recipes = [
     faqs: [
       {
         q: "How much fiber is in each serving?",
-        a: "About 6.7g per serving (24% of the daily value), calculated from USDA FoodData Central ingredient data for skin-on apples, oats, almond flour, walnuts, and ground flaxseed. Keeping the apple skin on adds roughly 0.8g fiber per serving.",
+        a: "About 9.6g per serving (34% of the daily value), calculated from USDA FoodData Central ingredient data for skin-on apples, oats, almond flour, walnuts, and ground flaxseed. Keeping the apple skin on adds roughly 1.8g fiber per serving.",
       },
       {
         q: "Can I peel the apples?",
-        a: "Yes — the crisp still works, but you lose about 0.8g fiber per serving. Thin-skinned varieties like Gala or Fuji barely register once baked, so keep them on if you can.",
+        a: "Yes — the crisp still works, but you lose about 1.8g fiber per serving. Thin-skinned varieties like Gala or Fuji barely register once baked, so keep them on if you can.",
       },
       {
         q: "Is this apple crisp gluten-free?",
@@ -5677,7 +5677,7 @@ export const recipes = [
     ],
     whyItHelps: {
       goal: "fiber",
-      text: "Recipe method developed in-house for The Recipe Seeker, informed by the oat-nut-maple crisp structures published by Columbus Community Hospital's diabetes education program and Aultman Health. Skin-on apples, oats, walnuts, almond flour, and ground flaxseed stack to 6.7g fiber per serving with no refined sugar. Nutrition calculated from USDA FoodData Central ingredient data — apple energy and vitamin C use USDA standard reference values (52 kcal / 4.6 mg per 100g), since the FDC search record omits those rows.",
+      text: "Recipe method developed in-house for The Recipe Seeker, informed by the oat-nut-maple crisp structures published by Columbus Community Hospital's diabetes education program and Aultman Health. Skin-on apples, oats, walnuts, almond flour, and ground flaxseed stack to 9.6g fiber per serving with no refined sugar. Nutrition calculated from USDA FoodData Central ingredient data — apple energy and vitamin C use USDA standard reference values (52 kcal / 4.6 mg per 100g), since the FDC search record omits those rows.",
     },
     source: "cached-verified",
     kitchenTested: false,
