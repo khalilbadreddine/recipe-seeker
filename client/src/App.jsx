@@ -4,6 +4,7 @@ import { AuthProvider } from './context/AuthContext'
 import { FavoritesProvider } from './context/FavoritesContext'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
+import MobileTabBar from './components/MobileTabBar'
 import Home from './pages/Home'
 import RecipePage from './pages/RecipePage'
 import RecipesIndex from './pages/RecipesIndex'
@@ -39,8 +40,11 @@ export default function App() {
       <FavoritesProvider>
         <div className="flex min-h-screen flex-col">
       <ScrollToTop />
+      <a href="#main" className="sr-only z-50 rounded-full bg-ink px-4 py-2 text-paper focus:not-sr-only focus:fixed focus:left-4 focus:top-4">
+        Skip to content
+      </a>
       <Navbar />
-      <main className="flex-1">
+      <main id="main" className="flex-1">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/recipes" element={<RecipesIndex />} />
@@ -64,6 +68,7 @@ export default function App() {
         </Routes>
       </main>
       <Footer />
+      <MobileTabBar />
         </div>
       </FavoritesProvider>
     </AuthProvider>

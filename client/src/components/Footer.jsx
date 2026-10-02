@@ -1,84 +1,95 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import { guides } from '../data/site'
-import { LogoMark } from './Navbar'
-
-const NUTRITION_GOALS = [
-  { label: 'Iron', to: '/nutrients/iron' },
-  { label: 'Protein', to: '/nutrients/protein' },
-  { label: 'Fiber', to: '/nutrients/fiber' },
-  { label: 'Vitamin C', to: '/nutrients/vitamin-c' },
-  { label: 'Zinc', to: '/nutrients/zinc' },
-]
+import { guides, nutrients, recipes } from '../data/site'
+import { nutrientMeta } from '../data/nutrientMeta'
+import { LogoMark, Wordmark } from './Navbar'
 
 const COMPANY = [
-  { label: 'About', to: '/about' },
+  { label: 'About Emily', to: '/about' },
   { label: 'Contact', to: '/contact' },
-  { label: 'Disclaimer', to: '/disclaimer' },
+  { label: 'Medical disclaimer', to: '/disclaimer' },
   { label: 'Privacy', to: '/privacy' },
 ]
 
 export default function Footer() {
   return (
-    <footer className="bg-forest-deep text-cream/90">
-      <div className="mx-auto grid max-w-6xl gap-10 px-4 py-14 sm:px-6 md:grid-cols-[1.3fr_1fr_1fr_1fr_1.4fr]">
-        <div>
-          <div className="flex items-center gap-2.5">
-            <LogoMark className="h-9 w-9" />
-            <span className="font-display text-lg font-semibold text-cream">The Recipe Seeker</span>
+    <footer className="mt-20 bg-ink text-paper/85">
+      <div className="mx-auto max-w-7xl px-4 pt-14 sm:px-6">
+        {/* Nutrient strip */}
+        <div className="flex flex-col gap-6 border-b border-paper/10 pb-10 lg:flex-row lg:items-end lg:justify-between">
+          <div className="max-w-md">
+            <p className="font-display text-3xl font-bold leading-tight text-paper sm:text-4xl">
+              Cook for what your body <span className="text-zest">actually needs.</span>
+            </p>
+            <p className="mt-3 text-sm leading-relaxed text-paper/60">
+              {recipes.length} recipes with real per-serving nutrition from USDA data. No fluff, no miracle claims.
+            </p>
           </div>
-          <p className="mt-3 max-w-xs text-sm leading-relaxed text-cream/70">
-            Nutrition-first recipes for real life. Balanced, wholesome, delicious.
-          </p>
+          <ul className="flex flex-wrap gap-2 lg:max-w-xl lg:justify-end">
+            {nutrients.map((n) => (
+              <li key={n.key}>
+                <Link
+                  to={`/nutrients/${n.slug || n.key}`}
+                  className="inline-flex min-h-[36px] items-center gap-2 rounded-full border border-paper/15 px-3.5 text-sm text-paper/80 hover:border-paper/40 hover:text-paper"
+                >
+                  <span aria-hidden="true" className="h-2 w-2 rounded-full" style={{ backgroundColor: nutrientMeta(n.key).color }} />
+                  {n.name}
+                </Link>
+              </li>
+            ))}
+          </ul>
         </div>
-        <nav aria-label="Explore">
-          <h3 className="font-display text-base font-semibold text-cream">Explore</h3>
-          <ul className="mt-3 space-y-2 text-sm">
-            <li><Link to="/recipes" className="hover:text-ember">All Recipes</Link></li>
-            <li><Link to="/nutrients" className="hover:text-ember">By Nutrient</Link></li>
-            {guides.map((g) => (
-              <li key={g.slug}><Link to={`/guides/${g.slug}`} className="hover:text-ember">{g.title}</Link></li>
-            ))}
-            <li><Link to="/fibermax-reset" className="hover:text-ember">Fibermax Reset <span className="text-cream/60">· 14-day meal plan</span></Link></li>
-            <li><Link to="/blog" className="hover:text-ember">Blog</Link></li>
-            <li><Link to="/day-builder" className="hover:text-ember">My Day — meal builder</Link></li>
-            <li><Link to="/saved" className="hover:text-ember">Saved recipes</Link></li>
-          </ul>
-        </nav>
-        <nav aria-label="Nutrition goals">
-          <h3 className="font-display text-base font-semibold text-cream">Nutrition goals</h3>
-          <ul className="mt-3 space-y-2 text-sm">
-            {NUTRITION_GOALS.map((g) => (
-              <li key={g.to}><Link to={g.to} className="hover:text-ember">{g.label}</Link></li>
-            ))}
-          </ul>
-        </nav>
-        <nav aria-label="Company">
-          <h3 className="font-display text-base font-semibold text-cream">Company</h3>
-          <ul className="mt-3 space-y-2 text-sm">
-            {COMPANY.map((c) => (
-              <li key={c.to}><Link to={c.to} className="hover:text-ember">{c.label}</Link></li>
-            ))}
-          </ul>
-        </nav>
-        <div>
-          <h3 className="font-display text-base font-semibold text-cream">Free meal plan</h3>
-          <p className="mt-3 text-sm text-cream/70">Get our 7-day high-protein meal plan, free.</p>
-          <a
-            href="/downloads/7-day-high-protein-meal-plan.pdf"
-            download
-            className="mt-3 inline-flex items-center gap-2 rounded-full bg-ember-dark px-5 py-2.5 text-sm font-semibold text-white transition hover:brightness-110"
-          >
-            Download the PDF
-          </a>
-        </div>
-      </div>
-      <div className="border-t border-cream/15">
-        <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-3 px-4 py-5 text-xs text-cream/60 sm:flex-row sm:px-6">
-          <p>© 2026 The Recipe Seeker. All rights reserved. Made with nutrition in mind.</p>
-          <div className="flex gap-4">
-            <Link to="/search" className="hover:text-ember">Search</Link>
+
+        <div className="grid gap-10 py-12 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr_1fr]">
+          <div>
+            <Link to="/" className="inline-flex items-center gap-2.5" aria-label="The Recipe Seeker, home">
+              <LogoMark className="h-9 w-9" />
+              <Wordmark dark />
+            </Link>
+            <p className="mt-4 max-w-xs text-sm leading-relaxed text-paper/60">
+              Nutrition-first recipes for real life by Emily Carter, recipe developer &amp; nutrition enthusiast.
+            </p>
+            <a
+              href="/downloads/7-day-high-protein-meal-plan.pdf"
+              download
+              className="mt-5 inline-flex min-h-[44px] items-center gap-2 rounded-full bg-zest px-5 text-sm font-bold text-ink hover:brightness-95"
+            >
+              Free 7-day protein plan (PDF)
+            </a>
           </div>
+          <nav aria-label="Explore">
+            <h2 className="text-xs font-bold uppercase tracking-[0.18em] text-paper/50">Explore</h2>
+            <ul className="mt-4 space-y-2.5 text-[15px]">
+              <li><Link to="/recipes" className="hover:text-zest">All recipes</Link></li>
+              <li><Link to="/nutrients" className="hover:text-zest">Browse by nutrient</Link></li>
+              <li><Link to="/search" className="hover:text-zest">Nutrient search</Link></li>
+              <li><Link to="/day-builder" className="hover:text-zest">My Day planner</Link></li>
+              <li><Link to="/saved" className="hover:text-zest">Saved recipes</Link></li>
+            </ul>
+          </nav>
+          <nav aria-label="Read">
+            <h2 className="text-xs font-bold uppercase tracking-[0.18em] text-paper/50">Read</h2>
+            <ul className="mt-4 space-y-2.5 text-[15px]">
+              <li><Link to="/blog" className="hover:text-zest">Blog</Link></li>
+              {guides.map((g) => (
+                <li key={g.slug}><Link to={`/guides/${g.slug}`} className="hover:text-zest">{g.title}</Link></li>
+              ))}
+              <li><Link to="/fibermax-reset" className="hover:text-zest">Fibermax Reset · 14-day plan</Link></li>
+            </ul>
+          </nav>
+          <nav aria-label="Company">
+            <h2 className="text-xs font-bold uppercase tracking-[0.18em] text-paper/50">Company</h2>
+            <ul className="mt-4 space-y-2.5 text-[15px]">
+              {COMPANY.map((c) => (
+                <li key={c.to}><Link to={c.to} className="hover:text-zest">{c.label}</Link></li>
+              ))}
+            </ul>
+          </nav>
+        </div>
+
+        <div className="flex flex-col gap-2 border-t border-paper/10 py-6 text-xs text-paper/50 sm:flex-row sm:items-center sm:justify-between">
+          <p>© 2026 The Recipe Seeker. General information only, not medical advice.</p>
+          <p>Nutrition data: USDA FoodData Central</p>
         </div>
       </div>
     </footer>

@@ -1,15 +1,19 @@
-import React, { useMemo, useRef, useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import Seo from '../components/Seo'
 import JsonLd from '../components/JsonLd'
 import RecipeCard from '../components/RecipeCard'
+import PostCard from '../components/PostCard'
 import LeadMagnetCta from '../components/LeadMagnetCta'
 import ResponsiveImage from '../components/ResponsiveImage'
-import Reveal, { Parallax } from '../components/Reveal'
+import Reveal from '../components/Reveal'
+import Icon from '../components/Icon'
 import NutrientIcon from '../components/NutrientIcon'
-import { SITE_URL, absUrl, absImage, recipes, nutrients, site, getPost, getNutrient } from '../data/site'
+import { SectionHeading } from '../components/ContentBlocks'
+import { SITE_URL, absUrl, absImage, recipes, nutrients, site, getPost, getNutrient, formatAmount } from '../data/site'
+import { nutrientMeta, tint, topRecipesBy, recipesForNutrient } from '../data/nutrientMeta'
 
-/** Curated featured pool (slugs) — covers high-protein, iron-rich, and quick tabs. */
+/** Curated featured pool (slugs): covers high-protein, iron-rich, and quick tabs. */
 const FEATURED_POOL = [
   'salmon-kale-pesto-pasta',
   'spinach-feta-stuffed-chicken',
@@ -27,15 +31,12 @@ const FEATURED_POOL = [
 
 const TABS = [
   { id: 'all', label: 'All' },
-  { id: 'protein', label: 'High-Protein' },
-  { id: 'iron', label: 'Iron-Rich' },
-  { id: 'quick', label: 'Quick' },
+  { id: 'protein', label: 'High-protein' },
+  { id: 'iron', label: 'Iron-rich' },
+  { id: 'quick', label: 'Under 30 min' },
 ]
 
-function nutrientAmount(recipe, key) {
-  const n = recipe.nutrition[key]
-  return n ? n.amount || 0 : 0
-}
+const nutrientAmount = (recipe, key) => recipe.nutrition[key]?.amount || 0
 
 function matchesTab(recipe, tabId) {
   if (tabId === 'protein') return nutrientAmount(recipe, 'protein') >= 20
@@ -44,32 +45,93 @@ function matchesTab(recipe, tabId) {
   return true
 }
 
-/** Hero quick chips — every one links to a real destination. */
-const QUICK_CHIPS = [
-  { label: 'Iron', to: '/nutrients/iron', icon: 'iron' },
-  { label: 'High Protein', to: '/nutrients/protein', icon: 'protein' },
-  { label: 'Fiber', to: '/nutrients/fiber', icon: 'fiber' },
-  { label: 'Vitamin C', to: '/nutrients/vitamin-c', icon: 'vitamin-c' },
-  { label: 'Vegetarian', to: '/search?q=vegetarian' },
-  { label: 'Under 30 Minutes', to: '/search?maxTime=30' },
+/** Nutrients offered in the hero picker. */
+const PICKER = ['iron', 'protein', 'fiber', 'vitaminC', 'calcium', 'omega3']
+
+const POPULAR = [
+  { label: 'iron-rich dinner', to: '/search?nutrient=iron&min=4' },
+  { label: '30g protein', to: '/search?nutrient=protein&min=30' },
+  { label: 'vegetarian', to: '/search?q=vegetarian' },
+  { label: 'under 30 minutes', to: '/search?maxTime=30' },
 ]
 
-const LEARN_SLUGS = [
-  'iron-vitamin-c-food-pairings',
-  'foods-that-block-iron-absorption',
-  'what-to-eat-in-a-day-for-iron',
-]
+const LEARN_SLUGS = ['iron-vitamin-c-food-pairings', 'foods-that-block-iron-absorption', 'what-to-eat-in-a-day-for-iron']
 
-function GoalIcon({ kind }) {
-  const paths = {
-    clock: 'M12 7v5l3 2m6-2a9 9 0 11-18 0 9 9 0 0118 0z',
-    leaf: 'M5 19C5 9 13 5 20 4c0 8-4 15-13 15m0 0c3-5 7-9 11-11',
-    grid: 'M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z',
-  }
+/** Hero widget: "I need more ___" → the top recipes for that nutrient, with real numbers. */
+function NutrientPicker() {
+  const [active, setActive] = useState('iron')
+  const hub = getNutrient(active)
+  const meta = nutrientMeta(active)
+  const top = useMemo(() => topRecipesBy(active, 3), [active])
+  const count = hub ? recipesForNutrient(hub).length : 0
+  const dvNumber = hub ? parseFloat(hub.dailyValue) : 0
+
   return (
-    <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-      <path d={paths[kind] || paths.grid} />
-    </svg>
+    <div className="relative rounded-[2rem] bg-ink p-5 text-paper shadow-[var(--shadow-lift)] sm:p-7">
+      <p className="font-display text-2xl font-bold sm:text-3xl">
+        I need more <span className="text-zest">{hub?.name.toLowerCase()}</span>
+      </p>
+      <div className="no-scrollbar -mx-5 mt-4 overflow-x-auto px-5 sm:-mx-7 sm:px-7" role="tablist" aria-label="Choose a nutrient">
+        <div className="flex w-max gap-2">
+          {PICKER.map((key) => {
+            const n = getNutrient(key)
+            const on = key === active
+            return (
+              <button
+                key={key}
+                type="button"
+                role="tab"
+                aria-selected={on}
+                aria-controls="picker-panel"
+                onClick={() => setActive(key)}
+                className={`inline-flex min-h-[40px] items-center gap-2 rounded-full px-3.5 text-sm font-semibold ${
+                  on ? 'bg-paper text-ink' : 'bg-paper/10 text-paper/80 hover:bg-paper/20'
+                }`}
+              >
+                <span className="h-2 w-2 rounded-full" style={{ backgroundColor: nutrientMeta(key).color }} aria-hidden="true" />
+                {n?.name}
+              </button>
+            )
+          })}
+        </div>
+      </div>
+
+      <div id="picker-panel" role="tabpanel" aria-live="polite" className="mt-5">
+        <p className="text-xs font-bold uppercase tracking-[0.16em] text-paper/50">Top recipes per serving</p>
+        <ul key={active} className="mt-3 space-y-2.5">
+          {top.map((r, i) => {
+            const n = r.nutrition[active]
+            const pct = Math.min(100, Math.round(n.dv || (dvNumber ? (n.amount / dvNumber) * 100 : 0)))
+            return (
+              <li key={r.slug} className="pop-in" style={{ animationDelay: `${i * 60}ms` }}>
+                <Link to={`/recipes/${r.slug}`} className="flex items-center gap-3 rounded-2xl bg-paper/5 p-2.5 hover:bg-paper/10">
+                  <ResponsiveImage src={r.image} alt="" width={112} height={112} sizes="64px" loading="lazy" className="h-14 w-14 shrink-0 rounded-xl object-cover" />
+                  <span className="min-w-0 flex-1">
+                    <span className="block truncate text-[15px] font-semibold">{r.title}</span>
+                    <span className="mt-1.5 flex items-center gap-2">
+                      <span className="h-1.5 flex-1 overflow-hidden rounded-full bg-paper/15">
+                        <span className="block h-full rounded-full" style={{ width: `${pct}%`, backgroundColor: meta.color }} />
+                      </span>
+                      <span className="shrink-0 text-xs font-bold tabular-nums text-paper/80">
+                        {formatAmount(n.amount, n.unit)} · {pct}%
+                      </span>
+                    </span>
+                  </span>
+                </Link>
+              </li>
+            )
+          })}
+        </ul>
+        {hub && (
+          <Link
+            to={`/nutrients/${hub.slug || hub.key}`}
+            className="mt-5 inline-flex min-h-[44px] w-full items-center justify-center gap-2 rounded-full bg-zest px-5 text-sm font-bold text-ink hover:brightness-95"
+          >
+            See all {count} {hub.name.toLowerCase()} recipes <Icon name="arrowRight" className="h-4 w-4" strokeWidth={2.4} />
+          </Link>
+        )}
+      </div>
+    </div>
   )
 }
 
@@ -77,7 +139,6 @@ export default function Home() {
   const navigate = useNavigate()
   const [query, setQuery] = useState('')
   const [tab, setTab] = useState('all')
-  const searchRef = useRef(null)
 
   const canonical = absUrl('/')
   const title = 'The Recipe Seeker - Find Recipes by What Your Body Needs'
@@ -100,7 +161,7 @@ export default function Home() {
   const featuredRecipes = useMemo(() => {
     const pool = FEATURED_POOL.map((slug) => recipes.find((r) => r.slug === slug)).filter(Boolean)
     const filtered = pool.filter((r) => matchesTab(r, tab))
-    return tab === 'all' ? filtered.slice(0, 8) : filtered
+    return filtered.slice(0, 6)
   }, [tab])
 
   const itemListLd = {
@@ -116,48 +177,22 @@ export default function Home() {
     })),
   }
 
-  const goalCards = useMemo(() => {
+  const quickRecipes = useMemo(
+    () => [...recipes].filter((r) => (r.totalMinutes || 0) <= 20).sort((a, b) => a.totalMinutes - b.totalMinutes).slice(0, 10),
+    [],
+  )
+
+  const goals = useMemo(() => {
     const countBy = (fn) => recipes.filter(fn).length
     return [
-      {
-        title: 'I need more iron',
-        text: `${countBy((r) => (r.tags.nutrients || []).includes('iron'))} iron-rich recipes, from lentil bolognese to white bean shakshuka.`,
-        to: '/nutrients/iron',
-        icon: <NutrientIcon iconKey="iron" className="h-6 w-6" />,
-      },
-      {
-        title: 'I want high-protein meals',
-        text: 'Meals with 20g+ protein per serving — real food that keeps you full for hours.',
-        to: '/nutrients/protein',
-        icon: <NutrientIcon iconKey="protein" className="h-6 w-6" />,
-      },
-      {
-        title: 'Quick weeknight meals',
-        text: `${countBy((r) => (r.totalMinutes || 0) <= 30)} recipes on the table in 30 minutes or less. No compromise on nutrition.`,
-        to: '/search?maxTime=30',
-        icon: <GoalIcon kind="clock" />,
-      },
-      {
-        title: 'More fiber, please',
-        text: `${countBy((r) => (r.tags.nutrients || []).includes('fiber'))} fiber-packed recipes for gut-friendly, satisfying eating.`,
-        to: '/nutrients/fiber',
-        icon: <NutrientIcon iconKey="fiber" className="h-6 w-6" />,
-      },
-      {
-        title: 'Eat more plants',
-        text: `${countBy((r) => (r.tags.diets || []).includes('vegetarian'))} vegetarian recipes rich in the nutrients plants do best.`,
-        to: '/search?q=vegetarian',
-        icon: <GoalIcon kind="leaf" />,
-      },
-      {
-        title: 'Improve a nutrient',
-        text: `Browse all ${nutrients.length} nutrient hubs — zinc, B12, magnesium, calcium and more.`,
-        to: '/nutrients',
-        icon: <GoalIcon kind="grid" />,
-      },
+      { title: 'More energy', text: 'Iron-rich meals, paired with vitamin C for better absorption.', to: '/nutrients/iron', key: 'iron', count: countBy((r) => r.tags.nutrients.includes('iron')) },
+      { title: 'Stay full longer', text: '20g+ protein per serving from real food.', to: '/nutrients/protein', key: 'protein', count: countBy((r) => nutrientAmount(r, 'protein') >= 20) },
+      { title: 'Happy gut', text: 'Fiber-packed breakfasts, lunches and snacks.', to: '/nutrients/fiber', key: 'fiber', count: countBy((r) => r.tags.nutrients.includes('fiber')) },
+      { title: 'Strong bones', text: 'Calcium and vitamin D, without a glass of milk at every meal.', to: '/nutrients/calcium', key: 'calcium', count: countBy((r) => r.tags.nutrients.includes('calcium')) },
     ]
   }, [])
 
+  const vegCount = recipes.filter((r) => r.tags.diets.includes('vegetarian') || r.tags.diets.includes('vegan')).length
   const learnPosts = useMemo(() => LEARN_SLUGS.map((slug) => getPost(slug)).filter(Boolean), [])
 
   const submitSearch = (e) => {
@@ -170,117 +205,100 @@ export default function Home() {
       <Seo title={title} description={description} canonical={canonical} image={absImage('/images/hero-bowl.webp')} />
       <JsonLd data={[websiteLd, itemListLd]} />
 
-      {/* HERO — functional: search is the star */}
-      <section className="overflow-hidden">
-        <div className="mx-auto max-w-3xl px-4 pt-12 text-center sm:px-6 lg:pt-16">
-          <Reveal immediate variant="up">
-            <p className="text-xs font-bold uppercase tracking-[0.2em] text-ember-dark">Nutrition-first recipes</p>
-          </Reveal>
-          <Reveal as="h1" immediate variant="up" delay={70} className="mt-3 font-display text-4xl font-semibold leading-[1.05] text-forest sm:text-5xl lg:text-6xl">
-            Find recipes by what your body needs
-          </Reveal>
-          <Reveal as="p" immediate variant="up" delay={140} className="mx-auto mt-5 max-w-xl text-lg leading-relaxed text-forest/75">
-            Practical, delicious meals with per-serving nutrition information. Search by nutrient, diet, or craving.
-          </Reveal>
-          <Reveal as="form" immediate variant="up" delay={210} onSubmit={submitSearch} className="mx-auto mt-7 flex max-w-xl flex-col items-stretch gap-3 sm:flex-row sm:items-center" role="search">
-            <label htmlFor="home-search" className="sr-only">Search recipes</label>
-            <div className="relative w-full sm:flex-1">
-              <svg viewBox="0 0 24 24" className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-forest/40" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
-                <circle cx="11" cy="11" r="7" /><path d="M20 20l-3.5-3.5" />
-              </svg>
-              <input
-                ref={searchRef}
-                id="home-search"
-                type="search"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="Try “iron-rich dinner” or “30g protein”…"
-                className="w-full rounded-full border border-forest-line bg-cream-card py-4 pl-12 pr-5 text-base text-forest shadow-sm outline-none placeholder:text-forest/90 focus:border-ember"
-              />
-            </div>
-            <button type="submit" className="w-full shrink-0 rounded-full bg-ember-dark px-7 py-4 text-base font-semibold text-white shadow-sm transition hover:shadow-md sm:w-auto">
-              Find a recipe
-            </button>
-          </Reveal>
-          <Reveal immediate variant="up" delay={280} className="mt-6">
-            <div className="no-scrollbar -mx-4 overflow-x-auto px-4 pb-1 sm:mx-0 sm:overflow-visible sm:px-0">
-              <div className="flex w-max gap-2.5 sm:w-auto sm:flex-wrap sm:justify-center">
-                {QUICK_CHIPS.map((chip) => (
-                  <Link
-                    key={chip.label}
-                    to={chip.to}
-                    className="inline-flex min-h-[44px] items-center gap-2 whitespace-nowrap rounded-full border border-forest/25 bg-cream-card px-4 py-2.5 text-sm font-semibold text-forest transition hover:border-forest hover:bg-forest hover:text-cream"
-                  >
-                    {chip.icon && <NutrientIcon iconKey={chip.icon} />}
-                    {chip.label}
-                  </Link>
-                ))}
-              </div>
-            </div>
-          </Reveal>
-        </div>
-        <Reveal variant="scale" immediate delay={200} className="mx-auto mt-10 max-w-5xl px-4 sm:px-6">
-          <div className="overflow-hidden rounded-[2rem] shadow-[0_24px_60px_rgba(30,70,51,0.18)]">
-            <Parallax speed={0.08} className="aspect-[16/10] w-full sm:aspect-[21/9]">
-              <ResponsiveImage
-                src="/images/hero-bowl.webp"
-                alt="Fresh salad bowl with avocado, chickpeas and greens"
-                width={1200}
-                height={514}
-                fetchPriority="high"
-                sizes="(max-width: 1024px) 100vw, 1024px"
-                className="h-full w-full scale-[1.15] object-cover"
-              />
-            </Parallax>
-          </div>
-        </Reveal>
-      </section>
-
-      {/* GOAL-BASED ENTRY POINTS */}
-      <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20">
-        <Reveal as="h2" variant="up" className="text-center font-display text-3xl font-semibold text-forest sm:text-4xl">
-          What are you looking for?
-        </Reveal>
-        <Reveal as="p" variant="up" delay={80} className="mx-auto mt-3 max-w-xl text-center text-lg text-forest/75">
-          Start from your goal — we’ll match it to recipes rich in exactly what you need.
-        </Reveal>
-        <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-          {goalCards.map((card, i) => (
-            <Reveal key={card.title} variant="up" delay={Math.min(i * 60, 300)}>
-              <Link
-                to={card.to}
-                className="group flex h-full items-start gap-4 rounded-3xl border border-forest-line bg-cream-card p-6 shadow-[0_8px_30px_rgba(30,70,51,0.08)] transition hover:-translate-y-1 hover:shadow-[0_16px_40px_rgba(30,70,51,0.14)]"
-              >
-                <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-forest text-cream transition group-hover:bg-ember-dark">
-                  {card.icon}
+      {/* HERO */}
+      <section className="relative overflow-hidden">
+        <div aria-hidden="true" className="bg-dots pointer-events-none absolute inset-0 [mask-image:linear-gradient(to_bottom,black,transparent_85%)]" />
+        <div className="relative mx-auto grid max-w-7xl items-center gap-10 px-4 pb-16 pt-10 [&>*]:min-w-0 sm:px-6 lg:grid-cols-[1.15fr_0.85fr] lg:gap-14 lg:pb-24 lg:pt-16">
+          <div>
+            <Reveal immediate variant="up">
+              <p className="inline-flex items-center gap-2 rounded-full border border-line bg-card px-3 py-1.5 text-xs font-semibold text-ink/70">
+                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-zest">
+                  <Icon name="leaf" className="h-3 w-3" strokeWidth={2.4} />
                 </span>
-                <span className="min-w-0">
-                  <span className="font-display text-xl font-semibold text-forest group-hover:text-ember-dark">
-                    {card.title}
-                  </span>
-                  <span className="mt-1 block text-sm leading-relaxed text-forest/75">{card.text}</span>
-                  <span className="mt-2 inline-flex items-center gap-1 text-sm font-semibold text-ember-dark">
-                    Explore <span aria-hidden="true" className="transition group-hover:translate-x-0.5">→</span>
-                  </span>
-                </span>
-              </Link>
+                {recipes.length} recipes · nutrition from USDA data
+              </p>
             </Reveal>
-          ))}
+            <Reveal as="h1" immediate variant="up" delay={70} className="mt-5 font-display text-[2.75rem] font-extrabold leading-[0.98] text-ink sm:text-6xl lg:text-7xl">
+              Find recipes by what your body <span className="mark-zest">needs.</span>
+            </Reveal>
+            <Reveal as="p" immediate variant="up" delay={140} className="mt-6 max-w-xl text-lg leading-relaxed text-ink/70 sm:text-xl">
+              Search by nutrient, not just by craving. Every recipe shows real per-serving numbers for protein, iron, fiber and more.
+            </Reveal>
+            <Reveal as="form" immediate variant="up" delay={210} onSubmit={submitSearch} role="search" className="mt-8 max-w-xl">
+              <label htmlFor="home-search" className="sr-only">Search recipes</label>
+              <div className="flex items-center gap-2 rounded-full border border-line bg-card p-1.5 shadow-[var(--shadow-card)] focus-within:border-ink/40">
+                <Icon name="search" className="ml-3 h-5 w-5 shrink-0 text-ink/40" />
+                <input
+                  id="home-search"
+                  type="search"
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  placeholder="Try “salmon”, “lentils” or “vegan”"
+                  className="min-w-0 flex-1 bg-transparent py-3 text-base text-ink outline-none placeholder:text-ink/40"
+                />
+                <button type="submit" className="min-h-[48px] shrink-0 rounded-full bg-ink px-5 text-[15px] font-bold text-paper hover:bg-leaf-dark sm:px-7">
+                  Search
+                </button>
+              </div>
+            </Reveal>
+            <Reveal immediate variant="up" delay={260} className="mt-4 flex flex-wrap items-center gap-2 text-sm">
+              <span className="text-ink/50">Popular:</span>
+              {POPULAR.map((p) => (
+                <Link key={p.label} to={p.to} className="inline-flex min-h-[36px] items-center rounded-full bg-mist px-3.5 font-medium text-ink/80 hover:bg-ink hover:text-paper">
+                  {p.label}
+                </Link>
+              ))}
+            </Reveal>
+          </div>
+
+          <Reveal immediate variant="scale" delay={180}>
+            <NutrientPicker />
+          </Reveal>
         </div>
       </section>
 
-      {/* FEATURED RECIPES */}
-      <section className="bg-cream-card/60 py-16 sm:py-20">
-        <div className="mx-auto max-w-6xl px-4 sm:px-6">
-          <Reveal as="h2" variant="up" className="text-center font-display text-3xl font-semibold text-forest sm:text-4xl">
-            Featured recipes
-          </Reveal>
-          <Reveal as="p" variant="up" delay={80} className="mx-auto mt-3 max-w-xl text-center text-lg text-forest/75">
-            Handpicked for protein, iron, and speed — every one with full per-serving nutrition.
-          </Reveal>
-          <Reveal variant="fade" delay={140} className="mt-8">
-            <div className="no-scrollbar -mx-4 overflow-x-auto px-4 pb-1 sm:mx-0 sm:px-0" role="tablist" aria-label="Filter featured recipes">
-              <div className="flex w-max gap-2.5 sm:w-auto sm:justify-center">
+      {/* NUTRIENT SPECTRUM */}
+      <section id="nutrients" className="mx-auto max-w-7xl scroll-mt-24 px-4 sm:px-6" aria-labelledby="spectrum-heading">
+        <SectionHeading
+          id="spectrum-heading"
+          eyebrow="Browse by nutrient"
+          title="Twelve nutrients. One color each."
+          intro="Tap a nutrient to see what it does, how much you need, the best foods for it and every recipe rich in it."
+        />
+        <ul className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+          {nutrients.map((n, i) => {
+            const meta = nutrientMeta(n.key)
+            const count = recipesForNutrient(n).length
+            return (
+              <Reveal as="li" key={n.key} variant="up" delay={Math.min(i * 35, 300)}>
+                <Link
+                  to={`/nutrients/${n.slug || n.key}`}
+                  className="group flex h-full flex-col justify-between gap-6 rounded-3xl p-4 hover:-translate-y-1 sm:p-5"
+                  style={{ backgroundColor: tint(meta.color, 0.13) }}
+                >
+                  <span className="flex h-10 w-10 items-center justify-center rounded-2xl text-white" style={{ backgroundColor: meta.color }}>
+                    <NutrientIcon iconKey={n.slug || n.key} className="h-5 w-5" />
+                  </span>
+                  <span>
+                    <span className="block font-display text-lg font-bold leading-tight text-ink">{n.name}</span>
+                    <span className="mt-0.5 block text-xs font-medium text-ink/60">{count} recipes</span>
+                  </span>
+                </Link>
+              </Reveal>
+            )
+          })}
+        </ul>
+      </section>
+
+      {/* FEATURED */}
+      <section id="recipes" className="mx-auto mt-24 max-w-7xl scroll-mt-24 px-4 sm:px-6" aria-labelledby="featured-heading">
+        <SectionHeading
+          id="featured-heading"
+          eyebrow="Editor's picks"
+          title="Featured recipes"
+          action={
+            <div className="no-scrollbar -mx-4 overflow-x-auto px-4 sm:mx-0 sm:px-0" role="tablist" aria-label="Filter featured recipes">
+              <div className="flex w-max gap-2 rounded-full bg-mist p-1">
                 {TABS.map((t) => (
                   <button
                     key={t.id}
@@ -288,10 +306,8 @@ export default function Home() {
                     role="tab"
                     aria-selected={tab === t.id}
                     onClick={() => setTab(t.id)}
-                    className={`min-h-[44px] whitespace-nowrap rounded-full px-5 py-2.5 text-sm font-semibold transition ${
-                      tab === t.id
-                        ? 'bg-forest text-cream'
-                        : 'border border-forest/25 bg-cream text-forest hover:border-forest'
+                    className={`min-h-[40px] whitespace-nowrap rounded-full px-4 text-sm font-semibold ${
+                      tab === t.id ? 'bg-card text-ink shadow-sm' : 'text-ink/60 hover:text-ink'
                     }`}
                   >
                     {t.label}
@@ -299,78 +315,140 @@ export default function Home() {
                 ))}
               </div>
             </div>
-          </Reveal>
-          <div className="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-3" aria-live="polite">
-            {featuredRecipes.map((r, i) => (
-              <Reveal key={r.slug} variant="up" delay={Math.min(i * 60, 360)} className={i === 0 ? 'sm:col-span-2 lg:col-span-2' : ''}>
-                <RecipeCard recipe={r} />
-              </Reveal>
-            ))}
-          </div>
-          <div className="mt-10 text-center">
-            <Link
-              to="/recipes"
-              className="inline-flex min-h-[48px] items-center gap-2 rounded-full border border-forest/30 px-7 py-3 font-semibold text-forest transition hover:border-forest hover:bg-forest hover:text-cream"
-            >
-              Browse all {recipes.length} recipes <span aria-hidden="true">→</span>
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* LEARN — nutrition-first food writing */}
-      <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6 sm:py-20">
-        <Reveal as="h2" variant="up" className="text-center font-display text-3xl font-semibold text-forest sm:text-4xl">
-          Nutrition-first food writing
-        </Reveal>
-        <Reveal as="p" variant="up" delay={80} className="mx-auto mt-3 max-w-xl text-center text-lg text-forest/75">
-          The science behind the plate — practical guides tied to real recipes.
-        </Reveal>
-        <div className="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-          {learnPosts.map((post, i) => (
-            <Reveal key={post.slug} variant="up" delay={Math.min(i * 80, 240)}>
-              <article className="group h-full overflow-hidden rounded-3xl border border-forest-line bg-cream-card shadow-[0_8px_30px_rgba(30,70,51,0.08)] transition hover:-translate-y-1 hover:shadow-[0_16px_40px_rgba(30,70,51,0.14)]">
-                <Link to={`/blog/${post.slug}`} className="block h-full">
-                  <div className="overflow-hidden">
-                    <ResponsiveImage
-                      src={post.image}
-                      alt={post.title}
-                      loading="lazy"
-                      width={800}
-                      height={533}
-                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                      className="aspect-[3/2] w-full object-cover transition duration-500 group-hover:scale-105"
-                    />
-                  </div>
-                  <div className="px-6 pb-6 pt-5">
-                    <p className="text-xs font-bold uppercase tracking-[0.18em] text-ember-dark">{post.category}</p>
-                    <h3 className="mt-2 font-display text-[22px] font-semibold leading-snug text-forest group-hover:text-ember-dark">
-                      {post.title}
-                    </h3>
-                    <p className="mt-2 line-clamp-2 text-pretty text-sm leading-relaxed text-forest/80">{post.description}</p>
-                    <span className="mt-4 inline-flex items-center gap-1 text-sm font-semibold text-ember-dark">
-                      Read article <span aria-hidden="true" className="transition group-hover:translate-x-0.5">→</span>
-                    </span>
-                  </div>
-                </Link>
-              </article>
+          }
+        />
+        <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3" aria-live="polite">
+          {featuredRecipes.map((r, i) => (
+            <Reveal key={`${tab}-${r.slug}`} variant="up" delay={Math.min(i * 60, 300)}>
+              <RecipeCard recipe={r} />
             </Reveal>
           ))}
         </div>
         <div className="mt-10 text-center">
-          <Link
-            to="/blog"
-            className="inline-flex min-h-[48px] items-center gap-2 rounded-full border border-forest/30 px-7 py-3 font-semibold text-forest transition hover:border-forest hover:bg-forest hover:text-cream"
-          >
-            All articles <span aria-hidden="true">→</span>
+          <Link to="/recipes" className="inline-flex min-h-[52px] items-center gap-2 rounded-full bg-ink px-8 font-bold text-paper hover:bg-leaf-dark">
+            Browse all {recipes.length} recipes <Icon name="arrowRight" className="h-5 w-5" />
           </Link>
         </div>
       </section>
 
-      {/* MEAL-PLAN OFFER — after the value has been shown */}
-      <Reveal variant="up">
-        <LeadMagnetCta />
-      </Reveal>
+      {/* GOALS */}
+      <section className="mx-auto mt-24 max-w-7xl px-4 sm:px-6" aria-labelledby="goals-heading">
+        <div className="grid gap-4 lg:grid-cols-[0.9fr_1.1fr] lg:gap-6">
+          <div className="flex flex-col justify-between rounded-[2rem] bg-zest p-7 sm:p-10">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-[0.18em] text-ink/60">Start from a goal</p>
+              <h2 id="goals-heading" className="mt-3 font-display text-4xl font-extrabold leading-[1.02] text-ink sm:text-5xl">
+                What do you want food to do for you?
+              </h2>
+            </div>
+            <div className="mt-10 space-y-3">
+              <Link to="/search?q=vegetarian" className="flex items-center justify-between gap-3 rounded-2xl bg-ink/5 px-5 py-4 font-semibold text-ink hover:bg-ink/10">
+                <span>Eat more plants <span className="font-normal text-ink/60">· {vegCount} meat-free recipes</span></span>
+                <Icon name="arrowRight" className="h-5 w-5" />
+              </Link>
+              <Link to="/day-builder" className="flex items-center justify-between gap-3 rounded-2xl bg-ink px-5 py-4 font-semibold text-paper hover:bg-leaf-dark">
+                <span>Plan a whole day of eating</span>
+                <Icon name="arrowRight" className="h-5 w-5" />
+              </Link>
+            </div>
+          </div>
+          <ul className="grid gap-4 sm:grid-cols-2">
+            {goals.map((g, i) => {
+              const meta = nutrientMeta(g.key)
+              return (
+                <Reveal as="li" key={g.title} variant="up" delay={i * 60}>
+                  <Link to={g.to} className="group flex h-full flex-col rounded-[2rem] border border-line bg-card p-6 hover:-translate-y-1 hover:shadow-[var(--shadow-lift)]">
+                    <span className="flex h-12 w-12 items-center justify-center rounded-2xl" style={{ backgroundColor: tint(meta.color, 0.15), color: meta.color }}>
+                      <NutrientIcon iconKey={g.key} className="h-6 w-6" />
+                    </span>
+                    <span className="mt-6 font-display text-2xl font-bold text-ink">{g.title}</span>
+                    <span className="mt-1.5 flex-1 text-[15px] leading-relaxed text-ink/65">{g.text}</span>
+                    <span className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-ink">
+                      {g.count} recipes <Icon name="arrowRight" className="h-4 w-4 transition group-hover:translate-x-1" />
+                    </span>
+                  </Link>
+                </Reveal>
+              )
+            })}
+          </ul>
+        </div>
+      </section>
+
+      {/* QUICK CAROUSEL */}
+      <section className="mt-24" aria-labelledby="quick-heading">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6">
+          <SectionHeading
+            id="quick-heading"
+            eyebrow="Weeknight rescue"
+            title="Ready in 20 minutes or less"
+            action={
+              <Link to="/search?maxTime=30" className="inline-flex items-center gap-1.5 font-semibold text-ink hover:text-leaf-dark">
+                More quick meals <Icon name="arrowRight" className="h-4 w-4" />
+              </Link>
+            }
+          />
+        </div>
+        <div className="no-scrollbar snap-row mx-auto mt-8 flex max-w-7xl gap-4 overflow-x-auto px-4 pb-2 sm:px-6">
+          {quickRecipes.map((r) => (
+            <div key={r.slug} className="w-[78%] shrink-0 sm:w-[44%] lg:w-[23.5%]">
+              <RecipeCard recipe={r} maxBadges={2} />
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* HOW IT WORKS */}
+      <section className="mx-auto mt-24 max-w-7xl px-4 sm:px-6" aria-labelledby="how-heading">
+        <div className="rounded-[2rem] bg-ink px-6 py-12 text-paper sm:px-12 sm:py-16">
+          <p className="text-xs font-bold uppercase tracking-[0.18em] text-zest">How it works</p>
+          <h2 id="how-heading" className="mt-3 max-w-2xl font-display text-4xl font-extrabold leading-[1.05] sm:text-5xl">
+            Honest numbers. Real food. No miracle claims.
+          </h2>
+          <ol className="mt-12 grid gap-8 md:grid-cols-3">
+            {[
+              { n: '01', t: 'Pick what you need', d: 'Choose a nutrient or goal: iron, protein, fiber, calcium and more.' },
+              { n: '02', t: 'See the real numbers', d: 'Every recipe lists per-serving nutrition and % daily value, computed from USDA ingredient data.' },
+              { n: '03', t: 'Cook, save, plan', d: 'Use cook mode in the kitchen, save favorites, and build a full day in My Day.' },
+            ].map((s) => (
+              <li key={s.n} className="border-t border-paper/15 pt-6">
+                <span className="font-display text-5xl font-extrabold text-zest">{s.n}</span>
+                <h3 className="mt-4 font-display text-2xl font-bold">{s.t}</h3>
+                <p className="mt-2 leading-relaxed text-paper/70">{s.d}</p>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </section>
+
+      {/* LEARN */}
+      {learnPosts.length > 0 && (
+        <section className="mx-auto mt-24 max-w-7xl px-4 sm:px-6" aria-labelledby="learn-heading">
+          <SectionHeading
+            id="learn-heading"
+            eyebrow="From the blog"
+            title="The science behind the plate"
+            action={
+              <Link to="/blog" className="inline-flex items-center gap-1.5 font-semibold text-ink hover:text-leaf-dark">
+                All articles <Icon name="arrowRight" className="h-4 w-4" />
+              </Link>
+            }
+          />
+          <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {learnPosts.map((post, i) => (
+              <Reveal key={post.slug} variant="up" delay={i * 70}>
+                <PostCard post={post} />
+              </Reveal>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* FIBERMAX */}
+      <div className="mt-24">
+        <Reveal variant="up">
+          <LeadMagnetCta />
+        </Reveal>
+      </div>
     </>
   )
 }

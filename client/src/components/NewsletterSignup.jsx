@@ -1,11 +1,11 @@
 import React, { useState } from 'react'
 
 /**
- * Newsletter signup. POSTs to /api/subscribe (Express + SQLite, sibling agent's API).
- * In dev, vite proxies /api → http://localhost:3001.
+ * Newsletter signup. POSTs to /api/subscribe.
  * Shows sending / success / error states; never throws.
+ * `dark` styles it for ink backgrounds.
  */
-export default function NewsletterSignup({ compact = false }) {
+export default function NewsletterSignup({ dark = false, id = 'newsletter-email' }) {
   const [email, setEmail] = useState('')
   const [status, setStatus] = useState('idle') // idle | sending | success | error
   const [message, setMessage] = useState('')
@@ -32,45 +32,39 @@ export default function NewsletterSignup({ compact = false }) {
 
   if (status === 'success') {
     return (
-      <p className={`flex items-center gap-2 font-medium text-forest ${compact ? 'mt-3 text-sm text-cream' : 'mt-4'}`} role="status">
-        <span aria-hidden="true" className="flex h-8 w-8 items-center justify-center rounded-full bg-forest text-cream">✓</span>
+      <p className={`mt-5 flex items-center gap-2 font-semibold ${dark ? 'text-paper' : 'text-ink'}`} role="status">
+        <span aria-hidden="true" className="flex h-8 w-8 items-center justify-center rounded-full bg-zest text-ink">✓</span>
         {message}
       </p>
     )
   }
 
   return (
-    <form onSubmit={submit} className={compact ? 'mt-3' : 'mt-6'} aria-label="Newsletter signup">
-      <div
-        className={`flex items-center gap-2 rounded-full p-1.5 ${
-          compact ? 'bg-cream/10' : 'border border-forest-line bg-cream-card shadow-sm'
-        }`}
-      >
-        <label htmlFor={compact ? 'newsletter-email-footer' : 'newsletter-email'} className="sr-only">
-          Email address
-        </label>
+    <form onSubmit={submit} className="mt-5 max-w-md" aria-label="Newsletter signup">
+      <div className={`flex items-center gap-2 rounded-full p-1.5 ${dark ? 'bg-paper/10 ring-1 ring-paper/20' : 'border border-line bg-card'}`}>
+        <label htmlFor={id} className="sr-only">Email address</label>
         <input
-          id={compact ? 'newsletter-email-footer' : 'newsletter-email'}
+          id={id}
           type="email"
           required
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          placeholder="Your email…"
+          placeholder="you@email.com"
           disabled={status === 'sending'}
-          className={`w-full bg-transparent px-4 py-2.5 text-base outline-none placeholder:text-forest/90 sm:text-[15px] ${
-            compact ? 'text-cream placeholder:text-cream/70' : 'text-forest'
+          className={`min-w-0 flex-1 bg-transparent px-4 py-2.5 text-base outline-none ${
+            dark ? 'text-paper placeholder:text-paper/50' : 'text-ink placeholder:text-ink/40'
           }`}
         />
         <button
           type="submit"
           disabled={status === 'sending'}
-          className="shrink-0 rounded-full bg-ember-dark px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:shadow-md disabled:opacity-60"
+          className="min-h-[44px] shrink-0 rounded-full bg-zest px-5 text-sm font-bold text-ink hover:brightness-95 disabled:opacity-60"
         >
           {status === 'sending' ? 'Joining…' : 'Subscribe'}
         </button>
       </div>
       {status === 'error' && (
-        <p className={`mt-2 text-sm ${compact ? 'text-ember-soft' : 'text-ember-dark'}`} role="alert">
+        <p className={`mt-2 text-sm ${dark ? 'text-tomato-soft' : 'text-tomato-dark'}`} role="alert">
           {message}
         </p>
       )}

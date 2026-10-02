@@ -3,48 +3,53 @@ import { Link } from 'react-router-dom'
 import NutrientBadge from './NutrientBadge'
 import ResponsiveImage from './ResponsiveImage'
 import FavoriteButton from './FavoriteButton'
-import { getNutrient } from '../data/site'
+import Icon from './Icon'
+import { formatAmount } from '../data/site'
 
-/** Editorial recipe card: image, serif title, description, nutrient badge row. */
-export default function RecipeCard({ recipe, badgeVariant = 'solid' }) {
+/**
+ * Recipe card. The whole card is clickable through a "stretched" title link
+ * (one <a> per card, no nested links); the heart sits above it.
+ */
+export default function RecipeCard({ recipe, priority = false, maxBadges = 3 }) {
   const to = `/recipes/${recipe.slug}`
   return (
-    <article className="group relative overflow-hidden rounded-3xl bg-cream-card shadow-[0_8px_30px_rgba(30,70,51,0.08)] transition hover:-translate-y-1 hover:shadow-[0_16px_40px_rgba(30,70,51,0.14)]">
+    <article className="group relative flex h-full flex-col overflow-hidden rounded-3xl border border-line bg-card shadow-[var(--shadow-card)] transition hover:-translate-y-1 hover:shadow-[var(--shadow-lift)]">
+      <div className="relative overflow-hidden">
+        <ResponsiveImage
+          src={recipe.image}
+          alt={recipe.imageAlt}
+          loading={priority ? 'eager' : 'lazy'}
+          width={800}
+          height={600}
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+          className="aspect-[4/3] w-full object-cover transition duration-700 group-hover:scale-[1.04]"
+        />
+        <span className="absolute left-3 top-3 inline-flex items-center gap-1 rounded-full bg-card/90 px-2.5 py-1 text-xs font-semibold text-ink backdrop-blur">
+          <Icon name="clock" className="h-3.5 w-3.5" />
+          {recipe.totalMinutes} min
+        </span>
+      </div>
       <FavoriteButton slug={recipe.slug} title={recipe.title} overlay />
-      <Link to={to} className="block">
-        <div className="relative overflow-hidden">
-          <ResponsiveImage
-            src={recipe.image}
-            alt={recipe.imageAlt}
-            loading="lazy"
-            width={800}
-            height={533}
-            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-            className="aspect-[3/2] w-full object-cover transition duration-500 group-hover:scale-105"
-          />
-        </div>
-        <div className="px-6 pb-6 pt-5 text-center">
-          <h3 className="font-display text-[22px] font-semibold leading-snug text-forest group-hover:text-ember-dark">
+      <div className="flex flex-1 flex-col px-5 pb-5 pt-4">
+        <p className="flex items-center gap-1.5 text-xs font-medium uppercase tracking-wider text-ink/55">
+          <Icon name="flame" className="h-3.5 w-3.5" />
+          {formatAmount(recipe.calories, 'kcal')}
+          <span aria-hidden="true">·</span>
+          {recipe.servings} servings
+        </p>
+        <h3 className="mt-1.5 font-display text-xl font-bold leading-snug text-ink">
+          <Link to={to} className="after:absolute after:inset-0 after:content-[''] group-hover:text-leaf-dark">
             {recipe.title}
-          </h3>
-          <p className="mt-1.5 line-clamp-2 text-pretty text-sm text-forest/80">{recipe.description}</p>
-          <div className="mt-4 flex flex-wrap justify-center gap-2">
-            {recipe.keyNutrients.map((b) => {
-              // Newer recipes use `id`; older ones use `key`. Accept both.
-              const badgeKey = b.key || b.id
-              const nutrient = getNutrient(badgeKey)
-              return (
-                <NutrientBadge
-                  key={badgeKey}
-                  label={b.label}
-                  variant={badgeVariant}
-                  to={nutrient ? `/nutrients/${nutrient.slug || nutrient.key}` : undefined}
-                />
-              )
-            })}
-          </div>
+          </Link>
+        </h3>
+        <p className="mt-1.5 line-clamp-2 text-pretty text-sm leading-relaxed text-ink/65">{recipe.description}</p>
+        <div className="mt-auto flex flex-wrap gap-1.5 pt-4">
+          {recipe.keyNutrients.slice(0, maxBadges).map((b) => {
+            const key = b.key || b.id
+            return <NutrientBadge key={key} label={b.label} nutrientKey={key} size="sm" />
+          })}
         </div>
-      </Link>
+      </div>
     </article>
   )
 }
