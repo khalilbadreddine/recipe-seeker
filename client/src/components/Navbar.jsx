@@ -83,7 +83,7 @@ function UserChip() {
         <div role="menu" aria-label="Account" className="pop-in absolute right-0 top-full z-50 mt-2 w-56 overflow-hidden rounded-2xl border border-line bg-card p-1.5 shadow-[var(--shadow-lift)]">
           {[
             { label: 'Saved recipes', icon: 'heart', to: '/saved' },
-            { label: 'My Day planner', icon: 'calendar', to: '/day-builder' },
+            { label: 'Meal planner', icon: 'calendar', to: '/day-builder' },
             { label: 'Shopping list', icon: 'list', to: '/shopping-list' },
           ].map((item) => (
             <button
@@ -170,14 +170,13 @@ function MobileAuthSection({ menuOpen, onNavigate }) {
 const PRIMARY = [
   { label: 'Recipes', to: '/recipes' },
   { label: 'Nutrients', to: '/nutrients' },
-  { label: 'My Day', to: '/day-builder' },
+  { label: 'Planner', to: '/day-builder' },
   { label: 'Blog', to: '/blog' },
   { label: 'About', to: '/about' },
 ]
 
 const MOBILE_EXTRA = [
-  { label: 'Iron deficiency guide', to: '/guides/what-to-eat-for-iron-deficiency' },
-  { label: 'High protein on a budget', to: '/guides/high-protein-meals-on-a-budget' },
+  { label: 'Nutrition guides', to: '/guides' },
   { label: 'Fibermax Reset · 14-day plan', to: '/fibermax-reset' },
   { label: 'Contact', to: '/contact' },
 ]

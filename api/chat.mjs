@@ -16,9 +16,10 @@
  * advice, invented recipes and invented numbers (YMYL).
  */
 import { readFileSync } from 'node:fs'
-import { matchConversation, recipeLine, basicReply } from '../client/src/lib/recipeMatch.mjs'
+import { matchConversation, recipeLine, basicReply, parseIntent } from '../client/src/lib/recipeMatch.mjs'
 import { chatCompletion, isLlmConfigured } from './_lib/llm.mjs'
 import { createRateLimiter, clientIp, sameOrigin, readJson, send } from './_lib/http.mjs'
+import { supabaseConfigured, supabaseRequest, scrubText } from './_lib/supabase.mjs'
 
 const data = JSON.parse(readFileSync(new URL('../client/src/data/recipes.json', import.meta.url), 'utf8'))
 const bySlug = new Map(data.recipes.map((r) => [r.slug, r]))
@@ -63,6 +64,39 @@ function referencedSlugs(reply, candidates) {
   return named.length ? named.slice(0, 4) : candidates.slice(0, 3).map((r) => r.slug)
 }
 
+/**
+ * Questions the site can't answer well are content ideas. Log them (text only,
+ * scrubbed, no IP or user id) to `chat_gaps`; pipeline/scripts/keyword-miner-chat.mjs
+ * turns repeated gaps into keyword candidates for the draft writer.
+ */
+function gapReason(match) {
+  if (!match.signal) return null
+  if (match.recipes.length === 0) return 'no_match'
+  if (match.mealRelaxed || match.timeRelaxed) return 'relaxed'
+  if (match.recipes.length < 2) return 'few'
+  return null
+}
+
+async function logGap(question, match) {
+  const reason = gapReason(match)
+  if (!reason || !supabaseConfigured()) return
+  try {
+    const clean = scrubText(question)
+    const intent = parseIntent(clean.replace(/\[(email|number)\]/g, ' '))
+    await supabaseRequest('POST', '/chat_gaps', {
+      prefer: 'return=minimal',
+      timeoutMs: 2500,
+      body: {
+        question: clean,
+        reason,
+        intent: { nutrients: intent.nutrients, diets: intent.diets, meals: intent.meals, maxTime: intent.maxTime, keywords: intent.keywords.slice(0, 5) },
+      },
+    })
+  } catch (e) {
+    console.error('[chat] gap log failed:', e.message)
+  }
+}
+
 function cleanMessages(raw) {
   if (!Array.isArray(raw)) return null
   const msgs = raw
@@ -92,19 +126,23 @@ export default async function handler(req, res) {
   if (!messages) return send(res, 400, { error: 'messages must end with a user message' })
 
   // Follow-ups ("any quicker ones?", "make it vegan") build on the previous question.
+  const question = messages[messages.length - 1].content
   const match = matchConversation(messages.filter((m) => m.role === 'user').map((m) => m.content), data)
+  const gapLogged = logGap(question, match) // runs alongside the LLM call
 
   if (isLlmConfigured()) {
     try {
       const out = await chatCompletion([{ role: 'system', content: systemPrompt(match) }, ...messages], { maxTokens: 450 })
       const reply = out.text.replace(/\*\*(.+?)\*\*/g, '$1').replace(/^#+\s*/gm, '').trim()
       const recipes = match.recipes.length ? referencedSlugs(reply, match.recipes).filter((s) => bySlug.has(s)) : []
+      await gapLogged
       return send(res, 200, { reply, recipes, mode: 'ai' })
     } catch (e) {
       console.error('[chat] LLM failed, answering in basic mode:', e.message)
     }
   }
 
+  await gapLogged
   return send(res, 200, {
     reply: basicReply(match),
     recipes: match.recipes.slice(0, 4).map((r) => r.slug),

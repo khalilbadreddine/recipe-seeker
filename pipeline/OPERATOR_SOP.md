@@ -36,7 +36,7 @@ Research → Review → Approve → Publish → Verify → Report. Never skip a 
 1. No `TODO_KHALIL` anywhere in the draft.
 2. Hero image present AND reachable (HTTP 200).
 3. Zero `flagged_claims`.
-4. No invented experience: Emily never "cooked / tested / tasted" something she didn't. Fictional persona, honest framing.
+4. No invented experience: the brand voice never claims to have "cooked / tested / tasted" a dish, and there is no invented person or personal health story.
 5. **Every numeric nutrition claim must trace to USDA data or the draft's evidence pack.** A number you can't verify = FAIL. The draft stays `pending_review` for Khalil with the exact reason.
 6. Nutrition is YMYL: no medical claims, no disease-cure language, no "will lower your cholesterol" promises. Health disclaimer present on every post.
 7. Never bypass the publisher's guardrail P1 (approved-only, no-TODO, has-image). It exists because humans make mistakes.

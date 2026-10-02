@@ -9,7 +9,7 @@
  * renders the React tree to static HTML with react-dom/server, injects the
  * react-helmet-async head tags into <head>, and writes dist/<route>/index.html.
  * Also emits sitemap.xml, robots.txt, llms.txt and llms-full.txt, then removes dist-ssr/.
- * These four are generated HERE (not by scripts/generate-seo.mjs) so they always
+ * These four are generated HERE (the old scripts/generate-seo.mjs is gone) so they always
  * match the exact set of prerendered routes — single source of truth.
  *
  * NOTE: this replaces vite-ssg (its React support was dropped in v24+; the
@@ -27,6 +27,8 @@ const distSsr = join(root, 'dist-ssr')
 const data = JSON.parse(readFileSync(join(root, 'src/data/recipes.json'), 'utf8'))
 const SITE_URL = data.site.canonicalBase || 'https://recipe-seeker-client.vercel.app'
 
+import { detailForRoute, fetchRatingStats } from './site-index.mjs'
+
 const routeFor = (path) => (path === '/' ? 'index.html' : `${path.replace(/^\//, '')}/index.html`)
 
 async function main() {
@@ -40,15 +42,25 @@ async function main() {
   // Routes are derived from the same data file the pages render —
   // the sitemap and the prerendered HTML can never disagree.
   const { recipes, nutrients, guides, posts } = data
-  const routes = ['/', '/recipes', '/nutrients', '/search', '/day-builder', '/saved', '/shopping-list', '/fibermax-reset', '/about', '/disclaimer', '/privacy', '/contact', '/blog']
+  const routes = ['/', '/recipes', '/nutrients', '/search', '/day-builder', '/saved', '/shopping-list', '/fibermax-reset', '/about', '/disclaimer', '/privacy', '/contact', '/blog', '/guides']
   recipes.forEach((r) => routes.push(`/recipes/${r.slug}`))
   nutrients.forEach((n) => routes.push(`/nutrients/${n.slug || n.key}`))
   guides.forEach((g) => routes.push(`/guides/${g.slug}`))
   ;(posts || []).forEach((p) => routes.push(`/blog/${p.slug}`))
 
+  const ratingStats = await fetchRatingStats()
+  console.log(`rating stats for ${Object.keys(ratingStats).length} recipes`)
+
   for (const route of routes) {
-    const { html, head } = render(route)
-    const page = template.replace('<!--ssr-head-->', head).replace('<!--ssr-body-->', html)
+    const details = detailForRoute(data, route, ratingStats)
+    const { html, head } = render(route, details)
+    const embedded = Object.keys(details).length
+      ? `<script id="page-data" type="application/json">${JSON.stringify(details).replace(/</g, '\\u003c')}</script>`
+      : ''
+    const page = template
+      .replace('<!--ssr-head-->', head)
+      .replace('<!--ssr-body-->', html)
+      .replace('</body>', `${embedded}</body>`)
     const outFile = join(dist, routeFor(route))
     mkdirSync(dirname(outFile), { recursive: true })
     writeFileSync(outFile, page)
@@ -127,7 +139,7 @@ function writeLlmsTxt() {
     '',
     '## Blog',
     '',
-    `- [Blog index](${SITE_URL}/blog): Nutrition-first food writing from Emily Carter.`,
+    `- [Blog index](${SITE_URL}/blog): Nutrition-first food writing from The Recipe Seeker Kitchen.`,
     ...(data.posts || []).map((p) => `- [${p.title}](${SITE_URL}/blog/${p.slug}): ${p.description}`),
     '',
   ]

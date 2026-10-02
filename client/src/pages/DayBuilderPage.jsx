@@ -10,6 +10,9 @@ import MedicalDisclaimer from '../components/MedicalDisclaimer'
 import { useAuth } from '../context/AuthContext'
 import { getSupabase, isSupabaseConfigured } from '../lib/supabase'
 import { absUrl, absImage, recipes } from '../data/site'
+import { useShoppingList } from '../context/ShoppingListContext'
+import { loadDetail } from '../lib/details'
+import { DAY_IDS, DAY_NAMES, emptyDay, emptyWeek, todayId, cleanWeek, isWeekEmpty, loadWeek, saveWeek, toStored } from '../lib/weekPlan'
 
 /* ------------------------------------------------------------------ */
 /* Data model                                                          */
@@ -18,8 +21,6 @@ import { absUrl, absImage, recipes } from '../data/site'
 /* nutrition.<key> = { amount, unit }. We only AGGREGATE here — never   */
 /* recompute from ingredients.                                         */
 /* ------------------------------------------------------------------ */
-
-const STORAGE_KEY = 'rs-day-v1'
 
 const SLOTS = [
   { id: 'breakfast', label: 'Breakfast', capacity: 1, hint: 'Start the day right' },
@@ -66,39 +67,8 @@ const GOALS = [
   },
 ]
 
-const EMPTY_DAY = { breakfast: [], lunch: [], dinner: [], snacks: [] }
-
 const recipeBySlug = Object.fromEntries(recipes.map((r) => [r.slug, r]))
-
-/** Keep only known recipe slugs, capped at each slot's capacity. */
-function cleanDay(parsed) {
-  const clean = { ...EMPTY_DAY }
-  for (const s of SLOTS) {
-    const slugs = parsed && Array.isArray(parsed[s.id]) ? parsed[s.id] : []
-    clean[s.id] = slugs.filter((slug) => recipeBySlug[slug]).slice(0, s.capacity)
-  }
-  return clean
-}
-
-function loadDay() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY)
-    if (!raw) return null
-    return cleanDay(JSON.parse(raw))
-  } catch {
-    return null
-  }
-}
-
-function writeDay(day) {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(day))
-  } catch {
-    /* storage unavailable — the builder still works for the session */
-  }
-}
-
-const isDayEmpty = (day) => !day || SLOTS.every((s) => (day[s.id] || []).length === 0)
+const isKnown = (slug) => Boolean(recipeBySlug[slug])
 
 function fmt(n) {
   if (n == null || Number.isNaN(n)) return '0'
@@ -392,7 +362,15 @@ function DvBar({ nutrientKey, amount, emphasize }) {
 export default function DayBuilderPage() {
   // SSR-safe: start empty (matches prerender), hydrate from localStorage after mount.
   const { user } = useAuth()
-  const [day, setDay] = useState(EMPTY_DAY)
+  const [week, setWeek] = useState(emptyWeek)
+  // SSR renders Monday; the visitor's real "today" is selected after mount.
+  const [activeDay, setActiveDay] = useState('mon')
+  const [today, setToday] = useState(null)
+  const [listNote, setListNote] = useState('')
+  const list = useShoppingList()
+  const day = week[activeDay]
+  const setDay = (update) =>
+    setWeek((w) => ({ ...w, [activeDay]: typeof update === 'function' ? update(w[activeDay]) : update }))
   const [goal, setGoal] = useState('balanced')
   const [pickerSlotId, setPickerSlotId] = useState(null)
   const [hydrated, setHydrated] = useState(false)
@@ -400,15 +378,18 @@ export default function DayBuilderPage() {
   const cloudSyncedFor = useRef(null)
 
   useEffect(() => {
-    const saved = loadDay()
-    if (saved) setDay(saved)
+    const saved = loadWeek(isKnown)
+    if (saved) setWeek(saved)
+    const t = todayId()
+    setToday(t)
+    setActiveDay(t)
     setHydrated(true)
   }, [])
 
   useEffect(() => {
     if (!hydrated) return
-    writeDay(day)
-  }, [day, hydrated])
+    saveWeek(week)
+  }, [week, hydrated])
 
   // Cloud sync (Supabase `day_plans`). Merge rule, documented:
   // - If the cloud has a plan and this device has nothing → adopt the cloud plan.
@@ -428,14 +409,14 @@ export default function DayBuilderPage() {
           .eq('user_id', user.id)
           .maybeSingle()
         if (error) throw error
-        const local = loadDay()
-        if (data?.plan && isDayEmpty(local)) {
-          const clean = cleanDay(data.plan)
-          setDay(clean)
-          writeDay(clean)
-        } else if (!isDayEmpty(local)) {
+        const local = loadWeek(isKnown)
+        if (data?.plan && isWeekEmpty(local)) {
+          const clean = cleanWeek(data.plan, isKnown)
+          setWeek(clean)
+          saveWeek(clean)
+        } else if (!isWeekEmpty(local)) {
           await client.from('day_plans').upsert(
-            { user_id: user.id, plan: local, updated_at: new Date().toISOString() },
+            { user_id: user.id, plan: toStored(local), updated_at: new Date().toISOString() },
             { onConflict: 'user_id' }
           )
         }
@@ -457,7 +438,7 @@ export default function DayBuilderPage() {
           return
         }
         const { error } = await client.from('day_plans').upsert(
-          { user_id: user.id, plan: day, updated_at: new Date().toISOString() },
+          { user_id: user.id, plan: toStored(week), updated_at: new Date().toISOString() },
           { onConflict: 'user_id' }
         )
         setSyncState(error ? 'error' : 'saved')
@@ -466,7 +447,7 @@ export default function DayBuilderPage() {
       }
     }, 1500)
     return () => clearTimeout(t)
-  }, [day, hydrated, user])
+  }, [week, hydrated, user])
 
   // On sign-out, allow the next sign-in to re-run the cloud merge.
   useEffect(() => {
@@ -515,20 +496,43 @@ export default function DayBuilderPage() {
 
   const clearDay = () => {
     if (chosenCount === 0) return
-    if (window.confirm('Clear your whole day? This cannot be undone.')) {
-      setDay(EMPTY_DAY)
+    if (window.confirm(`Clear ${DAY_NAMES[activeDay]}? This cannot be undone.`)) {
+      setDay(emptyDay())
     }
   }
 
+  const weekSlugs = useMemo(() => DAY_IDS.flatMap((d) => SLOTS.flatMap((s) => week[d][s.id])), [week])
+  const weekCount = weekSlugs.length
+  const dayCount = (d) => SLOTS.reduce((n, s) => n + week[d][s.id].length, 0)
+
+  /** Each unique recipe goes on the list once, at its full recipe size. */
+  const addToList = async (slugs, label) => {
+    const unique = [...new Set(slugs)].filter((s) => recipeBySlug[s])
+    setListNote('Adding to your shopping list…')
+    const results = await Promise.allSettled(unique.map((s) => loadDetail('recipes', s)))
+    let added = 0
+    for (const res of results) {
+      if (res.status !== 'fulfilled') continue
+      const r = res.value
+      list.addRecipe({ slug: r.slug, title: r.title, servings: r.servings, items: r.ingredients })
+      added++
+    }
+    setListNote(
+      added === unique.length
+        ? `${label}: ${added} recipe${added === 1 ? '' : 's'} added to your shopping list.`
+        : `${label}: added ${added} of ${unique.length} recipes (check your connection and try again).`,
+    )
+  }
+
   const canonical = absUrl('/day-builder')
-  const title = 'Build Your Day | The Recipe Seeker'
+  const title = 'Weekly Meal Planner | The Recipe Seeker'
   const description =
-    'Plan a full day of meals and see your total nutrition — protein, iron, fiber, vitamins and more — summed from real per-serving recipe data.'
+    'Plan your week of meals, see each day’s nutrition add up from real per-serving recipe data, and turn the plan into one shopping list.'
 
   const webPageLd = {
     '@context': 'https://schema.org',
     '@type': 'WebPage',
-    name: 'Build Your Day',
+    name: 'Weekly Meal Planner',
     description,
     url: canonical,
   }
@@ -537,7 +541,7 @@ export default function DayBuilderPage() {
     '@type': 'BreadcrumbList',
     itemListElement: [
       { '@type': 'ListItem', position: 1, name: 'Home', item: absUrl('/') },
-      { '@type': 'ListItem', position: 2, name: 'Build Your Day', item: canonical },
+      { '@type': 'ListItem', position: 2, name: 'Meal planner', item: canonical },
     ],
   }
 
@@ -553,18 +557,74 @@ export default function DayBuilderPage() {
 
       {/* ---- Interactive builder (screen only) ---- */}
       <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-14 print:hidden">
-        <Breadcrumbs items={[{ label: 'Home', to: '/' }, { label: 'Build Your Day' }]} />
+        <Breadcrumbs items={[{ label: 'Home', to: '/' }, { label: 'Meal planner' }]} />
 
         <Reveal as="p" immediate variant="up" className="mt-6 text-sm font-semibold uppercase tracking-widest text-ember-dark">
           Interactive tool
         </Reveal>
         <Reveal as="h1" immediate variant="up" delay={80} className="mt-2 max-w-2xl font-display text-4xl font-semibold leading-tight text-forest sm:text-5xl">
-          Build Your Day
+          Plan your week
         </Reveal>
         <Reveal as="p" immediate variant="fade" delay={160} className="mt-4 max-w-2xl text-lg leading-relaxed text-forest/80">
-          Pick a recipe for each meal and watch your day's nutrition add up —
-          protein, iron, fiber, vitamins and more, from real per-serving data.
+          Pick recipes for each day and watch the nutrition add up, from real
+          per-serving data. Then send the whole week to your shopping list.
         </Reveal>
+
+        {/* Week tabs */}
+        <div className="mt-8 rounded-3xl border border-line bg-card p-3 sm:p-4">
+          <div className="grid grid-cols-7 gap-1.5 sm:gap-2" role="tablist" aria-label="Day of the week">
+            {DAY_IDS.map((d) => {
+              const on = d === activeDay
+              const n = dayCount(d)
+              const isToday = d === today
+              return (
+                <button
+                  key={d}
+                  type="button"
+                  role="tab"
+                  aria-selected={on}
+                  aria-label={`${DAY_NAMES[d]}${isToday ? ', today' : ''}, ${n} meal${n === 1 ? '' : 's'} planned`}
+                  onClick={() => setActiveDay(d)}
+                  className={`flex min-h-[60px] min-w-0 flex-col items-center justify-center rounded-2xl px-0.5 py-2 text-xs font-semibold sm:text-sm ${
+                    on ? 'bg-ink text-paper' : 'bg-mist text-ink hover:bg-line'
+                  }`}
+                >
+                  <span>{DAY_NAMES[d].slice(0, 3)}</span>
+                  <span className={`mt-1 text-[10px] font-medium sm:text-xs ${on ? 'text-zest' : 'text-ink/55'}`}>
+                    <span className="sm:hidden">{isToday ? 'Today' : n || '—'}</span>
+                    <span className="hidden sm:inline">
+                      {isToday ? `Today${n ? ` · ${n}` : ''}` : n ? `${n} meal${n === 1 ? '' : 's'}` : '—'}
+                    </span>
+                  </span>
+                </button>
+              )
+            })}
+          </div>
+          <div className="mt-3 flex flex-wrap items-center gap-2 px-1">
+            <button
+              type="button"
+              onClick={() => addToList(SLOTS.flatMap((s) => day[s.id]), DAY_NAMES[activeDay])}
+              disabled={chosenCount === 0}
+              className="inline-flex min-h-[40px] items-center gap-2 rounded-full border border-line px-4 text-sm font-semibold text-ink hover:border-ink/30 disabled:opacity-40"
+            >
+              Add {DAY_NAMES[activeDay]} to shopping list
+            </button>
+            <button
+              type="button"
+              onClick={() => addToList(weekSlugs, 'This week')}
+              disabled={weekCount === 0}
+              className="inline-flex min-h-[40px] items-center gap-2 rounded-full bg-ink px-4 text-sm font-bold text-paper hover:bg-leaf-dark disabled:opacity-40"
+            >
+              Add whole week to shopping list
+            </button>
+            {listNote && (
+              <p role="status" className="text-sm font-medium text-leaf-dark">
+                {listNote}{' '}
+                <Link to="/shopping-list" className="underline underline-offset-2">View list</Link>
+              </p>
+            )}
+          </div>
+        </div>
 
         {/* Goal presets */}
         <Reveal variant="up" className="mt-8">
@@ -612,7 +672,7 @@ export default function DayBuilderPage() {
           {/* Day totals (sticky on desktop) */}
           <aside aria-label="Day totals" className="min-w-0 lg:sticky lg:top-24 lg:self-start">
             <div className="rounded-2xl border border-forest/15 bg-forest p-5 text-cream sm:p-6">
-              <h2 className="font-display text-xl font-semibold">Your day so far</h2>
+              <h2 className="font-display text-xl font-semibold">{DAY_NAMES[activeDay]}{activeDay === today ? ' (today)' : ''}</h2>
               <p className="mt-1 text-sm text-cream/75">
                 {chosenCount === 0
                   ? 'Add recipes to see your totals.'
@@ -679,18 +739,18 @@ export default function DayBuilderPage() {
               )}
 
               <div className="mt-4 flex flex-wrap gap-3">
-                <PrintButton className="min-h-[44px] px-5 py-2.5 text-sm" label="Print day" />
+                <PrintButton className="min-h-[44px] px-5 py-2.5 text-sm" label="Print week" />
                 <button
                   type="button"
                   onClick={clearDay}
                   disabled={chosenCount === 0}
                   className="inline-flex min-h-[44px] items-center rounded-full border border-cream/40 px-5 py-2.5 text-sm font-semibold text-cream transition hover:bg-cream/10 disabled:cursor-not-allowed disabled:opacity-40"
                 >
-                  Clear day
+                  Clear {DAY_NAMES[activeDay]}
                 </button>
               </div>
               <p className="mt-3 text-xs text-cream/60">
-                Your day is saved automatically in this browser.
+                Your week is saved automatically in this browser{weekCount ? ` · ${weekCount} meals planned` : ''}.
               </p>
               {isSupabaseConfigured && user && syncState !== 'idle' && (
                 <p className="mt-1 text-xs text-cream/60" role="status">
@@ -720,44 +780,28 @@ export default function DayBuilderPage() {
         )}
       </div>
 
-      {/* ---- Printable summary (print only) ---- */}
+      {/* ---- Printable week (print only) ---- */}
       <div className="hidden print:block">
-        <h1 style={{ fontSize: '22pt', marginBottom: '4pt' }}>My Day — The Recipe Seeker</h1>
-        <p style={{ marginBottom: '12pt' }}>
-          {new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
-        </p>
-        {SLOTS.map((slot) => (
-          <div key={slot.id} style={{ marginBottom: '10pt' }}>
-            <h2 style={{ fontSize: '14pt', marginBottom: '4pt' }}>{slot.label}</h2>
-            {day[slot.id].length === 0 ? (
-              <p>—</p>
-            ) : (
-              <ul>
-                {day[slot.id].map((slug) => {
+        <h1 style={{ fontSize: '22pt', marginBottom: '8pt' }}>My week — The Recipe Seeker</h1>
+        {DAY_IDS.filter((d) => dayCount(d) > 0).map((d) => (
+          <div key={d} style={{ marginBottom: '10pt', breakInside: 'avoid' }}>
+            <h2 style={{ fontSize: '14pt', marginBottom: '4pt' }}>{DAY_NAMES[d]}</h2>
+            <ul>
+              {SLOTS.flatMap((slot) =>
+                week[d][slot.id].map((slug) => {
                   const r = recipeBySlug[slug]
                   const n = r?.nutrition || {}
                   return (
-                    <li key={slug}>
-                      {r?.title} — {fmt(n.protein?.amount)}g protein · {fmt(n.iron?.amount)}mg iron · {fmt(n.calories?.amount)} kcal
+                    <li key={`${slot.id}-${slug}`}>
+                      {slot.label}: {r?.title} — {fmt(n.protein?.amount)}g protein · {fmt(n.iron?.amount)}mg iron · {fmt(n.calories?.amount)} kcal
                     </li>
                   )
-                })}
-              </ul>
-            )}
+                }),
+              )}
+            </ul>
           </div>
         ))}
-        <h2 style={{ fontSize: '14pt', margin: '12pt 0 4pt' }}>Day totals</h2>
-        <table>
-          <tbody>
-            {DV_KEYS.map((k) => (
-              <tr key={k}>
-                <td style={{ paddingRight: '16pt' }}>{DV[k].label}</td>
-                <td style={{ paddingRight: '16pt' }}>{fmt(totals[k])}{DV[k].unit}</td>
-                <td>{Math.round((totals[k] / DV[k].dv) * 100)}% DV</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        {weekCount === 0 && <p>No meals planned yet.</p>}
         <p style={{ marginTop: '12pt', fontSize: '9pt' }}>
           Based on general FDA Daily Values. General nutrition information only — not medical advice.
         </p>

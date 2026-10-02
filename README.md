@@ -258,114 +258,76 @@ USDA FoodData Central API docs · OpenLens (free AI-visibility tracker).
 
 ## Run & deploy
 
-Prerequisites: **Node 20+** (built/tested on Node 24). All dependencies are free/open-source.
-No secrets are committed — copy `.env.example` to `server/.env` for local overrides.
+Prerequisites: **Node 20+**. All dependencies are free/open-source. No secrets are committed:
+copy `.env.example` to `.env` (repo root) for local keys.
 
 ### Local development
 
 ```bash
-# 1. Install dependencies
-npm --prefix server install
-npm --prefix client install
-
-# 2. Build the dataset (validates seed data, writes data/recipes.json + client copy)
-npm run data:build
-
-# 3. Terminal A — API on http://localhost:3001
-npm run server:dev
-
-# 4. Terminal B — frontend dev server on http://localhost:5173 (proxies /api → :3001)
-npm --prefix client run dev
+npm install                       # root + client workspace
+npm run data:build                # validate data/seed.mjs, write data/recipes.json + client copy
+npm --prefix client run dev       # site on http://localhost:5173 (proxies /api → :3001)
+npm run api:dev                   # optional: chat/subscribe/unsubscribe functions on :3001
 ```
 
 ### Production build + verification
 
 ```bash
-npm run build        # data:build → seo:build → client build (prerenders every route to static HTML)
-npm run seo:check    # 122 automated checks: <h1> in every page, JSON-LD present,
-                     # no hash routes, real <a> navigation, sitemap.xml / robots.txt /
-                     # llms.txt / llms-full.txt present in dist/
-npm --prefix client run preview   # serve client/dist/ locally to smoke-test
+npm run build        # data:build → client build (prerenders every route) → email JPEGs
+npm run seo:check    # <h1>, JSON-LD, no hash routes, real <a> links, sitemap/robots/llms files
+npm --prefix client run preview
 ```
 
-How the build works: `vite build` → SSR bundle (`entry-server.jsx`) → `node scripts/prerender.mjs`
-renders every route (from `src/data/recipes.json`, the same file the pages read) to
-`dist/<route>/index.html`, injecting react-helmet-async head tags and JSON-LD, and emits
-`sitemap.xml`, `robots.txt` (AI crawlers explicitly allowed), `llms.txt`, `llms-full.txt`.
-(vite-ssg's React support was dropped in v24+, so the prerenderer is custom — same outcome.)
+How the build works: a small Vite plugin (`client/vite.config.js`) splits
+`client/src/data/recipes.json` into a slim index every page ships with and one detail file per
+recipe/post/guide (`/data/<kind>/<slug>.json`). `vite build` → SSR bundle → `client/scripts/prerender.mjs`
+renders every route to static HTML, embeds that page's detail data (so hydration matches and
+crawlers see everything), and emits `sitemap.xml`, `robots.txt`, `llms.txt`, `llms-full.txt`.
 
-### Deploy (all free tiers)
+### Hosting: Vercel
 
-**Recommended — single service (simplest, zero CORS):** deploy `server/` to the Render free tier.
-If `client/dist/` exists, Express serves the prerendered site itself, so one service handles
-both frontend and API.
+Static site + serverless functions in `api/` (auto-detected). Set env vars in
+Vercel → Project → Settings → Environment Variables, then redeploy:
 
-```bash
-# Render settings for the Web Service:
-#   Build command: npm run build && npm --prefix server install
-#   Start command:  npm run server:start
-#   Env vars:       FDC_API_KEY=<your key>   (optional until Phase 3 refresh; DEMO_KEY is the default)
-```
-
-**Split (alternative):** frontend `client/dist/` → Cloudflare Pages or Vercel (static, `404.html`
-as the not-found page); API → Render. Note: the client calls `/api/*` relatively, so a split
-deploy needs either same-origin rewrites or a `VITE_API_URL` base — single-service is easier.
-
-### Vercel functions: AI chat + newsletter
-
-The site is static, plus two serverless functions in `api/` (Vercel picks them up automatically):
-
-| Function | What it does | Env vars (Vercel → Project → Settings → Environment Variables) |
+| Function | What it does | Env vars |
 |---|---|---|
-| `api/chat.mjs` | "Ask Seeker" chat on the home page. Matches the question against `recipes.json` (`client/src/lib/recipeMatch.mjs`) and asks an LLM to answer using only those recipes and their real numbers. | At least one of `OPENROUTER_API_KEY`, `NVIDIA_API_KEY`, `GEMINI_API_KEY`, `XAI_API_KEY` (free tiers). Without any key the chat still works in "basic" mode (recipe matches, no AI wording). |
-| `api/subscribe.mjs` | Newsletter signups → Supabase table `newsletter_subscribers`. | `SUPABASE_URL`, `SUPABASE_SERVICE_KEY`, and run `supabase/newsletter.sql` once. The signup form in the footer only appears once both are set. |
+| `api/chat.mjs` | "Ask Seeker" chat on the home page. Matches the question against `recipes.json` (`client/src/lib/recipeMatch.mjs`) and asks an LLM to answer using only those recipes and their real numbers. Logs questions it couldn't answer well to `chat_gaps`. | One of `OPENROUTER_API_KEY`, `NVIDIA_API_KEY`, `GEMINI_API_KEY`, `XAI_API_KEY` (free tiers). Without one, chat works in "basic" mode. `SUPABASE_URL` + `SUPABASE_SERVICE_KEY` for gap logging. |
+| `api/subscribe.mjs` | Newsletter signups → `newsletter_subscribers`. The footer form appears only once configured. | `SUPABASE_URL`, `SUPABASE_SERVICE_KEY` |
+| `api/unsubscribe.mjs` | One-click unsubscribe links in every newsletter. | `NEWSLETTER_SECRET` (same value as the GitHub secret) + the Supabase pair |
 
-Guardrails: same-origin only, per-IP rate limits (chat 20 / 10 min, signup 5 / 10 min), capped message
-length and history, and a system prompt that forbids medical advice, invented recipes and invented numbers.
+Other Vercel settings: `SITE_URL` (your custom domain, moves every canonical/sitemap URL),
+`VITE_SUPABASE_URL` + `VITE_SUPABASE_PUBLISHABLE_KEY` (sign-in, favorites, planner sync, ratings),
+and turn on **Analytics** (cookieless Vercel Web Analytics; the script is already in `index.html`).
 
-Local: `npm run api:dev` serves both functions on :3001 (reads the repo-root `.env`), and the Vite
-dev/preview server proxies `/api` there.
+Guardrails on the functions: same-origin only, per-IP rate limits, capped input/history/output, and a
+chat system prompt that forbids medical advice, invented recipes and invented numbers.
 
-### USDA data refresh (when the production key arrives)
+### Automation (GitHub Actions)
 
-All 12 seed recipes are currently marked `source: "estimate-refresh-when-key-arrives"` — values
-were composed from documented USDA per-100g figures, not live API pulls. To flip them to
-`cached-verified`:
+| Workflow | When | Does |
+|---|---|---|
+| `keyword-news-weekly.yml` | Sundays | Chat-gap miner (real visitor demand) then Google News miner → `keyword_candidates` |
+| `pipeline-drafts.yml` | Daily 05:00 UTC | AI drafts → `pending_review` (a human approves in `/admin/review`) |
+| `pipeline-publish.yml` | Daily 06:00 UTC | Publishes approved drafts + their pin images |
+| `pins.yml` | On recipe data changes | Generates 1000×1500 Pinterest pins (`scripts/generate-images.mjs pins`) |
+| `newsletter-weekly.yml` | Thursdays 13:00 UTC | Weekly email via Brevo (run manually with dry_run for a preview) |
 
-```bash
-# 1. Get a free key: https://fdc.nal.usda.gov/api-key-signup (2 min, 1,000 req/hr)
-# 2. Put it in server/.env as FDC_API_KEY=...
-node scripts/fetch-hero-cache.cjs   # 12 ingredient pulls → SQLite cache (stays under DEMO limits)
-# 3. Recompute per-serving nutrition from cache, update data/seed.mjs sources, then:
-npm run build && npm run seo:check
-```
+Each workflow lists its required secrets in its header and skips cleanly until they exist.
 
-### What's still open (needs Khalil)
+### Setup checklist (owner)
 
-1. **Author identity — DONE in v2.** The site now ships with "Emily Carter, recipe developer &
-   nutrition enthusiast" (AI persona with a low-iron backstory, portrait at
-   `client/public/images/author.webp`, bylines on recipe/guide pages, Person JSON-LD on /about).
-   Hard honesty rule enforced: she is NEVER presented as a dietitian/doctor. If you later want a
-   real credentialed reviewer, add a "Reviewed by" line then.
-2. **Domain** — canonical base is the placeholder `https://therecipeseeker.com`; update
-   `SITE_URL` in `client/src/data/site.js` + rebuild when the real domain is live.
-3. **USDA API key** — your production key is already in the gitignored `server/.env` (do not
-   commit it). The hero-ingredient cache now covers all 24 recipes (22 cached pulls in
-   `server/data/app.db`). Per-serving values in v2 are still authored estimates backed by
-   USDA hero-ingredient data (`source: 'estimate-refresh-when-key-arrives'`); a full per-recipe
-   recompute from weighed ingredients is future work.
-4. **Pinterest profile link** — to wire CTAs/UTMs.
-5. **Recipe photos — DONE in v2.** All 24 recipes now have their own AI-generated food photo in
-   `client/public/images/` (warm editorial style, cream backgrounds). Replace with real
-   photography any time.
-6. **Newsletter backend** — the signup form posts to `/api/subscribe` (Express + SQLite), which
-   does not exist on static hosting (Vercel/Cloudflare Pages). You said you will handle this
-   later: either deploy the Express server (Render, single-service) or swap the form to a
-   provider (Buttondown/ConvertKit) + serverless function.
-7. **Plausible account** — create it, add the real domain, confirm `data-domain` in
-   `client/index.html`.
-8. **Contact email** — replace placeholder `hello@therecipeseeker.com` in `ContactPage.jsx` and
-   `PrivacyPage.jsx` with the real inbox.
+1. **Supabase SQL:** run `supabase/schema.sql`, `pipeline/supabase/schema-pipeline.sql`, then
+   `supabase/site-features.sql` (newsletter, chat gaps, ratings).
+2. **Vercel env vars** (above), then redeploy. Enable Analytics.
+3. **GitHub secrets:** `SUPABASE_URL`, `SUPABASE_SERVICE_KEY`, one LLM key; for the newsletter also
+   `BREVO_API_KEY`, `NEWSLETTER_FROM_EMAIL` (verified in Brevo), `NEWSLETTER_SECRET`,
+   `NEWSLETTER_POSTAL_ADDRESS` (required by US anti-spam law).
+4. **Domain:** buy it, add it in Vercel → Domains, set `SITE_URL` in Vercel and as a GitHub
+   repository variable, redeploy, then submit the new sitemap in Search Console.
+5. **Author:** the site speaks as "The Recipe Seeker Kitchen" (`client/src/data/author.js`). To
+   publish under a real person, edit that file and add a real photo.
+6. **Contact email:** replace the placeholder `hello@therecipeseeker.com` in `ContactPage.jsx`,
+   `PrivacyPage.jsx` and `AboutPage.jsx`.
 
 ---
 

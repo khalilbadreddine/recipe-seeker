@@ -89,7 +89,7 @@ export default function SavedPage() {
             <div>
               <h2 className="font-display text-2xl font-bold">Take them anywhere</h2>
               <p className="mt-1 max-w-xl leading-relaxed text-paper/70">
-                Sign in with Google to sync saved recipes and your My Day meal plans across phone, tablet and computer.
+                Sign in with Google to sync saved recipes and your weekly meal plans across phone, tablet and computer.
               </p>
             </div>
             <SignInButton className="shrink-0 border-transparent" />

@@ -345,9 +345,8 @@ details.faq-item > summary::-webkit-details-marker {
     vertical-align: -0.1em;
   }
 
-  article::after {
-    content: 'https://recipe-seeker-client.vercel.app';
-    display: block;
+  .print-url {
+    display: block !important;
     margin-top: 1.2cm;
     padding-top: 0.4cm;
     border-top: 1px solid #999999;

@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import Seo from '../components/Seo'
 import RecipeCard from '../components/RecipeCard'
@@ -22,10 +22,20 @@ const TIMES = [
  */
 export default function SearchPage() {
   const [params] = useSearchParams()
-  const [nutrientKey, setNutrientKey] = useState(() => params.get('nutrient') || 'protein')
-  const [minAmount, setMinAmount] = useState(() => Number(params.get('min')) || 0)
-  const [query, setQuery] = useState(() => params.get('q') || '')
-  const [maxTime, setMaxTime] = useState(() => Number(params.get('maxTime')) || 0)
+  // Start from defaults (what the prerendered HTML shows), then apply the URL's
+  // filters after hydration, so ?q=… links never cause a hydration mismatch.
+  const [nutrientKey, setNutrientKey] = useState('protein')
+  const [minAmount, setMinAmount] = useState(0)
+  const [query, setQuery] = useState('')
+  const [maxTime, setMaxTime] = useState(0)
+
+  useEffect(() => {
+    const nutrient = params.get('nutrient')
+    setNutrientKey(nutrients.some((n) => n.key === nutrient) ? nutrient : 'protein')
+    setMinAmount(Number(params.get('min')) || 0)
+    setQuery(params.get('q') || '')
+    setMaxTime(Number(params.get('maxTime')) || 0)
+  }, [params])
 
   const nutrient = nutrients.find((n) => n.key === nutrientKey) || nutrients[0]
   const meta = nutrientMeta(nutrient.key)
@@ -43,7 +53,7 @@ export default function SearchPage() {
           !q ||
           r.title.toLowerCase().includes(q) ||
           r.description.toLowerCase().includes(q) ||
-          r.ingredients.some((i) => i.item.toLowerCase().includes(q)) ||
+          (r.ingredientNames || []).some((i) => i.toLowerCase().includes(q)) ||
           r.tags.diets.some((d) => d.toLowerCase().includes(q)) ||
           r.tags.meals.some((m) => m.toLowerCase().includes(q))
         return matchesNutrient && matchesTime && matchesQuery

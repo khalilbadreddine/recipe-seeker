@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import Seo from '../components/Seo'
 import JsonLd from '../components/JsonLd'
@@ -11,10 +11,14 @@ import Reveal from '../components/Reveal'
 import { ArticleSections, TableOfContents } from '../components/ContentBlocks'
 import { formatPostDate } from '../components/PostCard'
 import { absUrl, absImage, getGuide, getRecipe } from '../data/site'
+import { useDetail } from '../lib/details'
 
 export default function GuidePage() {
   const { slug } = useParams()
-  const guide = getGuide(slug)
+  const summary = getGuide(slug)
+  const { data: detail, error: detailError } = useDetail('guides', slug)
+  const guide = useMemo(() => (summary && detail ? { ...summary, ...detail } : summary), [summary, detail])
+  const ready = Boolean(summary && detail)
 
   if (!guide) {
     return (
@@ -32,7 +36,7 @@ export default function GuidePage() {
   const canonical = absUrl(`/guides/${guide.slug}`)
   const title = `${guide.title} | The Recipe Seeker`
   const description = guide.description.slice(0, 160)
-  const related = guide.relatedRecipes.map(getRecipe).filter(Boolean)
+  const related = ready ? guide.relatedRecipes.map(getRecipe).filter(Boolean) : []
 
   const articleLd = {
     '@context': 'https://schema.org',
@@ -51,11 +55,11 @@ export default function GuidePage() {
     '@type': 'BreadcrumbList',
     itemListElement: [
       { '@type': 'ListItem', position: 1, name: 'Home', item: absUrl('/') },
-      { '@type': 'ListItem', position: 2, name: 'Guides', item: canonical },
+      { '@type': 'ListItem', position: 2, name: 'Guides', item: absUrl('/guides') },
       { '@type': 'ListItem', position: 3, name: guide.title, item: canonical },
     ],
   }
-  const faqLd = {
+  const faqLd = ready && {
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
     mainEntity: guide.faqs.map((f) => ({
@@ -76,10 +80,10 @@ export default function GuidePage() {
         publishedTime={guide.datePublished}
         modifiedTime={guide.dateModified}
       />
-      <JsonLd data={[articleLd, breadcrumbLd, faqLd]} />
+      <JsonLd data={ready ? [articleLd, breadcrumbLd, faqLd] : [articleLd, breadcrumbLd]} />
 
       <article className="mx-auto max-w-7xl px-4 pt-4 sm:px-6 sm:pt-6">
-        <Breadcrumbs items={[{ label: 'Home', to: '/' }, { label: 'Guides', to: '/' }, { label: guide.title }]} />
+        <Breadcrumbs items={[{ label: 'Home', to: '/' }, { label: 'Guides', to: '/guides' }, { label: guide.title }]} />
 
         <header className="relative overflow-hidden rounded-[2rem] bg-zest px-6 py-12 sm:px-12 sm:py-16">
           <div aria-hidden="true" className="bg-dots pointer-events-none absolute inset-0 opacity-50" />
@@ -94,6 +98,7 @@ export default function GuidePage() {
           </div>
         </header>
 
+        {ready ? (
         <div className="mx-auto mt-12 grid max-w-6xl gap-12 lg:grid-cols-[1fr_280px]">
           <div className="min-w-0 max-w-3xl">
             {/* Direct-answer lede: first ~100 words, citation-friendly */}
@@ -135,6 +140,18 @@ export default function GuidePage() {
             </div>
           </aside>
         </div>
+        ) : detailError ? (
+          <div className="mx-auto mt-12 max-w-3xl rounded-3xl border border-line bg-card p-6">
+            <p className="font-display text-xl font-bold text-ink">We couldn’t load this guide.</p>
+            <a href={`/guides/${slug}`} className="mt-4 inline-flex min-h-[44px] items-center rounded-full bg-ink px-5 text-sm font-bold text-paper">Reload</a>
+          </div>
+        ) : (
+          <div className="mx-auto mt-12 max-w-3xl space-y-4" aria-busy="true">
+            {[0, 1, 2, 3].map((k) => (
+              <div key={k} className="h-24 animate-pulse rounded-3xl bg-mist" />
+            ))}
+          </div>
+        )}
       </article>
     </>
   )

@@ -1,7 +1,9 @@
-import rawData from './recipes.json'
+// Slim index of all content (see vite.config.js + scripts/site-index.mjs).
+// Full recipe/post/guide detail is loaded per page via src/lib/details.js.
+import rawData from 'virtual:site-index'
 
-// TODO: replace with the real production domain once DNS is live.
-// All canonicals, OG/Twitter URLs and sitemap entries are derived from this one constant.
+// Set SITE_URL at build time to move to a custom domain: every canonical,
+// OG/Twitter URL and sitemap entry is derived from this one constant.
 export const SITE_URL = rawData.site.canonicalBase || 'https://recipe-seeker-client.vercel.app'
 
 export const site = rawData.site
@@ -25,7 +27,7 @@ export const formatAmount = (amount, unit) => {
 
 /** All routes that must exist as static HTML after prerendering. */
 export function getIncludedRoutes() {
-  const routes = ['/', '/recipes', '/nutrients', '/search', '/about', '/disclaimer', '/privacy', '/contact', '/blog', '/fibermax-reset']
+  const routes = ['/', '/recipes', '/nutrients', '/search', '/about', '/disclaimer', '/privacy', '/contact', '/blog', '/guides', '/fibermax-reset']
   recipes.forEach((r) => routes.push(`/recipes/${r.slug}`))
   nutrients.forEach((n) => routes.push(`/nutrients/${n.slug || n.key}`))
   guides.forEach((g) => routes.push(`/guides/${g.slug}`))

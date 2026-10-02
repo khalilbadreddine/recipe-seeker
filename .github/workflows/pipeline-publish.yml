@@ -35,8 +35,15 @@ jobs:
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
-          SITE_URL: https://recipe-seeker-client.vercel.app
+          SITE_URL: ${{ vars.SITE_URL || 'https://recipe-seeker-client.vercel.app' }}
         run: node pipeline/scripts/publisher.mjs
+
+      - name: Pin images for new posts
+        run: |
+          if ! git diff --quiet -- client/src/data/recipes.json; then
+            npm ci --no-audit --no-fund
+            node scripts/generate-images.mjs pins
+          fi
 
       - name: Commit new posts (if any)
         run: |
@@ -45,7 +52,7 @@ jobs:
           else
             git config user.name "recipe-seeker-pipeline"
             git config user.email "pipeline@recipe-seeker.local"
-            git add client/src/data/recipes.json
+            git add client/src/data/recipes.json client/public/pins client/src/data/pins.json
             git commit -m "pipeline: publish approved post(s) [skip ci]"
             git push
             echo "Pushed — Vercel will deploy."

@@ -2,9 +2,10 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import ResponsiveImage from './ResponsiveImage'
 
-/** Estimate reading time from post content (200 wpm, minimum 1 min). */
+/** Reading time: precomputed in the slim index, else estimated (200 wpm, minimum 1). */
 export function readTimeMinutes(post) {
-  let words = post.lede.split(/\s+/).length
+  if (post.readMinutes) return post.readMinutes
+  let words = String(post.lede || '').split(/\s+/).length
   for (const s of post.sections || []) {
     words += s.h2.split(/\s+/).length
     for (const p of s.paragraphs || []) words += p.split(/\s+/).length

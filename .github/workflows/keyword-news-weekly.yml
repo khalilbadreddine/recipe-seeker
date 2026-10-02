@@ -1,4 +1,4 @@
-# Keyword News Scan — weekly backup keyword miner (Google News RSS).
+# Weekly keyword mining: visitor chat gaps first, then Google News RSS trends.
 #
 # Why: the Pinterest keyword miner needs Pinterest API trial approval and is
 # rate-limited. This backup needs NO api key — it reads Google News RSS (US)
@@ -30,6 +30,14 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
+
+      # Real visitor demand first: questions the site chat couldn't answer well.
+      # Skips quietly until the chat_gaps table exists (supabase/site-features.sql).
+      - name: Run chat-gaps keyword miner
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+        run: node pipeline/scripts/keyword-miner-chat.mjs || echo "::warning::chat-gaps miner skipped (is supabase/site-features.sql applied?)"
 
       - name: Run news keyword miner
         env:

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import Seo from '../components/Seo'
 import JsonLd from '../components/JsonLd'
@@ -12,11 +12,30 @@ import Reveal from '../components/Reveal'
 import { ArticleSections, TableOfContents } from '../components/ContentBlocks'
 import PostCard, { readTimeMinutes, formatPostDate } from '../components/PostCard'
 import { absUrl, absImage, getPost, getRecipe, posts } from '../data/site'
-import { AUTHOR_PERSON_LD } from '../data/author'
+import { AUTHOR_LD } from '../data/author'
+import { useDetail } from '../lib/details'
+
+function DetailFallback({ error, href }) {
+  return error ? (
+    <div className="mx-auto mt-12 max-w-3xl rounded-3xl border border-line bg-card p-6">
+      <p className="font-display text-xl font-bold text-ink">We couldn’t load this article.</p>
+      <a href={href} className="mt-4 inline-flex min-h-[44px] items-center rounded-full bg-ink px-5 text-sm font-bold text-paper">Reload</a>
+    </div>
+  ) : (
+    <div className="mx-auto mt-12 max-w-3xl space-y-4" aria-busy="true">
+      {[0, 1, 2, 3].map((k) => (
+        <div key={k} className="h-24 animate-pulse rounded-3xl bg-mist" />
+      ))}
+    </div>
+  )
+}
 
 export default function BlogPost() {
   const { slug } = useParams()
-  const post = getPost(slug)
+  const summary = getPost(slug)
+  const { data: detail, error: detailError } = useDetail('posts', slug)
+  const post = useMemo(() => (summary && detail ? { ...summary, ...detail } : summary), [summary, detail])
+  const ready = Boolean(summary && detail)
 
   if (!post) {
     return (
@@ -34,7 +53,7 @@ export default function BlogPost() {
   const canonical = absUrl(`/blog/${post.slug}`)
   const title = `${post.title} | The Recipe Seeker`
   const description = post.description.slice(0, 160)
-  const relatedRecipes = (post.relatedRecipes || []).map(getRecipe).filter(Boolean)
+  const relatedRecipes = ready ? (post.relatedRecipes || []).map(getRecipe).filter(Boolean) : []
   const relatedPosts = [
     ...posts.filter((p) => p.slug !== post.slug && p.category === post.category),
     ...posts.filter((p) => p.slug !== post.slug && p.category !== post.category),
@@ -46,7 +65,7 @@ export default function BlogPost() {
     headline: post.title,
     description: post.description,
     image: [absImage(post.image)],
-    author: AUTHOR_PERSON_LD,
+    author: AUTHOR_LD,
     publisher: { '@type': 'Organization', name: 'The Recipe Seeker', url: absUrl('/') },
     datePublished: post.datePublished,
     dateModified: post.dateModified,
@@ -62,7 +81,7 @@ export default function BlogPost() {
       { '@type': 'ListItem', position: 3, name: post.title, item: canonical },
     ],
   }
-  const faqLd = {
+  const faqLd = ready && {
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
     mainEntity: post.faqs.map((f) => ({
@@ -83,7 +102,7 @@ export default function BlogPost() {
         publishedTime={post.datePublished}
         modifiedTime={post.dateModified}
       />
-      <JsonLd data={[blogPostingLd, breadcrumbLd, faqLd]} />
+      <JsonLd data={ready ? [blogPostingLd, breadcrumbLd, faqLd] : [blogPostingLd, breadcrumbLd]} />
 
       <article className="mx-auto max-w-7xl px-4 pt-4 sm:px-6 sm:pt-6">
         <Breadcrumbs items={[{ label: 'Home', to: '/' }, { label: 'Blog', to: '/blog' }, { label: post.title }]} />
@@ -112,6 +131,7 @@ export default function BlogPost() {
           />
         </Reveal>
 
+        {ready ? (
         <div className="mx-auto mt-12 grid max-w-6xl gap-12 lg:grid-cols-[1fr_280px]">
           <div className="min-w-0 max-w-3xl">
             {/* Direct-answer lede: citation-friendly opening */}
@@ -153,6 +173,9 @@ export default function BlogPost() {
             </div>
           </aside>
         </div>
+        ) : (
+          <DetailFallback error={detailError} href={`/blog/${slug}`} />
+        )}
 
         {relatedPosts.length > 0 && (
           <section className="mt-20" aria-labelledby="post-related-posts">

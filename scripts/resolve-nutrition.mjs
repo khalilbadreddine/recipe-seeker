@@ -17,8 +17,7 @@
  * Run from the repo root: `npm run data:build`
  *
  * Nutrition data flow: the seed's per-serving `nutrition` values were
- * composed at authoring time from USDA FoodData Central (see
- * scripts/fetch-hero-cache.cjs for the cached hero-ingredient pulls).
+ * composed at authoring time from USDA FoodData Central ingredient data.
  * This script only assembles + validates — it never fetches.
  */
 import fs from 'node:fs';
@@ -36,8 +35,10 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.join(__dirname, '..');
 
 const CANONICAL_BASE = (() => {
-  // Single source of truth: keep whatever canonicalBase is already in data/recipes.json
-  // (set it there when the domain changes). Falls back to the live Vercel URL.
+  // Domain switch: set SITE_URL (e.g. in Vercel env) and every canonical, sitemap,
+  // OG and JSON-LD URL follows. Otherwise keep whatever canonicalBase is already in
+  // data/recipes.json, falling back to the live Vercel URL.
+  if (process.env.SITE_URL) return process.env.SITE_URL.replace(/\/$/, '');
   try {
     const existing = JSON.parse(
       fs.readFileSync(path.join(ROOT, 'data', 'recipes.json'), 'utf8')

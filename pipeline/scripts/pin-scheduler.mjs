@@ -28,6 +28,7 @@
  * Full step-by-step: pipeline/docs/pin-scheduler-guide.md
  */
 
+import { readFileSync } from 'node:fs';
 import './lib/env.mjs';
 import { createDb } from './lib/db.mjs';
 import { GuardrailError, assertPinCreatable } from './lib/guardrails.mjs';
@@ -39,6 +40,13 @@ const EXPLAIN = process.argv.includes('--explain');
 const LIST_BOARDS = process.argv.includes('--boards');
 const SPACING_HOURS = Number(process.env.PIN_SPACING_HOURS || 6);
 const SITE_URL = (process.env.SITE_URL || 'https://recipe-seeker-client.vercel.app').replace(/\/$/, '');
+const PIN_MANIFEST = (() => {
+  try {
+    return JSON.parse(readFileSync(new URL('../../client/src/data/pins.json', import.meta.url), 'utf8'));
+  } catch {
+    return { recipes: [], blog: [] };
+  }
+})();
 
 function say(step, text) {
   if (EXPLAIN) console.log(`\n[teach ${step}] ${text}`);
@@ -104,7 +112,11 @@ async function main() {
     }
 
     const variant = draft.pin_variants?.[0] || {};
-    const imageUrl = SITE_URL + draft.image;
+    // Prefer the generated 1000×1500 pin (scripts/generate-images.mjs) over the hero photo.
+    const slug = (draft.live_url || '').split('/').filter(Boolean).pop();
+    const imageUrl = slug && PIN_MANIFEST.blog.includes(slug)
+      ? `${SITE_URL}/pins/blog/${slug}.jpg`
+      : /^https?:/.test(draft.image) ? draft.image : SITE_URL + draft.image;
     const publishAt = new Date(Date.now() + i * SPACING_HOURS * 3600 * 1000).toISOString();
 
     say(3, `For "${draft.title}" I build the pin: title + description (variant 1 of 3), link back to ${draft.live_url}, and the hero image ${imageUrl}. The image MUST be a public URL — Pinterest fetches it from your live site.`);

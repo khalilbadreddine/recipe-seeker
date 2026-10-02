@@ -7,7 +7,7 @@ import { useShoppingList } from '../context/ShoppingListContext'
 const TABS = [
   { label: 'Home', to: '/', icon: 'home', end: true },
   { label: 'Recipes', to: '/recipes', icon: 'bowl' },
-  { label: 'My Day', to: '/day-builder', icon: 'calendar' },
+  { label: 'Planner', to: '/day-builder', icon: 'calendar' },
   { label: 'Saved', to: '/saved', icon: 'heart' },
   { label: 'List', to: '/shopping-list', icon: 'list' },
 ]

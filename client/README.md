@@ -12,7 +12,7 @@ Nutrition-first recipe site: "Find recipes by what your body needs."
   Day Builder, Fibermax and admin pages inherit the new look.
 - **react-helmet-async** for per-route head tags
 - **Custom prerenderer** (`scripts/prerender.mjs`) instead of vite-ssg — see below
-- Zero paid deps. Dev proxy: `/api` → `http://localhost:3001` (Express API, sibling agent)
+- Zero paid deps. Dev proxy: `/api` → `http://localhost:3001` (`npm run api:dev` serves the Vercel functions in `/api`)
 
 ## Why not vite-ssg
 

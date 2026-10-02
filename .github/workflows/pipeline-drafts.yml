@@ -71,5 +71,5 @@ jobs:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
           LLM_PROVIDER: auto
           DRAFTS_PER_DAY: ${{ vars.DRAFTS_PER_DAY || '3' }}
-          SITE_URL: https://recipe-seeker-client.vercel.app
+          SITE_URL: ${{ vars.SITE_URL || 'https://recipe-seeker-client.vercel.app' }}
         run: node pipeline/scripts/draft-generator.mjs

@@ -1,0 +1,59 @@
+# Pins — creates Pinterest pin images (1000×1500) for any new recipe or post.
+#
+# Runs when recipe data changes on main (e.g. a merged recipe PR) or on demand.
+# Commits new images to client/public/pins/ and updates client/src/data/pins.json;
+# Vercel deploys them with the site. Existing pins are never regenerated unless
+# you run it manually with "force".
+
+name: pins
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'client/src/data/recipes.json'
+      - 'data/seed.mjs'
+      - 'data/posts.json'
+      - 'scripts/generate-images.mjs'
+  workflow_dispatch:
+    inputs:
+      force:
+        description: 'Regenerate every pin'
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: pins
+  cancel-in-progress: false
+
+jobs:
+  pins:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install
+        run: npm ci --no-audit --no-fund
+
+      - name: Generate pins
+        run: node scripts/generate-images.mjs pins ${{ inputs.force && '--force' || '' }}
+
+      - name: Commit new pins (if any)
+        run: |
+          git add client/public/pins client/src/data/pins.json
+          if git diff --cached --quiet; then
+            echo "No new pins."
+          else
+            git config user.name "recipe-seeker-pipeline"
+            git config user.email "pipeline@recipe-seeker.local"
+            git commit -m "pins: generate Pinterest images [skip ci]"
+            git push
+          fi

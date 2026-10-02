@@ -69,7 +69,8 @@ const STOP = new Set(
   something anything per serving servings day daily today tonight week minutes minute mins min quick fast under than about
   around that this these those it its also just really very tasty yummy delicious ok okay hi hello thanks thank
   quicker faster shorter ones one other others another else instead different option options alternative alternatives
-  make made version same kind type sort what about how but only too also maybe`.split(/\s+/),
+  make made version same kind type sort what about how but only too also maybe
+  email send tell know help suggest recommend recommendation looking search`.split(/\s+/),
 )
 
 const has = (text, phrase) => new RegExp(`(^|[^a-z0-9])${phrase.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`).test(text)
@@ -123,7 +124,8 @@ const dietOk = (recipe, diet) => {
   return d.includes(diet)
 }
 
-const ingredientText = (r) => (r.ingredients || []).map((i) => i.item.toLowerCase()).join(' | ')
+// Full recipes carry ingredients[]; the slim client index carries ingredientNames[].
+const ingredientText = (r) => (r.ingredients ? r.ingredients.map((i) => i.item) : r.ingredientNames || []).join(' | ').toLowerCase()
 
 /**
  * Rank recipes for a question.
