@@ -3,6 +3,7 @@ import { renderToString } from 'react-dom/server'
 import { StaticRouter } from 'react-router'
 import { HelmetProvider } from 'react-helmet-async'
 import App from './App.jsx'
+import { seedDetails } from './lib/details'
 
 /**
  * SSR entry used by scripts/prerender.mjs.
@@ -16,7 +17,8 @@ import App from './App.jsx'
  */
 const HEAD_TAG_RE = /<(title|meta|link)\b([^>]*?)(?:\/>|>([\s\S]*?)<\/\1>)/g
 
-export function render(url) {
+export function render(url, details = {}) {
+  seedDetails(details)
   const raw = renderToString(
     <HelmetProvider>
       <StaticRouter location={url}>

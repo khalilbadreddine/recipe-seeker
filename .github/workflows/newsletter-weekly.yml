@@ -1,0 +1,77 @@
+# Newsletter — sends the weekly email to subscribers (Thursdays, 13:00 UTC ≈ 9am US Eastern).
+#
+# One issue per ISO week (tracked in newsletter_issues, so re-runs never double-send).
+# Run manually with "dry_run" to build the preview without sending.
+#
+# Required repository secrets (Settings -> Secrets and variables -> Actions):
+#   SUPABASE_URL, SUPABASE_SERVICE_KEY
+#   BREVO_API_KEY            (brevo.com, free tier: 300 emails/day)
+#   NEWSLETTER_FROM_EMAIL    (a sender address verified in Brevo)
+#   NEWSLETTER_SECRET        (any long random string; set the SAME value in Vercel)
+#   NEWSLETTER_POSTAL_ADDRESS (required by US anti-spam law, shown in the footer)
+# Optional: repository variables NEWSLETTER_FROM_NAME, SITE_URL, MAX_SENDS.
+# Without the required secrets the job logs a notice and exits successfully.
+
+name: newsletter-weekly
+
+on:
+  schedule:
+    - cron: '0 13 * * 4'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Build the preview only, send nothing'
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: newsletter
+  cancel-in-progress: false
+
+jobs:
+  send:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Check configuration
+        id: config
+        env:
+          REQUIRED: ${{ secrets.SUPABASE_URL && secrets.SUPABASE_SERVICE_KEY && secrets.BREVO_API_KEY && secrets.NEWSLETTER_FROM_EMAIL && secrets.NEWSLETTER_SECRET && secrets.NEWSLETTER_POSTAL_ADDRESS && 'yes' || '' }}
+        run: |
+          if [ "${{ inputs.dry_run }}" = "true" ] || [ -n "$REQUIRED" ]; then
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "::notice::Skipping: newsletter secrets are not all set (see the header of this workflow)."
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Build and send
+        if: steps.config.outputs.ready == 'true'
+        env:
+          DRY_RUN: ${{ inputs.dry_run && '1' || '' }}
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+          BREVO_API_KEY: ${{ secrets.BREVO_API_KEY }}
+          NEWSLETTER_FROM_EMAIL: ${{ secrets.NEWSLETTER_FROM_EMAIL }}
+          NEWSLETTER_SECRET: ${{ secrets.NEWSLETTER_SECRET }}
+          NEWSLETTER_POSTAL_ADDRESS: ${{ secrets.NEWSLETTER_POSTAL_ADDRESS }}
+          NEWSLETTER_FROM_NAME: ${{ vars.NEWSLETTER_FROM_NAME || 'The Recipe Seeker' }}
+          SITE_URL: ${{ vars.SITE_URL || 'https://recipe-seeker-client.vercel.app' }}
+          MAX_SENDS: ${{ vars.MAX_SENDS || '280' }}
+        run: node pipeline/scripts/newsletter-weekly.mjs
+
+      - name: Upload preview
+        if: steps.config.outputs.ready == 'true' && inputs.dry_run
+        uses: actions/upload-artifact@v4
+        with:
+          name: newsletter-preview
+          path: pipeline/out/newsletter-preview.html

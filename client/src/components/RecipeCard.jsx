@@ -5,6 +5,7 @@ import ResponsiveImage from './ResponsiveImage'
 import FavoriteButton from './FavoriteButton'
 import Icon from './Icon'
 import { formatAmount } from '../data/site'
+import { prefetchDetail } from '../lib/details'
 
 /**
  * Recipe card. The whole card is clickable through a "stretched" title link
@@ -38,7 +39,12 @@ export default function RecipeCard({ recipe, priority = false, maxBadges = 3 }) 
           {recipe.servings} servings
         </p>
         <h3 className="mt-1.5 font-display text-xl font-bold leading-snug text-ink">
-          <Link to={to} className="after:absolute after:inset-0 after:content-[''] group-hover:text-leaf-dark">
+          <Link
+            to={to}
+            onPointerEnter={() => prefetchDetail('recipes', recipe.slug)}
+            onFocus={() => prefetchDetail('recipes', recipe.slug)}
+            className="after:absolute after:inset-0 after:content-[''] group-hover:text-leaf-dark"
+          >
             {recipe.title}
           </Link>
         </h3>

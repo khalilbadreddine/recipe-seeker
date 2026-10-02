@@ -19,9 +19,11 @@ import Reveal from '../components/Reveal'
 import { SectionHeading } from '../components/ContentBlocks'
 import { scaleAmount } from '../lib/scaleAmount'
 import { rememberRecipe, addToDay, slotFor } from '../lib/localPrefs'
+import { useDetail } from '../lib/details'
 import { useShoppingList } from '../context/ShoppingListContext'
 import { absUrl, absImage, getRecipe, getNutrient, recipes, formatAmount } from '../data/site'
 import { nutrientMeta, tint, DIET_LABELS, MEAL_LABELS } from '../data/nutrientMeta'
+import pins from '../data/pins.json'
 
 /** schema.org nutrition field names for the keys we track. */
 const NUTRITION_MAP = {
@@ -83,6 +85,19 @@ function buildRecipeLd(recipe, canonical) {
     })),
     nutrition: { '@type': 'NutritionInformation', servingSize: '1 serving', ...nutrition },
     suitableForDiet: recipe.tags.diets.map((d) => DIET_MAP[d.toLowerCase()]).filter(Boolean),
+    // Only real, signed-in ratings, only once there are enough, and the same
+    // numbers are shown on the page by RatingWidget (Google's requirement).
+    ...(recipe.ratingStats?.rating_count >= 5 && recipe.ratingStats.rating_avg != null
+      ? {
+          aggregateRating: {
+            '@type': 'AggregateRating',
+            ratingValue: Number(recipe.ratingStats.rating_avg),
+            ratingCount: recipe.ratingStats.rating_count,
+            bestRating: 5,
+            worstRating: 1,
+          },
+        }
+      : {}),
   }
 }
 
@@ -272,13 +287,18 @@ function Ingredients({ recipe, onToast }) {
 
 export default function RecipePage() {
   const { slug } = useParams()
-  const recipe = getRecipe(slug)
+  const summary = getRecipe(slug)
+  // Full recipe (ingredients, steps, FAQs): embedded in the prerendered page,
+  // fetched on client-side navigation. The summary renders immediately.
+  const { data: detail, error: detailError } = useDetail('recipes', slug)
+  const recipe = useMemo(() => (summary && detail ? { ...summary, ...detail } : summary), [summary, detail])
+  const ready = Boolean(summary && detail)
   const [cooking, setCooking] = useState(false)
   const [toast, setToast] = useState(null)
 
   useEffect(() => {
-    if (recipe) rememberRecipe(recipe.slug)
-  }, [recipe])
+    if (summary) rememberRecipe(summary.slug)
+  }, [summary])
 
   useEffect(() => {
     if (!toast) return
@@ -287,13 +307,13 @@ export default function RecipePage() {
   }, [toast])
 
   const related = useMemo(() => {
-    if (!recipe) return []
-    const score = (r) => r.tags.nutrients.filter((n) => recipe.tags.nutrients.includes(n)).length
+    if (!summary) return []
+    const score = (r) => r.tags.nutrients.filter((n) => summary.tags.nutrients.includes(n)).length
     return recipes
-      .filter((r) => r.slug !== recipe.slug && score(r) > 0)
+      .filter((r) => r.slug !== summary.slug && score(r) > 0)
       .sort((a, b) => score(b) - score(a))
       .slice(0, 3)
-  }, [recipe])
+  }, [summary])
 
   if (!recipe) {
     return (
@@ -314,7 +334,7 @@ export default function RecipePage() {
   const hook = ` ${topBadge} per serving, with full nutrition facts and % daily values.`
   const description = (recipe.description + hook).slice(0, 160)
 
-  const recipeLd = buildRecipeLd(recipe, canonical)
+  const recipeLd = ready ? buildRecipeLd(recipe, canonical) : null
   const breadcrumbLd = {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
@@ -324,7 +344,7 @@ export default function RecipePage() {
       { '@type': 'ListItem', position: 3, name: recipe.title, item: canonical },
     ],
   }
-  const faqLd = {
+  const faqLd = ready && {
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
     mainEntity: recipe.faqs.map((f) => ({
@@ -340,7 +360,7 @@ export default function RecipePage() {
   const slotLabel = { breakfast: 'breakfast', lunch: 'lunch', dinner: 'dinner', snacks: 'snacks' }[slot]
   const planIt = () => {
     addToDay(recipe.slug, slot)
-    setToast({ text: `Added to today’s ${slotLabel}`, to: '/day-builder', link: 'Open My Day' })
+    setToast({ text: `Added to today’s ${slotLabel}`, to: '/day-builder', link: 'Open planner' })
   }
   const share = async () => {
     const data = { title: recipe.title, text: `${recipe.title}: ${recipe.description}`, url: canonical }
@@ -354,8 +374,9 @@ export default function RecipePage() {
       /* share sheet dismissed */
     }
   }
+  const pinMedia = pins.recipes.includes(recipe.slug) ? absUrl(`/pins/recipes/${recipe.slug}.jpg`) : absImage(recipe.image)
   const pinUrl = `https://www.pinterest.com/pin/create/button/?url=${encodeURIComponent(canonical)}&media=${encodeURIComponent(
-    absImage(recipe.image),
+    pinMedia,
   )}&description=${encodeURIComponent(`${recipe.title} (${topBadge} per serving)`)}`
 
   return (
@@ -369,7 +390,7 @@ export default function RecipePage() {
         publishedTime={recipe.datePublished}
         modifiedTime={recipe.dateModified}
       />
-      <JsonLd data={[recipeLd, breadcrumbLd, faqLd]} />
+      <JsonLd data={ready ? [recipeLd, breadcrumbLd, faqLd] : [breadcrumbLd]} />
 
       <article className="mx-auto max-w-7xl px-4 pb-8 pt-4 sm:px-6 sm:pt-6">
         <Breadcrumbs items={[{ label: 'Home', to: '/' }, { label: 'Recipes', to: '/recipes' }, { label: recipe.title }]} />
@@ -423,7 +444,8 @@ export default function RecipePage() {
               <button
                 type="button"
                 onClick={() => setCooking(true)}
-                className="inline-flex min-h-[48px] items-center gap-2 rounded-full bg-ink px-6 text-[15px] font-bold text-paper hover:bg-leaf-dark"
+                disabled={!ready}
+                className="inline-flex min-h-[48px] items-center gap-2 rounded-full bg-ink px-6 text-[15px] font-bold text-paper hover:bg-leaf-dark disabled:opacity-50"
               >
                 <Icon name="chef" className="h-5 w-5" /> Start cook mode
               </button>
@@ -433,7 +455,7 @@ export default function RecipePage() {
                 onClick={planIt}
                 className="inline-flex min-h-[48px] items-center gap-2 rounded-full border border-line bg-card px-5 text-sm font-semibold text-ink hover:border-ink/30"
               >
-                <Icon name="calendar" className="h-4 w-4" /> Add to My Day
+                <Icon name="calendar" className="h-4 w-4" /> Add to plan
               </button>
             </Reveal>
             <Reveal immediate variant="up" delay={260} className="no-print mt-4 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm font-semibold text-ink/70">
@@ -468,9 +490,11 @@ export default function RecipePage() {
         </div>
 
         {/* BODY */}
+        {ready ? (
+          <>
         <div className="mt-12 grid gap-10 lg:grid-cols-[380px_1fr] lg:gap-14">
           <div className="lg:sticky lg:top-24 lg:self-start">
-            <Ingredients recipe={recipe} onToast={setToast} />
+            <Ingredients key={recipe.slug} recipe={recipe} onToast={setToast} />
             <div className="no-print mt-3 flex justify-center">
               <PrintButton label="Print recipe" />
             </div>
@@ -542,10 +566,34 @@ export default function RecipePage() {
             </section>
 
             <div className="mt-10">
-              <RatingWidget slug={recipe.slug} title={recipe.title} />
+              <RatingWidget slug={recipe.slug} title={recipe.title} initialStats={recipe.ratingStats || null} />
             </div>
           </div>
         </div>
+
+          </>
+        ) : (
+          <div className="mt-12 grid gap-10 lg:grid-cols-[380px_1fr] lg:gap-14" aria-busy={!detailError}>
+            {detailError ? (
+              <div className="rounded-3xl border border-line bg-card p-6 lg:col-span-2">
+                <p className="font-display text-xl font-bold text-ink">We couldn’t load the full recipe.</p>
+                <p className="mt-2 text-ink/65">Check your connection, then try again.</p>
+                <a href={`/recipes/${slug}`} className="mt-4 inline-flex min-h-[44px] items-center rounded-full bg-ink px-5 text-sm font-bold text-paper">
+                  Reload recipe
+                </a>
+              </div>
+            ) : (
+              <>
+                <div className="h-96 animate-pulse rounded-3xl bg-mist" />
+                <div className="space-y-4">
+                  {[0, 1, 2].map((k) => (
+                    <div key={k} className="h-28 animate-pulse rounded-3xl bg-mist" />
+                  ))}
+                </div>
+              </>
+            )}
+          </div>
+        )}
 
         {related.length > 0 && (
           <section aria-labelledby="related-heading" className="no-print mt-20">
@@ -572,9 +620,10 @@ export default function RecipePage() {
         <div className="mt-12">
           <MedicalDisclaimer />
         </div>
+        <p className="print-url hidden">{canonical}</p>
       </article>
 
-      <CookMode recipe={recipe} open={cooking} onClose={() => setCooking(false)} />
+      {ready && <CookMode recipe={recipe} open={cooking} onClose={() => setCooking(false)} />}
 
       <div aria-live="polite" className="no-print pointer-events-none fixed inset-x-0 bottom-[calc(80px+env(safe-area-inset-bottom))] z-50 flex justify-center px-4 lg:bottom-6">
         {toast && (

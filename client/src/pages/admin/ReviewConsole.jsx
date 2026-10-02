@@ -18,7 +18,7 @@ import {
  *
  * Approval checklist (client-side; server re-checks):
  *   - every flagged numeric claim ticked as verified
- *   - personal note present and real (AI-written in Emily Carter's voice;
+ *   - personal note present and real (AI-written in the brand voice;
  *     the TODO_KHALIL placeholder still blocks)
  *   - hero image set (auto-generated at draft time; replaceable)
  *
@@ -135,7 +135,7 @@ export function Preview({ draft, regen, setMsg }) {
 
       <div className={`mb-4 rounded-r-xl border-l-4 p-3 ${hasTodo ? 'border-ember-dark bg-ember-soft/40' : 'border-forest bg-forest-soft/50'}`}>
         <div className="mb-1 text-[11px] font-extrabold tracking-wide text-[#6b5f4d] uppercase">
-          Personal note — Emily Carter's voice{' '}
+          Kitchen note — brand voice{' '}
           {hasTodo && <span className="text-ember-dark">— replace the placeholder before approving</span>}
         </div>
         <div className={`text-sm ${hasTodo ? 'text-ember-dark' : 'text-[#3d3428] italic'}`}>

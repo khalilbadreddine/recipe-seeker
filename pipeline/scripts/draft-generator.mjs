@@ -132,10 +132,10 @@ You are now writing the PERSONAL NOTE for a Recipe Seeker blog post, in the char
 
 HARD RULES:
 - 2-3 sentences. A genuine kitchen tip, substitution idea, or serving suggestion tied to the dish.
-- NEVER claim you cooked, tested, or tasted this specific dish. Banned phrases: "I tested", "when I made this", "my family loved/devoured".
+- NEVER claim you cooked, tested, or tasted this specific dish. Banned phrases: "we tested", "I tested", "when we made this", "our family loved/devoured".
 - Frame it as the character's kitchen wisdom: a swap that works, a prep tip, how to serve it.
 - No nutrition numbers. No medical claims. No hype words (amazing, incredible, game-changer).
-- First person, in character. Reply with ONLY the note text — no quotes, no preamble.`;
+- Speak as "we" (the brand), never "I" and never a named person. Reply with ONLY the note text — no quotes, no preamble.`;
   const { text, provider, model } = await chat(system, `Dish: ${dish}`, {
     maxTokens: 220,
     timeoutMs: 60_000,

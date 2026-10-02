@@ -6,7 +6,7 @@ import { LogoMark, Wordmark } from './Navbar'
 import NewsletterSignup from './NewsletterSignup'
 
 const COMPANY = [
-  { label: 'About Emily', to: '/about' },
+  { label: 'About us', to: '/about' },
   { label: 'Contact', to: '/contact' },
   { label: 'Medical disclaimer', to: '/disclaimer' },
   { label: 'Privacy', to: '/privacy' },
@@ -48,7 +48,7 @@ export default function Footer() {
               <Wordmark dark />
             </Link>
             <p className="mt-4 max-w-xs text-sm leading-relaxed text-paper/60">
-              Nutrition-first recipes for real life by Emily Carter, recipe developer &amp; nutrition enthusiast.
+              Nutrition-first recipes for real life, with honest per-serving numbers. Not medical advice.
             </p>
             <NewsletterSignup dark id="newsletter-footer" source="footer">
               <p className="mt-6 text-sm font-semibold text-paper">New recipes every week, straight to your inbox.</p>
@@ -67,7 +67,7 @@ export default function Footer() {
               <li><Link to="/recipes" className="hover:text-zest">All recipes</Link></li>
               <li><Link to="/nutrients" className="hover:text-zest">Browse by nutrient</Link></li>
               <li><Link to="/search" className="hover:text-zest">Nutrient search</Link></li>
-              <li><Link to="/day-builder" className="hover:text-zest">My Day planner</Link></li>
+              <li><Link to="/day-builder" className="hover:text-zest">Weekly meal planner</Link></li>
               <li><Link to="/saved" className="hover:text-zest">Saved recipes</Link></li>
               <li><Link to="/shopping-list" className="hover:text-zest">Shopping list</Link></li>
             </ul>
@@ -76,6 +76,7 @@ export default function Footer() {
             <h2 className="text-xs font-bold uppercase tracking-[0.18em] text-paper/50">Read</h2>
             <ul className="mt-4 space-y-2.5 text-[15px]">
               <li><Link to="/blog" className="hover:text-zest">Blog</Link></li>
+              <li><Link to="/guides" className="hover:text-zest">All guides</Link></li>
               {guides.map((g) => (
                 <li key={g.slug}><Link to={`/guides/${g.slug}`} className="hover:text-zest">{g.title}</Link></li>
               ))}

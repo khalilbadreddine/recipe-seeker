@@ -12,6 +12,7 @@ import RecipesIndex from './pages/RecipesIndex'
 import NutrientHub from './pages/NutrientHub'
 import NutrientIndex from './pages/NutrientIndex'
 import GuidePage from './pages/GuidePage'
+import GuidesIndex from './pages/GuidesIndex'
 import BlogIndex from './pages/BlogIndex'
 import BlogPost from './pages/BlogPost'
 import SearchPage from './pages/SearchPage'
@@ -54,6 +55,7 @@ export default function App() {
           <Route path="/recipes/:slug" element={<RecipePage />} />
           <Route path="/nutrients" element={<NutrientIndex />} />
           <Route path="/nutrients/:slug" element={<NutrientHub />} />
+          <Route path="/guides" element={<GuidesIndex />} />
           <Route path="/guides/:slug" element={<GuidePage />} />
           <Route path="/blog" element={<BlogIndex />} />
           <Route path="/blog/:slug" element={<BlogPost />} />

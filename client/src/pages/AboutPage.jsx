@@ -5,8 +5,8 @@ import JsonLd from '../components/JsonLd'
 import MedicalDisclaimer from '../components/MedicalDisclaimer'
 import Reveal from '../components/Reveal'
 import Icon from '../components/Icon'
-import { absUrl, absImage, recipes, nutrients } from '../data/site'
-import { AUTHOR, AUTHOR_PERSON_LD } from '../data/author'
+import { absUrl, absImage, recipes, nutrients, SITE_URL } from '../data/site'
+import { AUTHOR, AUTHOR_LD } from '../data/author'
 
 const METHOD = [
   {
@@ -31,41 +31,55 @@ const METHOD = [
   },
 ]
 
+const HONEST = [
+  {
+    title: 'Where recipes come from',
+    text: 'We research and adapt practical recipes from reputable cooking sources and classic techniques, then write them up in our own words with clear steps and real per-serving numbers.',
+  },
+  {
+    title: 'What “tested” means here',
+    text: 'Only recipes marked “Tested in our kitchen” have been cooked by us. Everything else is a carefully checked recipe, not a kitchen-tested one.',
+  },
+  {
+    title: 'How we use AI',
+    text: 'AI helps us draft articles and runs the “Ask Seeker” chat. A person reviews every article before it’s published, the chat only recommends recipes from this site using our real numbers, and some recipe images are AI-generated.',
+  },
+  {
+    title: 'Who we are not',
+    text: 'We’re not doctors, dietitians or nutritionists, and nothing here is medical advice. If you’re managing a health condition or suspect a deficiency, talk to your doctor or a registered dietitian.',
+  },
+]
+
 export default function AboutPage() {
   const canonical = absUrl('/about')
+  const aboutLd = {
+    '@context': 'https://schema.org',
+    '@type': 'AboutPage',
+    name: 'About The Recipe Seeker',
+    url: canonical,
+    about: { ...AUTHOR_LD, description: AUTHOR.oneLineBio, url: SITE_URL },
+  }
   return (
     <>
       <Seo
-        title="About Emily Carter | The Recipe Seeker"
-        description="Meet Emily Carter, recipe developer & nutrition enthusiast. Her low-iron journey in her mid-20s is why The Recipe Seeker cooks for nutrients first, honestly and with no medical claims."
+        title="About The Recipe Seeker | How We Make Our Recipes"
+        description="How The Recipe Seeker works: practical recipes with per-serving nutrition from USDA data, honest about testing and AI, and never medical advice."
         canonical={canonical}
-        image={absImage('/images/author.webp')}
+        image={absImage('/images/hero-bowl.webp')}
       />
-      <JsonLd data={AUTHOR_PERSON_LD} />
+      <JsonLd data={aboutLd} />
 
       <article className="mx-auto max-w-7xl px-4 pt-8 sm:px-6 sm:pt-12">
-        <div className="grid items-center gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16">
-          <Reveal variant="scale" immediate className="relative mx-auto w-full max-w-sm">
-            <img
-              src={AUTHOR.photo}
-              alt={`${AUTHOR.name}, ${AUTHOR.role}, in her kitchen`}
-              width={480}
-              height={600}
-              className="aspect-[4/5] w-full rounded-[2rem] object-cover"
-            />
-            <span style={{ '--r': '-4deg' }} className="float-slow absolute -bottom-5 -right-3 -rotate-[4deg] rounded-2xl bg-zest px-4 py-3 font-display text-lg font-bold text-ink shadow-[var(--shadow-lift)]">
-              {recipes.length} recipes & counting
-            </span>
-          </Reveal>
+        <div className="grid items-center gap-10 lg:grid-cols-[1.2fr_0.8fr] lg:gap-16">
           <div>
             <Reveal as="p" immediate variant="up" className="text-xs font-bold uppercase tracking-[0.18em] text-leaf-dark">
-              {AUTHOR.role}
+              About us
             </Reveal>
             <Reveal as="h1" immediate variant="up" delay={60} className="mt-3 font-display text-5xl font-extrabold leading-[1.02] text-ink sm:text-7xl">
-              Hi, I’m {AUTHOR.name}
+              Recipes for what your body <span className="mark-zest">needs.</span>
             </Reveal>
             <Reveal as="p" immediate variant="up" delay={120} className="mt-5 max-w-2xl text-xl leading-relaxed text-ink/70">
-              {AUTHOR.oneLineBio}
+              The Recipe Seeker is an independent recipe site. Most recipe sites start with cravings; we start with nutrients. Search by what you need, like protein, iron or fiber, and get meals with honest per-serving numbers.
             </Reveal>
             <Reveal immediate variant="up" delay={180} className="mt-8 flex flex-wrap gap-3">
               <Link to="/recipes" className="inline-flex min-h-[48px] items-center gap-2 rounded-full bg-ink px-6 font-semibold text-paper hover:bg-leaf-dark">
@@ -76,52 +90,31 @@ export default function AboutPage() {
               </Link>
             </Reveal>
           </div>
-        </div>
-
-        <div className="mx-auto mt-20 max-w-3xl">
-          <Reveal variant="up" as="section">
-            <h2 className="font-display text-3xl font-extrabold text-ink">My low-iron journey</h2>
-            <div className="prose-body text-lg">
-              <p>
-                In my mid-20s I was exhausted all the time. Not the "I need a nap" kind of tired. The
-                "my bones feel heavy" kind. My doctor ran bloodwork and my iron came back low. Suddenly a
-                lot made sense.
-              </p>
-              <p>
-                But the practical part is where I got stuck. The advice was "eat more iron-rich foods,"
-                which sounded simple until I was standing in a grocery store wondering what that actually
-                means for dinner. So I started learning: which foods are rich in iron, how vitamin C
-                helps the body absorb it, and most importantly, how to cook those meals so they'd be
-                things I genuinely wanted to eat again. Not bland. Not punishment food. Just dinner.
-                Good dinner. Food that happened to be packed with iron.
-              </p>
-            </div>
-            <p className="mt-6 rounded-3xl bg-zest-soft px-6 py-5 text-lg leading-relaxed text-ink/85">
-              I won't pretend to be something I'm not: <strong className="text-ink">I'm not a
-              doctor, dietitian, or nutritionist.</strong> I'm someone who learned to cook for her own
-              body and kept going, because it turned out a lot of people are standing in that same
-              grocery store wondering the same thing.
-            </p>
-          </Reveal>
-
-          <Reveal variant="up" as="section" className="mt-14">
-            <h2 className="font-display text-3xl font-extrabold text-ink">What this site is</h2>
-            <div className="prose-body text-lg">
-              <p>
-                The Recipe Seeker flips the usual recipe search on its head. Most sites start with
-                cravings; we start with your body. You search by the nutrients you actually need:
-                protein for recovery, iron for energy, fiber for gut health. And you get recipes built around
-                them, each with honest per-serving nutrition so you can see exactly what you're getting.
-              </p>
-              <p>
-                My job here is recipe developer: I create and test the recipes, make them practical for
-                busy people, and compute their nutrition from USDA data. Every published recipe goes
-                through the same checks: it must taste great, use accessible ingredients, and deliver a
-                meaningful amount of its headline nutrient per serving.
-              </p>
-            </div>
+          <Reveal variant="scale" immediate className="relative mx-auto w-full max-w-sm">
+            <img
+              src="/images/hero-bowl.webp"
+              alt="A colorful bowl of greens, chickpeas and avocado"
+              width={1920}
+              height={1280}
+              className="aspect-[4/5] w-full rounded-[2rem] object-cover"
+            />
+            <span style={{ '--r': '-4deg' }} className="float-slow absolute -bottom-5 -right-3 -rotate-[4deg] rounded-2xl bg-zest px-4 py-3 font-display text-lg font-bold text-ink shadow-[var(--shadow-lift)]">
+              {recipes.length} recipes & counting
+            </span>
           </Reveal>
         </div>
+
+        <section className="mx-auto mt-20 max-w-5xl" aria-labelledby="honest-heading">
+          <h2 id="honest-heading" className="font-display text-3xl font-extrabold text-ink sm:text-4xl">Straight answers about how this site works</h2>
+          <ul className="mt-8 grid gap-4 md:grid-cols-2">
+            {HONEST.map((h) => (
+              <li key={h.title} className="rounded-3xl border border-line bg-card p-6">
+                <h3 className="font-display text-xl font-bold text-ink">{h.title}</h3>
+                <p className="mt-2 leading-relaxed text-ink/70">{h.text}</p>
+              </li>
+            ))}
+          </ul>
+        </section>
 
         <section className="mt-20 rounded-[2rem] bg-ink px-6 py-12 text-paper sm:px-12 sm:py-16" aria-labelledby="method-heading">
           <p className="text-xs font-bold uppercase tracking-[0.18em] text-zest">Our method</p>
@@ -146,9 +139,9 @@ export default function AboutPage() {
 
         <div className="mx-auto mt-14 max-w-3xl">
           <section>
-            <h2 className="font-display text-3xl font-extrabold text-ink">Contact</h2>
+            <h2 className="font-display text-3xl font-extrabold text-ink">Corrections & contact</h2>
             <p className="mt-3 text-lg leading-relaxed text-ink/75">
-              Questions, corrections or partnership ideas? Use the{' '}
+              Spotted a wrong number or a step that doesn’t work? We fix errors fast. Use the{' '}
               <Link to="/contact" className="font-semibold text-ink underline decoration-zest decoration-[3px] underline-offset-4">contact page</Link>{' '}
               or email <span className="font-medium text-ink">hello@therecipeseeker.com</span>{' '}
               <span className="text-ink/55">(placeholder address)</span>.

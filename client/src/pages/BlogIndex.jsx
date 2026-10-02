@@ -8,6 +8,7 @@ import PostCard, { readTimeMinutes, formatPostDate } from '../components/PostCar
 import ResponsiveImage from '../components/ResponsiveImage'
 import Icon from '../components/Icon'
 import { absUrl, absImage, posts, guides } from '../data/site'
+import { AUTHOR_LD } from '../data/author'
 
 export default function BlogIndex() {
   const canonical = absUrl('/blog')
@@ -33,7 +34,7 @@ export default function BlogIndex() {
       image: [absImage(p.image)],
       datePublished: p.datePublished,
       dateModified: p.dateModified,
-      author: { '@type': 'Person', name: 'Emily Carter', url: absUrl('/about') },
+      author: AUTHOR_LD,
     })),
   }
   const breadcrumbLd = {
@@ -59,7 +60,7 @@ export default function BlogIndex() {
             Nutrition-first food writing
           </Reveal>
           <Reveal as="p" immediate variant="up" delay={120} className="mt-4 text-lg leading-relaxed text-ink/65">
-            Practical explainers and meal plans from Emily’s kitchen: which foods pair well, what helps (or blocks) absorption, and how to hit your numbers with real meals.
+            Practical explainers and meal plans: which foods pair well, what helps (or blocks) absorption, and how to hit your numbers with real meals.
           </Reveal>
         </div>
 
@@ -101,7 +102,12 @@ export default function BlogIndex() {
 
         {guides.length > 0 && (
           <section className="mt-16" aria-labelledby="guides-heading">
-            <h2 id="guides-heading" className="font-display text-3xl font-extrabold text-ink">In-depth guides</h2>
+            <div className="flex items-end justify-between gap-4">
+              <h2 id="guides-heading" className="font-display text-3xl font-extrabold text-ink">In-depth guides</h2>
+              <Link to="/guides" className="inline-flex items-center gap-1.5 font-semibold text-ink hover:text-leaf-dark">
+                All guides <Icon name="arrowRight" className="h-4 w-4" />
+              </Link>
+            </div>
             <ul className="mt-6 grid gap-4 md:grid-cols-2">
               {guides.map((g) => (
                 <li key={g.slug}>

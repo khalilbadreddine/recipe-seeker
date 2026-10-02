@@ -5,8 +5,8 @@
  * time from documented USDA FoodData Central (SR Legacy / Foundation)
  * per-100g values for the main ingredients, scaled to the recipe's
  * ingredient amounts and serving count. Hero-ingredient profiles pulled
- * live from the FDC API are cached in server/data/app.db (see
- * scripts/fetch-hero-cache.cjs).
+ * live from the FDC API were cached locally at authoring time (the old
+ * fetch-hero-cache tool has since been removed).
  *
  * HONESTY RULE: `source` is "cached-verified" ONLY when the recipe's
  * nutrition was computed from values actually pulled from the FDC API for

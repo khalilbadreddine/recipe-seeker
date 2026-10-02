@@ -13,7 +13,7 @@ export default function PrivacyPage() {
       />
       <article className="mx-auto max-w-3xl px-4 py-10 sm:px-6">
         <h1 className="font-display text-4xl font-semibold text-forest sm:text-5xl">Privacy Policy</h1>
-        <p className="mt-3 text-sm text-forest/75">Last updated: September 2026</p>
+        <p className="mt-3 text-sm text-forest/75">Last updated: October 2026</p>
 
         <div className="mt-6 space-y-6 leading-relaxed text-forest/80">
           <p>
@@ -24,15 +24,27 @@ export default function PrivacyPage() {
           <h2 className="font-display text-2xl font-semibold text-forest">What we collect</h2>
           <ul className="list-disc space-y-2 pl-5">
             <li>
-              <strong className="text-forest">Anonymous visit stats.</strong> We may use
-              privacy-friendly analytics in the future. It would count page views without cookies
-              and without collecting personal data — no IP addresses stored, no cross-site
-              tracking, no fingerprints.
+              <strong className="text-forest">Anonymous visit stats.</strong> We use Vercel Web
+              Analytics to count page views. It works without cookies and doesn't store IP
+              addresses, track you across sites or build a profile of you.
             </li>
             <li>
-              <strong className="text-forest">Your email address — only if you sign up.</strong>
-              When the newsletter launches, subscribing will mean we store your email address so
-              we can send you recipes. That's it. We'll never ask for more than we need.
+              <strong className="text-forest">Your email address, only if you subscribe.</strong>{' '}
+              We store it to send you new recipes (via our email provider). Every email has a
+              one-click unsubscribe link.
+            </li>
+            <li>
+              <strong className="text-forest">Questions the chat couldn't answer.</strong> When the
+              “Ask Seeker” chat can't find a good recipe for a question, we save that question's
+              text (with anything that looks like an email or phone number removed, and no IP
+              address or account) so we know which recipes to add next. Please don't type
+              personal or medical details into the chat. Chat questions are processed by an AI
+              provider to write the answer.
+            </li>
+            <li>
+              <strong className="text-forest">Ratings, if you're signed in.</strong> When you rate
+              a recipe we store your rating with your account. Only the total count and average
+              are ever shown publicly.
             </li>
           </ul>
 
@@ -40,8 +52,8 @@ export default function PrivacyPage() {
           <p>
             You can browse every recipe without an account. If you choose to sign in with
             Google, we store the basics Google shares with us — your name, email address and
-            profile picture — plus what you save on the site: your favorite recipes and your
-            Build-Your-Day meal plans. That's all we keep, and it's only used to show your
+            profile picture — plus what you save on the site: your favorite recipes, your
+            weekly meal plans and your recipe ratings. That's all we keep, and it's only used to show your
             stuff back to you on any device.
           </p>
           <ul className="list-disc space-y-2 pl-5">
@@ -94,8 +106,7 @@ export default function PrivacyPage() {
 
           <h2 className="font-display text-2xl font-semibold text-forest">Changes to this policy</h2>
           <p>
-            If this policy changes — for example when the newsletter officially launches — we'll
-            update this page and the "last updated" date above.
+            If this policy changes, we'll update this page and the "last updated" date above.
           </p>
         </div>
       </article>

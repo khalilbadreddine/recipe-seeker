@@ -385,7 +385,7 @@ export default function Home() {
                 <Icon name="arrowRight" className="h-5 w-5" />
               </Link>
               <Link to="/day-builder" className="flex items-center justify-between gap-3 rounded-2xl bg-ink px-5 py-4 font-semibold text-paper hover:bg-leaf-dark">
-                <span>Plan a whole day of eating</span>
+                <span>Plan your week of meals</span>
                 <Icon name="arrowRight" className="h-5 w-5" />
               </Link>
             </div>
@@ -446,7 +446,7 @@ export default function Home() {
             {[
               { n: '01', t: 'Pick what you need', d: 'Choose a nutrient or goal: iron, protein, fiber, calcium and more.' },
               { n: '02', t: 'See the real numbers', d: 'Every recipe lists per-serving nutrition and % daily value, computed from USDA ingredient data.' },
-              { n: '03', t: 'Cook, save, plan', d: 'Use cook mode in the kitchen, save favorites, and build a full day in My Day.' },
+              { n: '03', t: 'Cook, save, plan', d: 'Use cook mode in the kitchen, save favorites, and plan your week in the planner.' },
             ].map((s) => (
               <li key={s.n} className="border-t border-paper/15 pt-6">
                 <span className="font-display text-5xl font-extrabold text-zest">{s.n}</span>

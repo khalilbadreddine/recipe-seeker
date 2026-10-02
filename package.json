@@ -11,13 +11,11 @@
   ],
   "scripts": {
     "data:build": "node scripts/resolve-nutrition.mjs",
-    "seo:build": "node scripts/generate-seo.mjs",
     "seo:check": "node scripts/check-seo.mjs client/dist",
-    "server:dev": "npm --prefix server run dev",
-    "server:start": "npm --prefix server run start",
-    "build": "npm run data:build && npm run seo:build && npm --prefix client run build",
+    "build": "npm run data:build && npm --prefix client run build && node scripts/generate-images.mjs email",
     "client:build": "npm --prefix client run build",
-    "api:dev": "node scripts/dev-api.mjs"
+    "api:dev": "node scripts/dev-api.mjs",
+    "images:pins": "node scripts/generate-images.mjs pins"
   },
   "version": "0.1.0"
 }
