@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { guides, nutrients, recipes } from '../data/site'
 import { nutrientMeta } from '../data/nutrientMeta'
 import { LogoMark, Wordmark } from './Navbar'
+import NewsletterSignup from './NewsletterSignup'
 
 const COMPANY = [
   { label: 'About Emily', to: '/about' },
@@ -49,10 +50,13 @@ export default function Footer() {
             <p className="mt-4 max-w-xs text-sm leading-relaxed text-paper/60">
               Nutrition-first recipes for real life by Emily Carter, recipe developer &amp; nutrition enthusiast.
             </p>
+            <NewsletterSignup dark id="newsletter-footer" source="footer">
+              <p className="mt-6 text-sm font-semibold text-paper">New recipes every week, straight to your inbox.</p>
+            </NewsletterSignup>
             <a
               href="/downloads/7-day-high-protein-meal-plan.pdf"
               download
-              className="mt-5 inline-flex min-h-[44px] items-center gap-2 rounded-full bg-zest px-5 text-sm font-bold text-ink hover:brightness-95"
+              className="mt-5 inline-flex min-h-[44px] items-center gap-2 rounded-full border border-paper/20 px-5 text-sm font-semibold text-paper hover:border-zest hover:text-zest"
             >
               Free 7-day protein plan (PDF)
             </a>
@@ -65,6 +69,7 @@ export default function Footer() {
               <li><Link to="/search" className="hover:text-zest">Nutrient search</Link></li>
               <li><Link to="/day-builder" className="hover:text-zest">My Day planner</Link></li>
               <li><Link to="/saved" className="hover:text-zest">Saved recipes</Link></li>
+              <li><Link to="/shopping-list" className="hover:text-zest">Shopping list</Link></li>
             </ul>
           </nav>
           <nav aria-label="Read">

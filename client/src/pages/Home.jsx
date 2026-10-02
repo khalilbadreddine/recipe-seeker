@@ -5,6 +5,8 @@ import JsonLd from '../components/JsonLd'
 import RecipeCard from '../components/RecipeCard'
 import PostCard from '../components/PostCard'
 import LeadMagnetCta from '../components/LeadMagnetCta'
+import AskSeeker from '../components/AskSeeker'
+import RecentlyViewed from '../components/RecentlyViewed'
 import ResponsiveImage from '../components/ResponsiveImage'
 import Reveal from '../components/Reveal'
 import Icon from '../components/Icon'
@@ -226,7 +228,7 @@ export default function Home() {
             </Reveal>
             <Reveal as="form" immediate variant="up" delay={210} onSubmit={submitSearch} role="search" className="mt-8 max-w-xl">
               <label htmlFor="home-search" className="sr-only">Search recipes</label>
-              <div className="flex items-center gap-2 rounded-full border border-line bg-card p-1.5 shadow-[var(--shadow-card)] focus-within:border-ink/40">
+              <div className="flex items-center gap-2 rounded-full border border-line bg-card p-1.5 shadow-[var(--shadow-card)] focus-within:ring-2 focus-within:ring-leaf">
                 <Icon name="search" className="ml-3 h-5 w-5 shrink-0 text-ink/40" />
                 <input
                   id="home-search"
@@ -234,7 +236,7 @@ export default function Home() {
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   placeholder="Try “salmon”, “lentils” or “vegan”"
-                  className="min-w-0 flex-1 bg-transparent py-3 text-base text-ink outline-none placeholder:text-ink/40"
+                  className="min-w-0 flex-1 bg-transparent py-3 text-base text-ink outline-none placeholder:text-ink/40 focus-visible:outline-none"
                 />
                 <button type="submit" className="min-h-[48px] shrink-0 rounded-full bg-ink px-5 text-[15px] font-bold text-paper hover:bg-leaf-dark sm:px-7">
                   Search
@@ -256,6 +258,42 @@ export default function Home() {
           </Reveal>
         </div>
       </section>
+
+      {/* ASK SEEKER (AI chat) */}
+      <section id="ask" className="mx-auto mb-24 max-w-7xl scroll-mt-24 px-4 sm:px-6" aria-labelledby="ask-heading">
+        <div className="grid items-center gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:gap-14 [&>*]:min-w-0">
+          <div>
+            <p className="inline-flex items-center gap-2 rounded-full bg-ink px-3 py-1.5 text-xs font-bold uppercase tracking-[0.16em] text-zest">
+              <Icon name="sparkle" className="h-3.5 w-3.5" /> New · Ask AI
+            </p>
+            <h2 id="ask-heading" className="mt-4 font-display text-4xl font-extrabold leading-[1.04] text-ink sm:text-5xl">
+              Not sure what to cook? <span className="mark-zest">Just ask.</span>
+            </h2>
+            <p className="mt-5 max-w-lg text-lg leading-relaxed text-ink/65">
+              Seeker knows every recipe on this site and its real per-serving numbers. Describe what you need in your own words and get matching recipes in seconds.
+            </p>
+            <ul className="mt-6 space-y-3 text-[15px] text-ink/75">
+              {[
+                'Combine needs: “iron-rich, vegetarian, under 30 minutes”',
+                'Leave things out: “no fish”, “nut-free”, “dairy-free”',
+                'Follow up: “any quicker ones?”',
+              ].map((t) => (
+                <li key={t} className="flex gap-3">
+                  <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-zest">
+                    <Icon name="check" className="h-3 w-3" strokeWidth={3} />
+                  </span>
+                  {t}
+                </li>
+              ))}
+            </ul>
+          </div>
+          <Reveal variant="up">
+            <AskSeeker />
+          </Reveal>
+        </div>
+      </section>
+
+      <RecentlyViewed />
 
       {/* NUTRIENT SPECTRUM */}
       <section id="nutrients" className="mx-auto max-w-7xl scroll-mt-24 px-4 sm:px-6" aria-labelledby="spectrum-heading">

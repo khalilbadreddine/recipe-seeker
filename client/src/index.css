@@ -151,44 +151,47 @@ details.faq-item > summary::-webkit-details-marker {
 /* Interaction layer: tactile press, smooth hover, visible focus.      */
 /* ------------------------------------------------------------------ */
 
-a,
-button,
-summary,
-input,
-select,
-textarea {
-  transition-property: color, background-color, border-color, text-decoration-color,
-    fill, stroke, box-shadow, transform, opacity;
-  transition-duration: 180ms;
-  transition-timing-function: ease-out;
-}
+/* In the base layer so per-element utilities (e.g. focus-visible:outline-none) can override. */
+@layer base {
+  a,
+  button,
+  summary,
+  input,
+  select,
+  textarea {
+    transition-property: color, background-color, border-color, text-decoration-color,
+      fill, stroke, box-shadow, transform, opacity;
+    transition-duration: 180ms;
+    transition-timing-function: ease-out;
+  }
 
-button:active,
-a:active {
-  transform: scale(0.98);
-}
+  button:active,
+  a:active {
+    transform: scale(0.98);
+  }
 
-a:focus-visible,
-button:focus-visible,
-input:focus-visible,
-select:focus-visible,
-textarea:focus-visible,
-summary:focus-visible {
-  outline: 2px solid var(--color-leaf);
-  outline-offset: 2px;
-}
+  a:focus-visible,
+  button:focus-visible,
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible,
+  summary:focus-visible {
+    outline: 2px solid var(--color-leaf);
+    outline-offset: 2px;
+  }
 
-/* WCAG 2.2 target size for footer and breadcrumb links. */
-footer a,
-nav[aria-label='Breadcrumb'] a {
-  display: inline-flex;
-  align-items: center;
-  min-height: 24px;
-}
+  /* WCAG 2.2 target size for footer and breadcrumb links. */
+  footer a,
+  nav[aria-label='Breadcrumb'] a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 24px;
+  }
 
-/* Range input in the brand color */
-input[type='range'] {
-  accent-color: var(--color-leaf);
+  /* Range input in the brand color */
+  input[type='range'] {
+    accent-color: var(--color-leaf);
+  }
 }
 
 /* Mobile bottom tab bar leaves room at the end of the page */

@@ -1,0 +1,75 @@
+# Pipeline Drafts — writes new AI drafts every morning for human review.
+#
+# Closes the automation loop:
+#   keyword-news-weekly (Sun) → keyword_candidates
+#   pipeline-drafts     (daily 05:00 UTC, this file) → drafts, status='pending_review'
+#   YOU                 → approve / edit / reject in /admin/review
+#   pipeline-publish    (daily 06:00 UTC) → publishes approved drafts
+#
+# Nothing here publishes: drafts wait at pending_review until a human approves
+# them (DB constraints + guardrails enforce this). DRAFTS_PER_DAY caps the queue.
+#
+# Required repository secrets (Settings -> Secrets and variables -> Actions):
+#   SUPABASE_URL, SUPABASE_SERVICE_KEY
+#   at least one LLM key: OPENROUTER_API_KEY, NVIDIA_API_KEY, GEMINI_API_KEY or XAI_API_KEY
+# Optional: POLLINATIONS_API_KEY or HF_TOKEN (hero images),
+#           repository variable DRAFTS_PER_DAY (default 3).
+# Without the required secrets the job logs a notice and exits successfully.
+
+name: pipeline-drafts
+
+on:
+  schedule:
+    - cron: '0 5 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pipeline-drafts
+  cancel-in-progress: false
+
+jobs:
+  drafts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Check configuration
+        id: config
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+          ANY_LLM_KEY: ${{ secrets.OPENROUTER_API_KEY }}${{ secrets.NVIDIA_API_KEY }}${{ secrets.GEMINI_API_KEY }}${{ secrets.XAI_API_KEY }}
+        run: |
+          if [ -z "$SUPABASE_URL" ] || [ -z "$SUPABASE_SERVICE_KEY" ]; then
+            echo "::notice::Skipping: SUPABASE_URL / SUPABASE_SERVICE_KEY secrets are not set."
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+          elif [ -z "$ANY_LLM_KEY" ]; then
+            echo "::notice::Skipping: no LLM key secret (OPENROUTER_API_KEY, NVIDIA_API_KEY, GEMINI_API_KEY or XAI_API_KEY)."
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Generate drafts
+        if: steps.config.outputs.ready == 'true'
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          XAI_API_KEY: ${{ secrets.XAI_API_KEY }}
+          POLLINATIONS_API_KEY: ${{ secrets.POLLINATIONS_API_KEY }}
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          LLM_PROVIDER: auto
+          DRAFTS_PER_DAY: ${{ vars.DRAFTS_PER_DAY || '3' }}
+          SITE_URL: https://recipe-seeker-client.vercel.app
+        run: node pipeline/scripts/draft-generator.mjs

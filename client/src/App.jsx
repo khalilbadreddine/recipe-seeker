@@ -2,6 +2,7 @@ import React, { useEffect } from 'react'
 import { Routes, Route, useLocation } from 'react-router-dom'
 import { AuthProvider } from './context/AuthContext'
 import { FavoritesProvider } from './context/FavoritesContext'
+import { ShoppingListProvider } from './context/ShoppingListContext'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import MobileTabBar from './components/MobileTabBar'
@@ -16,6 +17,7 @@ import BlogPost from './pages/BlogPost'
 import SearchPage from './pages/SearchPage'
 import DayBuilderPage from './pages/DayBuilderPage'
 import SavedPage from './pages/SavedPage'
+import ShoppingListPage from './pages/ShoppingListPage'
 import FibermaxPage from './pages/FibermaxPage'
 import AboutPage from './pages/AboutPage'
 import DisclaimerPage from './pages/DisclaimerPage'
@@ -38,6 +40,7 @@ export default function App() {
   return (
     <AuthProvider>
       <FavoritesProvider>
+      <ShoppingListProvider>
         <div className="flex min-h-screen flex-col">
       <ScrollToTop />
       <a href="#main" className="sr-only z-50 rounded-full bg-ink px-4 py-2 text-paper focus:not-sr-only focus:fixed focus:left-4 focus:top-4">
@@ -57,6 +60,7 @@ export default function App() {
           <Route path="/search" element={<SearchPage />} />
           <Route path="/day-builder" element={<DayBuilderPage />} />
           <Route path="/saved" element={<SavedPage />} />
+          <Route path="/shopping-list" element={<ShoppingListPage />} />
           <Route path="/fibermax-reset" element={<FibermaxPage />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/disclaimer" element={<DisclaimerPage />} />
@@ -70,6 +74,7 @@ export default function App() {
       <Footer />
       <MobileTabBar />
         </div>
+      </ShoppingListProvider>
       </FavoritesProvider>
     </AuthProvider>
   )

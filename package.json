@@ -16,7 +16,8 @@
     "server:dev": "npm --prefix server run dev",
     "server:start": "npm --prefix server run start",
     "build": "npm run data:build && npm run seo:build && npm --prefix client run build",
-    "client:build": "npm --prefix client run build"
+    "client:build": "npm --prefix client run build",
+    "api:dev": "node scripts/dev-api.mjs"
   },
   "version": "0.1.0"
 }

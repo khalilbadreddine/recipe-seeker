@@ -40,7 +40,7 @@ async function main() {
   // Routes are derived from the same data file the pages render —
   // the sitemap and the prerendered HTML can never disagree.
   const { recipes, nutrients, guides, posts } = data
-  const routes = ['/', '/recipes', '/nutrients', '/search', '/day-builder', '/saved', '/fibermax-reset', '/about', '/disclaimer', '/privacy', '/contact', '/blog']
+  const routes = ['/', '/recipes', '/nutrients', '/search', '/day-builder', '/saved', '/shopping-list', '/fibermax-reset', '/about', '/disclaimer', '/privacy', '/contact', '/blog']
   recipes.forEach((r) => routes.push(`/recipes/${r.slug}`))
   nutrients.forEach((n) => routes.push(`/nutrients/${n.slug || n.key}`))
   guides.forEach((g) => routes.push(`/guides/${g.slug}`))
@@ -83,9 +83,9 @@ function writeSitemap(routes) {
     if (post) return post.dateModified
     return today
   }
-  // /search is a tool page (noindex) — keep it out of the sitemap.
+  // /search and /shopping-list are tool pages (noindex) — keep them out of the sitemap.
   const urls = routes
-    .filter((r) => r !== '/search')
+    .filter((r) => r !== '/search' && r !== '/shopping-list')
     .map((r) => `  <url><loc>${SITE_URL}${r}</loc><lastmod>${lastmodFor(r)}</lastmod></url>`)
     .join('\n')
   writeFileSync(

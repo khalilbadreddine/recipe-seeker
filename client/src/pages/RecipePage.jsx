@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import Seo from '../components/Seo'
 import FavoriteButton from '../components/FavoriteButton'
@@ -18,6 +18,8 @@ import Icon from '../components/Icon'
 import Reveal from '../components/Reveal'
 import { SectionHeading } from '../components/ContentBlocks'
 import { scaleAmount } from '../lib/scaleAmount'
+import { rememberRecipe, addToDay, slotFor } from '../lib/localPrefs'
+import { useShoppingList } from '../context/ShoppingListContext'
 import { absUrl, absImage, getRecipe, getNutrient, recipes, formatAmount } from '../data/site'
 import { nutrientMeta, tint, DIET_LABELS, MEAL_LABELS } from '../data/nutrientMeta'
 
@@ -154,7 +156,8 @@ function AtAGlance({ recipe }) {
   )
 }
 
-function Ingredients({ recipe }) {
+function Ingredients({ recipe, onToast }) {
+  const list = useShoppingList()
   const [servings, setServings] = useState(recipe.servings)
   const [checked, setChecked] = useState(() => new Set())
   const [copied, setCopied] = useState(false)
@@ -179,6 +182,17 @@ function Ingredients({ recipe }) {
     } catch {
       setCopied(false)
     }
+  }
+
+  const addToList = () => {
+    const wasOnList = list.has(recipe.slug)
+    list.addRecipe({
+      slug: recipe.slug,
+      title: recipe.title,
+      servings,
+      items: recipe.ingredients.map((i) => ({ amount: scaleAmount(i.amount, factor), item: i.item })),
+    })
+    onToast({ text: wasOnList ? `Shopping list updated (${servings} servings)` : 'Added to your shopping list', to: '/shopping-list', link: 'View list' })
   }
 
   return (
@@ -234,14 +248,24 @@ function Ingredients({ recipe }) {
           )
         })}
       </ul>
-      <button
-        type="button"
-        onClick={copyAll}
-        className="no-print mt-4 inline-flex min-h-[44px] w-full items-center justify-center gap-2 rounded-full border border-ink px-5 text-sm font-semibold text-ink hover:bg-ink hover:text-paper"
-      >
-        <Icon name={copied ? 'check' : 'copy'} className="h-4 w-4" />
-        {copied ? 'Copied to clipboard!' : 'Copy shopping list'}
-      </button>
+      <div className="no-print mt-4 grid gap-2">
+        <button
+          type="button"
+          onClick={addToList}
+          className="inline-flex min-h-[48px] w-full items-center justify-center gap-2 rounded-full bg-ink px-5 text-sm font-bold text-paper hover:bg-leaf-dark"
+        >
+          <Icon name="list" className="h-4 w-4" />
+          {list.has(recipe.slug) ? 'Update shopping list' : 'Add to shopping list'}
+        </button>
+        <button
+          type="button"
+          onClick={copyAll}
+          className="inline-flex min-h-[44px] w-full items-center justify-center gap-2 rounded-full border border-line px-5 text-sm font-semibold text-ink hover:border-ink/30"
+        >
+          <Icon name={copied ? 'check' : 'copy'} className="h-4 w-4" />
+          {copied ? 'Copied to clipboard!' : 'Copy ingredients'}
+        </button>
+      </div>
     </section>
   )
 }
@@ -250,6 +274,17 @@ export default function RecipePage() {
   const { slug } = useParams()
   const recipe = getRecipe(slug)
   const [cooking, setCooking] = useState(false)
+  const [toast, setToast] = useState(null)
+
+  useEffect(() => {
+    if (recipe) rememberRecipe(recipe.slug)
+  }, [recipe])
+
+  useEffect(() => {
+    if (!toast) return
+    const t = setTimeout(() => setToast(null), 3500)
+    return () => clearTimeout(t)
+  }, [toast])
 
   const related = useMemo(() => {
     if (!recipe) return []
@@ -300,6 +335,28 @@ export default function RecipePage() {
   }
 
   const eyebrow = [...recipe.tags.meals.map((m) => MEAL_LABELS[m] || m), ...recipe.tags.diets.map((d) => DIET_LABELS[d] || d)]
+
+  const slot = slotFor(recipe)
+  const slotLabel = { breakfast: 'breakfast', lunch: 'lunch', dinner: 'dinner', snacks: 'snacks' }[slot]
+  const planIt = () => {
+    addToDay(recipe.slug, slot)
+    setToast({ text: `Added to today’s ${slotLabel}`, to: '/day-builder', link: 'Open My Day' })
+  }
+  const share = async () => {
+    const data = { title: recipe.title, text: `${recipe.title}: ${recipe.description}`, url: canonical }
+    try {
+      if (navigator.share) await navigator.share(data)
+      else {
+        await navigator.clipboard.writeText(canonical)
+        setToast({ text: 'Link copied to clipboard' })
+      }
+    } catch {
+      /* share sheet dismissed */
+    }
+  }
+  const pinUrl = `https://www.pinterest.com/pin/create/button/?url=${encodeURIComponent(canonical)}&media=${encodeURIComponent(
+    absImage(recipe.image),
+  )}&description=${encodeURIComponent(`${recipe.title} (${topBadge} per serving)`)}`
 
   return (
     <>
@@ -371,8 +428,26 @@ export default function RecipePage() {
                 <Icon name="chef" className="h-5 w-5" /> Start cook mode
               </button>
               <FavoriteButton slug={recipe.slug} title={recipe.title} className="min-h-[48px]" />
-              <a href="#ingredients" className="inline-flex min-h-[48px] items-center gap-2 rounded-full border border-line bg-card px-5 text-sm font-semibold text-ink hover:border-ink/30">
+              <button
+                type="button"
+                onClick={planIt}
+                className="inline-flex min-h-[48px] items-center gap-2 rounded-full border border-line bg-card px-5 text-sm font-semibold text-ink hover:border-ink/30"
+              >
+                <Icon name="calendar" className="h-4 w-4" /> Add to My Day
+              </button>
+            </Reveal>
+            <Reveal immediate variant="up" delay={260} className="no-print mt-4 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm font-semibold text-ink/70">
+              <a href="#ingredients" className="inline-flex min-h-[36px] items-center gap-1.5 hover:text-ink">
                 <Icon name="arrowDown" className="h-4 w-4" /> Jump to recipe
+              </a>
+              <button type="button" onClick={share} className="inline-flex min-h-[36px] items-center gap-1.5 hover:text-ink">
+                <Icon name="share" className="h-4 w-4" /> Share
+              </button>
+              <a href={pinUrl} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-[36px] items-center gap-1.5 hover:text-[#E60023]">
+                <svg viewBox="0 0 24 24" className="h-4 w-4" fill="currentColor" aria-hidden="true">
+                  <path d="M12 2a10 10 0 0 0-3.6 19.3c-.1-.8-.2-2 0-2.9l1.2-5s-.3-.6-.3-1.5c0-1.4.8-2.5 1.8-2.5.9 0 1.3.7 1.3 1.4 0 .9-.6 2.2-.9 3.4-.2 1 .5 1.9 1.6 1.9 1.9 0 3.3-2 3.3-4.9 0-2.6-1.8-4.4-4.5-4.4-3 0-4.8 2.3-4.8 4.6 0 .9.4 1.9.8 2.4l.1.4-.3 1.2c0 .2-.2.3-.4.2-1.3-.6-2.2-2.6-2.2-4.2 0-3.4 2.5-6.5 7.1-6.5 3.7 0 6.6 2.7 6.6 6.2 0 3.7-2.3 6.6-5.6 6.6-1.1 0-2.1-.6-2.5-1.2l-.7 2.6c-.2 1-.9 2.2-1.4 2.9A10 10 0 1 0 12 2z" />
+                </svg>
+                Pin it
               </a>
             </Reveal>
           </div>
@@ -395,7 +470,7 @@ export default function RecipePage() {
         {/* BODY */}
         <div className="mt-12 grid gap-10 lg:grid-cols-[380px_1fr] lg:gap-14">
           <div className="lg:sticky lg:top-24 lg:self-start">
-            <Ingredients recipe={recipe} />
+            <Ingredients recipe={recipe} onToast={setToast} />
             <div className="no-print mt-3 flex justify-center">
               <PrintButton label="Print recipe" />
             </div>
@@ -500,6 +575,23 @@ export default function RecipePage() {
       </article>
 
       <CookMode recipe={recipe} open={cooking} onClose={() => setCooking(false)} />
+
+      <div aria-live="polite" className="no-print pointer-events-none fixed inset-x-0 bottom-[calc(80px+env(safe-area-inset-bottom))] z-50 flex justify-center px-4 lg:bottom-6">
+        {toast && (
+          <div className="pop-in pointer-events-auto flex items-center gap-4 rounded-full bg-ink py-2 pl-5 pr-2 text-sm font-semibold text-paper shadow-[var(--shadow-lift)]">
+            <span className="flex items-center gap-2">
+              <Icon name="check" className="h-4 w-4 text-zest" strokeWidth={2.6} /> {toast.text}
+            </span>
+            {toast.to ? (
+              <Link to={toast.to} className="inline-flex min-h-[36px] items-center rounded-full bg-zest px-4 font-bold text-ink">
+                {toast.link}
+              </Link>
+            ) : (
+              <span className="w-2" />
+            )}
+          </div>
+        )}
+      </div>
     </>
   )
 }

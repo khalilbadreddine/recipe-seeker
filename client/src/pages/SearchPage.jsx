@@ -76,7 +76,7 @@ export default function SearchPage() {
 
         <Reveal immediate variant="up" delay={120} className="mt-8 rounded-[2rem] border border-line bg-card p-5 shadow-[var(--shadow-card)] sm:p-7">
           <label htmlFor="search-q" className="sr-only">Keyword</label>
-          <div className="flex items-center gap-2 rounded-full bg-mist px-4 focus-within:ring-2 focus-within:ring-ink/20">
+          <div className="flex items-center gap-2 rounded-full bg-mist px-4 focus-within:ring-2 focus-within:ring-leaf">
             <Icon name="search" className="h-5 w-5 shrink-0 text-ink/40" />
             <input
               id="search-q"
@@ -84,7 +84,7 @@ export default function SearchPage() {
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Keyword: salmon, vegan, pasta, breakfast…"
-              className="min-h-[52px] min-w-0 flex-1 bg-transparent text-base text-ink outline-none placeholder:text-ink/40"
+              className="min-h-[52px] min-w-0 flex-1 bg-transparent text-base text-ink outline-none placeholder:text-ink/40 focus-visible:outline-none"
             />
           </div>
 

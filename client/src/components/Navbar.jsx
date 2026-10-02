@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { useFavorites } from '../context/FavoritesContext'
+import { useShoppingList } from '../context/ShoppingListContext'
 import SignInButton, { GoogleIcon } from './SignInButton'
 import Icon from './Icon'
 
@@ -83,6 +84,7 @@ function UserChip() {
           {[
             { label: 'Saved recipes', icon: 'heart', to: '/saved' },
             { label: 'My Day planner', icon: 'calendar', to: '/day-builder' },
+            { label: 'Shopping list', icon: 'list', to: '/shopping-list' },
           ].map((item) => (
             <button
               key={item.to}
@@ -187,6 +189,7 @@ const MOBILE_EXTRA = [
 export default function Navbar() {
   const { pathname } = useLocation()
   const { favorites } = useFavorites()
+  const { count: listCount } = useShoppingList()
   const [menuOpen, setMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const buttonRef = useRef(null)
@@ -269,6 +272,18 @@ export default function Navbar() {
               </span>
             )}
           </Link>
+          <Link
+            to="/shopping-list"
+            aria-label={`Shopping list${listCount ? ` (${listCount} items)` : ''}`}
+            className="relative hidden h-11 w-11 items-center justify-center rounded-full border border-line bg-card text-ink hover:border-ink/30 lg:inline-flex"
+          >
+            <Icon name="list" className="h-5 w-5" />
+            {listCount > 0 && (
+              <span className="absolute -right-1 -top-1 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-ink px-1 text-[11px] font-bold text-zest">
+                {listCount > 99 ? '99+' : listCount}
+              </span>
+            )}
+          </Link>
           <span className="hidden lg:contents">
             <UserChip />
             <SignInButton compact />
@@ -298,7 +313,7 @@ export default function Navbar() {
       >
         <MobileAuthSection menuOpen={menuOpen} onNavigate={() => setMenuOpen(false)} />
         <ul className="mt-4">
-          {[{ label: 'Home', to: '/' }, ...PRIMARY, { label: 'Saved recipes', to: '/saved' }, { label: 'Search', to: '/search' }].map((l) => (
+          {[{ label: 'Home', to: '/' }, ...PRIMARY, { label: 'Saved recipes', to: '/saved' }, { label: 'Shopping list', to: '/shopping-list' }, { label: 'Search', to: '/search' }].map((l) => (
             <li key={l.to}>
               <Link
                 to={l.to}

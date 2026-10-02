@@ -4,7 +4,8 @@
 > Owner: Khalil (solo dev, zero budget) · Existing asset: 11k-follower Pinterest account (food niche)
 > Stack: React (Vite, **prerendered**) + Node/Express + SQLite
 >
-> **Status: PLAN — nothing is built yet. Read, validate, then we start Phase 1.**
+> **Status: LIVE** on Vercel (https://recipe-seeker-client.vercel.app). Sections 1–7 are the original v1 brief,
+> kept for context. For how the site works today, see **Run & deploy** and **Vercel functions** below.
 
 This README is based on a dedicated deep-research pass (Sept 2026, 40 sources, mostly 2025–2026) covering
 technical SEO for React, recipe rich results, AI-search visibility (GEO), YMYL nutrition content rules,
@@ -309,6 +310,21 @@ both frontend and API.
 **Split (alternative):** frontend `client/dist/` → Cloudflare Pages or Vercel (static, `404.html`
 as the not-found page); API → Render. Note: the client calls `/api/*` relatively, so a split
 deploy needs either same-origin rewrites or a `VITE_API_URL` base — single-service is easier.
+
+### Vercel functions: AI chat + newsletter
+
+The site is static, plus two serverless functions in `api/` (Vercel picks them up automatically):
+
+| Function | What it does | Env vars (Vercel → Project → Settings → Environment Variables) |
+|---|---|---|
+| `api/chat.mjs` | "Ask Seeker" chat on the home page. Matches the question against `recipes.json` (`client/src/lib/recipeMatch.mjs`) and asks an LLM to answer using only those recipes and their real numbers. | At least one of `OPENROUTER_API_KEY`, `NVIDIA_API_KEY`, `GEMINI_API_KEY`, `XAI_API_KEY` (free tiers). Without any key the chat still works in "basic" mode (recipe matches, no AI wording). |
+| `api/subscribe.mjs` | Newsletter signups → Supabase table `newsletter_subscribers`. | `SUPABASE_URL`, `SUPABASE_SERVICE_KEY`, and run `supabase/newsletter.sql` once. The signup form in the footer only appears once both are set. |
+
+Guardrails: same-origin only, per-IP rate limits (chat 20 / 10 min, signup 5 / 10 min), capped message
+length and history, and a system prompt that forbids medical advice, invented recipes and invented numbers.
+
+Local: `npm run api:dev` serves both functions on :3001 (reads the repo-root `.env`), and the Vite
+dev/preview server proxies `/api` there.
 
 ### USDA data refresh (when the production key arrives)
 
