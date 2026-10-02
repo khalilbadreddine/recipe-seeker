@@ -138,7 +138,7 @@ function AtAGlance({ recipe }) {
                 {hub ? hub.name : meta.short}
                 <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: meta.color }} aria-hidden="true" />
               </span>
-              <span className="mt-2 block font-display text-3xl font-extrabold text-ink sm:text-4xl">
+              <span className="mt-2 block font-display text-3xl font-extrabold text-ink sm:text-4xl" data-count={data.amount} data-suffix={data.unit === 'kcal' ? ' kcal' : data.unit}>
                 {formatAmount(data.amount, data.unit)}
               </span>
               <span className="mt-3 block h-2 overflow-hidden rounded-full bg-card/70">

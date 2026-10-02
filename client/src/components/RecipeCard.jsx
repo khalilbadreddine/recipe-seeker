@@ -14,7 +14,10 @@ import { prefetchDetail } from '../lib/details'
 export default function RecipeCard({ recipe, priority = false, maxBadges = 3 }) {
   const to = `/recipes/${recipe.slug}`
   return (
-    <article className="group relative flex h-full flex-col overflow-hidden rounded-3xl border border-line bg-card shadow-[var(--shadow-card)] transition hover:-translate-y-1 hover:shadow-[var(--shadow-lift)]">
+    <article
+      data-tilt="5"
+      className="group relative flex h-full flex-col overflow-hidden rounded-3xl border border-line bg-card shadow-[var(--shadow-card)] transition-[translate,box-shadow] duration-300 hover:-translate-y-1 hover:shadow-[var(--shadow-lift)]"
+    >
       <div className="relative overflow-hidden">
         <ResponsiveImage
           src={recipe.image}

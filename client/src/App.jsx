@@ -28,6 +28,33 @@ import ReviewConsole from './pages/admin/ReviewConsole'
 import Dashboard from './pages/admin/Dashboard'
 import NotFound from './pages/NotFound'
 
+/**
+ * GSAP motion for the current route (count-ups, tilt, scroll-scrubbed lines).
+ * Lazy chunk, bound after the page renders; skipped for reduced motion.
+ */
+function MotionLayer() {
+  const { pathname } = useLocation()
+  useEffect(() => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    let cleanup = null
+    let cancelled = false
+    const t = window.setTimeout(() => {
+      import('./lib/motion')
+        .then(({ bindMotion }) => {
+          if (cancelled) return
+          cleanup = bindMotion(document.getElementById('main'))
+        })
+        .catch(() => {})
+    }, 80)
+    return () => {
+      cancelled = true
+      window.clearTimeout(t)
+      cleanup?.()
+    }
+  }, [pathname])
+  return null
+}
+
 /** Scroll to top on route change (client-side only effect; harmless in SSR). */
 function ScrollToTop() {
   const { pathname } = useLocation()
@@ -44,6 +71,7 @@ export default function App() {
       <ShoppingListProvider>
         <div className="flex min-h-screen flex-col">
       <ScrollToTop />
+      <MotionLayer />
       <a href="#main" className="sr-only z-50 rounded-full bg-ink px-4 py-2 text-paper focus:not-sr-only focus:fixed focus:left-4 focus:top-4">
         Skip to content
       </a>
