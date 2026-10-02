@@ -23,8 +23,11 @@ const cancelIdle = (id) => ('cancelIdleCallback' in window ? window.cancelIdleCa
  * aria-hidden box on the server; the three.js chunk is fetched only after the
  * page is idle and only when the device can afford it. Purely visual: all
  * content and links live in normal HTML.
+ *
+ * `avoid` (hero): a selector for content in the same section that covers the
+ * canvas; foods are only placed where they stay visible around it.
  */
-export default function FoodScene({ nutrient = 'all', variant = 'hero', minWidth = 0, className = '' }) {
+export default function FoodScene({ nutrient = 'all', variant = 'hero', minWidth = 0, avoid = '', className = '' }) {
   const ref = useRef(null)
   const engine = useRef(null)
   const latest = useRef(nutrient)
@@ -37,7 +40,12 @@ export default function FoodScene({ nutrient = 'all', variant = 'hero', minWidth
       import('../three/foodScene.js')
         .then(({ createFoodScene }) => {
           if (cancelled || !ref.current || !ref.current.clientWidth) return
-          engine.current = createFoodScene(ref.current, { nutrient: latest.current, variant })
+          const scope = ref.current.closest('section') || document
+          engine.current = createFoodScene(ref.current, {
+            nutrient: latest.current,
+            variant,
+            avoid: () => (avoid ? Array.from(scope.querySelectorAll(avoid)) : []),
+          })
         })
         .catch(() => {
           /* decorative only: the page works without it */
@@ -49,7 +57,7 @@ export default function FoodScene({ nutrient = 'all', variant = 'hero', minWidth
       engine.current?.destroy()
       engine.current = null
     }
-  }, [variant, minWidth])
+  }, [variant, minWidth, avoid])
 
   useEffect(() => {
     engine.current?.setNutrient(nutrient)

@@ -12,6 +12,7 @@
  */
 import {
   AmbientLight,
+  Box3,
   BoxGeometry,
   CapsuleGeometry,
   CylinderGeometry,
@@ -30,6 +31,7 @@ import {
   SRGBColorSpace,
   TorusGeometry,
   Vector2,
+  Vector3,
   WebGLRenderer,
 } from 'three'
 import { gsap } from 'gsap'
@@ -204,50 +206,91 @@ function rand(seed) {
   return x - Math.floor(x)
 }
 
+/** Small string hash, so each nutrient gets its own composition. */
+function hashSeed(str) {
+  let h = 7
+  for (const ch of str) h = (h * 31 + ch.charCodeAt(0)) % 9973
+  return h
+}
+
 /**
- * Slot positions in normalized canvas space (-1..1).
- * hero: a ring hugging the canvas edges (the picker card covers the middle).
- * panel: spread over the banner's free corner (text sits elsewhere).
+ * Banner variant: slot positions in normalized canvas space (-1..1), spread
+ * over the banner's free corner (text sits elsewhere) on a jittered grid.
  */
-function slots(variant, count) {
+function panelSlots(count) {
   const out = []
+  const cols = 4
+  const rows = Math.ceil(count / cols)
   for (let i = 0; i < count; i++) {
-    const a = rand(i + 1)
-    const b = rand(i + 101)
-    const c = rand(i + 201)
-    if (variant === 'panel') {
-      // spread evenly over the banner box, jittered within a loose grid so foods don't overlap
-      const cols = 4
-      const col = i % cols
-      const row = Math.floor(i / cols)
-      const rows = Math.ceil(count / cols)
-      out.push({ x: -0.9 + ((col + 0.2 + a * 0.6) / cols) * 1.8, y: 0.9 - ((row + 0.2 + b * 0.6) / rows) * 1.8, z: -0.6 + c * 1.2 })
-    } else {
-      // walk the perimeter of a rounded rectangle, then jitter inwards/outwards
-      const t = (i + a * 0.6) / count
-      const per = t * 4
-      const side = Math.floor(per)
-      const f = per - side
-      let x
-      let y
-      if (side === 0) [x, y] = [-1 + 2 * f, -1]
-      else if (side === 1) [x, y] = [1, -1 + 2 * f]
-      else if (side === 2) [x, y] = [1 - 2 * f, 1]
-      else [x, y] = [-1, 1 - 2 * f]
-      const inset = 0.8 + b * 0.14
-      out.push({ x: x * inset, y: y * inset, z: -0.8 + c * 1.6 })
-    }
+    const col = i % cols
+    const row = Math.floor(i / cols)
+    out.push({
+      x: -0.9 + ((col + 0.2 + rand(i + 1) * 0.6) / cols) * 1.8,
+      y: 0.9 - ((row + 0.2 + rand(i + 101) * 0.6) / rows) * 1.8,
+      z: -0.6 + rand(i + 201) * 1.2,
+    })
   }
   return out
+}
+
+/**
+ * Hero variant: pixel spots in the canvas where a food is actually visible,
+ * i.e. not hidden behind the page content in `boxes` (the picker card, the
+ * hero copy) and not cut off by the screen edge. A food may tuck up to ~45%
+ * behind an edge for depth. Seeded dart throwing keeps it organic; the gap
+ * grows with the free area so foods spread out instead of clumping.
+ */
+function freeSpots({ width, height, boxes, minX, maxX, radius, count, seed }) {
+  const edge = radius * 1.2 // room to spin and bob without touching the canvas edge
+  const reach = radius * 0.55
+  const step = Math.max(6, radius / 2.5)
+  const cand = []
+  for (let y = edge; y <= height - edge; y += step) {
+    for (let x = Math.max(edge, minX + edge); x <= Math.min(width - edge, maxX - edge); x += step) {
+      const hidden = boxes.some((b) => {
+        const dx = Math.max(b.l - x, 0, x - b.r)
+        const dy = Math.max(b.t - y, 0, y - b.b)
+        return dx * dx + dy * dy < reach * reach
+      })
+      if (!hidden) cand.push([x, y])
+    }
+  }
+  // Seeded shuffle, then accept each candidate that keeps its distance.
+  const order = cand.map((p, i) => [rand(seed + i * 1.37), p]).sort((a, b) => a[0] - b[0])
+  const gap = Math.max(radius * 2.1, Math.sqrt((cand.length * step * step) / Math.max(count, 1)) * 0.85)
+  const spots = []
+  for (const [, p] of order) {
+    if (spots.length >= count) break
+    if (spots.every((s) => Math.hypot(s[0] - p[0], s[1] - p[1]) >= gap)) spots.push(p)
+  }
+  return spots
 }
 
 /* ------------------------------------------------------------------ */
 /* Scene                                                               */
 /* ------------------------------------------------------------------ */
 
-export function createFoodScene(container, { nutrient = 'all', variant = 'hero' } = {}) {
+/**
+ * Divisor that turns a target size into a scale. Softened so tiny foods
+ * (chia) stay small but visible, capped so big ones (orange slice) never
+ * outgrow their spot by more than ~5%.
+ */
+function visualSize(food) {
+  const s = new Box3().setFromObject(food).getSize(new Vector3())
+  const max = Math.max(s.x, s.y, s.z, 0.05)
+  return Math.max(Math.sqrt(max * 0.45), max / 1.05)
+}
+
+/**
+ * @param {HTMLElement} container  positioned box the canvas fills
+ * @param {object} opts
+ * @param {string} opts.nutrient   key of NUTRIENT_FOODS
+ * @param {'hero'|'panel'} opts.variant
+ * @param {() => Element[]} [opts.avoid]  hero only: page content the foods must not hide behind
+ */
+export function createFoodScene(container, { nutrient = 'all', variant = 'hero', avoid = () => [] } = {}) {
   const small = window.matchMedia('(max-width: 640px)').matches
-  const count = variant === 'panel' ? 9 : small ? 12 : 18
+  const count = variant === 'panel' ? 9 : small ? 10 : 16
 
   const renderer = new WebGLRenderer({ antialias: !small, alpha: true, powerPreference: 'low-power' })
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, small ? 1.5 : 1.75))
@@ -271,7 +314,7 @@ export function createFoodScene(container, { nutrient = 'all', variant = 'hero' 
   const world = new Group()
   scene.add(world)
 
-  let items = [] // { obj, slot, phase, speed, amp, spin }
+  let items = [] // { obj, dim, target, phase, speed, bob, spin }
   let current = null
   let width = 1
   let height = 1
@@ -280,42 +323,69 @@ export function createFoodScene(container, { nutrient = 'all', variant = 'hero' 
   let raf = 0
   let last = performance.now()
 
-  /** Half-extents of the visible area at z=0, in world units. */
-  function extents() {
-    const h = 2 * camera.position.z * Math.tan((camera.fov * Math.PI) / 360)
-    return { hx: (h * camera.aspect) / 2, hy: h / 2 }
+  /** World units per CSS pixel at depth z. */
+  const unitsPerPx = (z) => (2 * (camera.position.z - z) * Math.tan((camera.fov * Math.PI) / 360)) / height
+
+  /** Up to n target poses { x, y, z, size } in world units; fewer when space is short. */
+  function targets(n, seed) {
+    if (variant === 'panel') {
+      const hy = (height * unitsPerPx(0)) / 2
+      const hx = hy * camera.aspect
+      // Keep a margin so no food is ever sliced by the canvas edge.
+      return panelSlots(n).map((s, i) => ({
+        x: s.x * hx * 0.84,
+        y: s.y * hy * 0.76,
+        z: s.z,
+        size: 0.52 * (0.85 + rand(i + 301) * 0.45),
+      }))
+    }
+    const box = container.getBoundingClientRect()
+    const boxes = avoid()
+      .map((el) => el.getBoundingClientRect())
+      .filter((r) => r.width && r.height)
+      .map((r) => ({ l: r.left - box.left, t: r.top - box.top, r: r.right - box.left, b: r.bottom - box.top }))
+    const radius = width < 560 ? 23 : 31
+    const spots = freeSpots({
+      width,
+      height,
+      boxes,
+      minX: -box.left,
+      maxX: document.documentElement.clientWidth - box.left,
+      radius,
+      count: n,
+      seed,
+    })
+    return spots.map(([px, py], i) => {
+      const z = -0.5 + rand(seed + i * 7 + 3)
+      const u = unitsPerPx(z)
+      return { x: (px - width / 2) * u, y: (height / 2 - py) * u, z, size: radius * 2 * (0.85 + rand(seed + i * 7 + 5) * 0.3) * u }
+    })
   }
 
-  function place(item) {
-    const { hx, hy } = extents()
-    const s = item.slot
-    // Keep a margin so no food is ever sliced by the canvas edge.
-    return { x: s.x * hx * 0.84, y: s.y * hy * 0.76, z: s.z }
-  }
+  const scaleOf = (it) => it.target.size / it.dim
 
   function build(key) {
     const list = NUTRIENT_FOODS[key] || NUTRIENT_FOODS.all
-    const layout = slots(variant, count)
-    return layout.map((slot, i) => {
+    return targets(count, hashSeed(key)).map((target, i) => {
       // Wrap so the enter/exit scale tweens never overwrite a food's own proportions.
       const obj = new Group()
-      obj.add(FOODS[list[i % list.length]]())
-      const size = (variant === 'panel' ? 1.15 : 0.92) * (0.85 + rand(i + 301) * 0.45) * (small ? 0.85 : 1)
-      obj.userData.size = size
+      const food = FOODS[list[i % list.length]]()
+      obj.add(food)
       obj.rotation.set(rand(i + 401) * Math.PI, rand(i + 501) * Math.PI, rand(i + 601) * Math.PI)
       obj.scale.setScalar(0.0001)
+      // Start near the middle (behind the card) and burst outwards.
+      obj.position.set(target.x * 0.35, target.y * 0.35, target.z - 1.5)
       world.add(obj)
-      const item = {
+      return {
         obj,
-        slot,
+        dim: visualSize(food),
+        target,
         phase: rand(i + 701) * Math.PI * 2,
         speed: 0.5 + rand(i + 801) * 0.6,
-        amp: 0.06 + rand(i + 901) * 0.08,
+        // bob height, relative to the food's own size so it never drifts out of its spot
+        bob: target.size * (0.1 + rand(i + 901) * 0.08),
         spin: { x: (rand(i + 1001) - 0.5) * 0.5, y: (rand(i + 1101) - 0.5) * 0.6 },
       }
-      const p = place(item)
-      obj.position.set(p.x * 0.35, p.y * 0.35, p.z - 1.5)
-      return item
     })
   }
 
@@ -338,41 +408,52 @@ export function createFoodScene(container, { nutrient = 'all', variant = 'hero' 
     })
     items = build(next)
     items.forEach((it, i) => {
-      const p = place(it)
-      const s = it.obj.userData.size
-      gsap.to(it.obj.position, { x: p.x, y: p.y, z: p.z, duration: 1.1, delay: 0.18 + i * 0.03, ease: 'expo.out' })
+      const { x, y, z } = it.target
+      const s = scaleOf(it)
+      gsap.to(it.obj.position, { x, y, z, duration: 1.1, delay: 0.18 + i * 0.03, ease: 'expo.out' })
       gsap.to(it.obj.scale, { x: s, y: s, z: s, duration: 0.9, delay: 0.18 + i * 0.03, ease: 'back.out(2.2)' })
       gsap.from(it.obj.rotation, { y: it.obj.rotation.y - Math.PI, duration: 1.2, delay: 0.18 + i * 0.03, ease: 'expo.out' })
     })
   }
 
   function resize() {
-    width = Math.max(1, container.clientWidth)
-    height = Math.max(1, container.clientHeight)
+    const w = Math.max(1, container.clientWidth)
+    const h = Math.max(1, container.clientHeight)
+    if (w === width && h === height) return
+    width = w
+    height = h
     renderer.setSize(width, height, false)
     camera.aspect = width / height
     camera.updateProjectionMatrix()
-    items.forEach((it) => {
-      const p = place(it)
-      gsap.to(it.obj.position, { x: p.x, y: p.y, z: p.z, duration: 0.6, ease: 'power2.out' })
+    if (!items.length) return
+    // Re-fit the current foods to the new free space; any without room shrink away.
+    const next = targets(items.length, hashSeed(current))
+    items.forEach((it, i) => {
+      gsap.killTweensOf([it.obj.position, it.obj.scale])
+      const t = next[i]
+      if (!t) return gsap.to(it.obj.scale, { x: 0.0001, y: 0.0001, z: 0.0001, duration: 0.4 })
+      it.target = t
+      const s = scaleOf(it)
+      gsap.to(it.obj.position, { x: t.x, y: t.y, z: t.z, duration: 0.6, ease: 'power2.out' })
+      gsap.to(it.obj.scale, { x: s, y: s, z: s, duration: 0.6, ease: 'power2.out' })
     })
   }
 
-  // Gentle parallax that follows the pointer.
+  // Gentle parallax that follows the pointer (small, so foods stay in their free spots).
   const tiltY = gsap.quickTo(world.rotation, 'y', { duration: 1.4, ease: 'power3' })
   const tiltX = gsap.quickTo(world.rotation, 'x', { duration: 1.4, ease: 'power3' })
   function onPointer(e) {
     const nx = (e.clientX / window.innerWidth) * 2 - 1
     const ny = (e.clientY / window.innerHeight) * 2 - 1
-    tiltY(nx * 0.28)
-    tiltX(ny * 0.16)
+    tiltY(nx * 0.16)
+    tiltX(ny * 0.09)
   }
   window.addEventListener('pointermove', onPointer, { passive: true })
 
-  // Drift up and shrink as the section scrolls away.
+  // Drift up and back as the section scrolls away.
   const scrollTween = gsap.to(world.position, {
-    y: 1.4,
-    z: -1.2,
+    y: 0.8,
+    z: -0.8,
     ease: 'none',
     scrollTrigger: { trigger: container, start: 'top top', end: 'bottom top', scrub: 0.8 },
   })
@@ -389,7 +470,7 @@ export function createFoodScene(container, { nutrient = 'all', variant = 'hero' 
     for (const it of items) {
       it.obj.rotation.x += it.spin.x * dt
       it.obj.rotation.y += it.spin.y * dt
-      it.obj.position.y += Math.cos(t * it.speed + it.phase) * it.amp * dt
+      it.obj.position.y += Math.cos(t * it.speed + it.phase) * it.bob * it.speed * dt
     }
     renderer.render(scene, camera)
   }

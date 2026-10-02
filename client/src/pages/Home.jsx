@@ -71,7 +71,7 @@ function NutrientPicker({ active, setActive }) {
   const dvNumber = hub ? parseFloat(hub.dailyValue) : 0
 
   return (
-    <div data-tilt="3" className="relative rounded-[2rem] bg-ink p-5 text-paper shadow-[var(--shadow-lift)] sm:p-7">
+    <div data-tilt="3" data-food-avoid className="relative rounded-[2rem] bg-ink p-5 text-paper shadow-[var(--shadow-lift)] sm:p-7">
       <p className="font-display text-2xl font-bold sm:text-3xl">
         I need more <span className="text-zest">{hub?.name.toLowerCase()}</span>
       </p>
@@ -214,7 +214,7 @@ export default function Home() {
       <section className="relative isolate overflow-hidden">
         <div aria-hidden="true" className="bg-dots pointer-events-none absolute inset-0 [mask-image:linear-gradient(to_bottom,black,transparent_85%)]" />
         <div className="relative mx-auto grid max-w-7xl items-center gap-10 px-4 pb-16 pt-10 [&>*]:min-w-0 sm:px-6 lg:grid-cols-[1.15fr_0.85fr] lg:gap-14 lg:pb-24 lg:pt-16">
-          <div>
+          <div data-food-avoid>
             <Reveal immediate variant="up">
               <p className="inline-flex items-center gap-2 rounded-full border border-line bg-card px-3 py-1.5 text-xs font-semibold text-ink/70">
                 <span className="flex h-5 w-5 items-center justify-center rounded-full bg-zest">
@@ -261,8 +261,14 @@ export default function Home() {
             </Reveal>
           </div>
 
-          <div className="relative">
-            <FoodScene nutrient={pickerNutrient} className="absolute -inset-x-4 -inset-y-12 -z-10 sm:-inset-x-20 lg:-inset-x-24 lg:-inset-y-20" />
+          {/* On narrow screens the card fills the width, so the foods get their own band above it
+              (only reserved when motion is allowed, i.e. when the scene can appear). */}
+          <div className="relative motion-safe:pt-20 lg:motion-safe:pt-0">
+            <FoodScene
+              nutrient={pickerNutrient}
+              avoid="[data-food-avoid]"
+              className="absolute -inset-x-4 -bottom-16 -top-6 -z-10 sm:-inset-x-20 lg:-inset-x-24 lg:-inset-y-20"
+            />
             <Reveal immediate variant="scale" delay={180} className="relative">
               <NutrientPicker active={pickerNutrient} setActive={setPickerNutrient} />
             </Reveal>
