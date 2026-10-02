@@ -49,9 +49,15 @@ Console. This is enforced twice:
    ```
 2. **Env**: `cp pipeline/.env.example .env`, fill it in. `git check-ignore .env`
    must print `.env` (never commit secrets).
-3. **GitHub Action** (publisher): repo Settings → Secrets → Actions →
-   add `SUPABASE_URL` and `SUPABASE_SERVICE_KEY`. The workflow
-   `.github/workflows/pipeline-publish.yml` runs daily + on demand.
+3. **GitHub Actions**: repo Settings → Secrets → Actions →
+   add `SUPABASE_URL`, `SUPABASE_SERVICE_KEY` and at least one LLM key
+   (`OPENROUTER_API_KEY`, `NVIDIA_API_KEY`, `GEMINI_API_KEY` or `XAI_API_KEY`;
+   optional `POLLINATIONS_API_KEY` / `HF_TOKEN` for hero images).
+   - `.github/workflows/pipeline-drafts.yml` writes drafts daily at 05:00 UTC
+     (skips cleanly until the secrets exist).
+   - `.github/workflows/pipeline-publish.yml` publishes approved drafts daily at 06:00 UTC.
+   - `.github/workflows/keyword-news-weekly.yml` mines keywords every Sunday.
+   Your only daily job: approve or reject drafts in `/admin/review`.
 4. **Pin scheduler**: your part — follow `docs/pin-scheduler-guide.md`.
 
 ## The scripts

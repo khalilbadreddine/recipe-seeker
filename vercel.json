@@ -1,6 +1,18 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "buildCommand": "npm run build",
+  "installCommand": "npm install",
+  "outputDirectory": "client/dist",
+  "functions": {
+    "api/chat.mjs": {
+      "maxDuration": 30,
+      "includeFiles": "client/src/data/recipes.json"
+    },
+    "api/subscribe.mjs": {
+      "maxDuration": 10
+    }
+  },
+  "trailingSlash": false,
   "headers": [
     {
       "headers": [
@@ -46,9 +58,6 @@
       "source": "/(.*)"
     }
   ],
-  "installCommand": "npm install",
-  "outputDirectory": "client/dist",
-  "trailingSlash": false,
   "rewrites": [
     {
       "source": "/admin/:path*",

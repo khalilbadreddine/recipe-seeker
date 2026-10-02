@@ -1,27 +1,10 @@
 import React from 'react'
 import { useFavorites } from '../context/FavoritesContext'
-
-/** Heart icon: filled ember when saved, outline when not. */
-function HeartIcon({ filled, className = 'h-5 w-5' }) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      className={className}
-      fill={filled ? 'currentColor' : 'none'}
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      <path d="M19.5 12.6 12 20l-7.5-7.4A5 5 0 1 1 12 6.3a5 5 0 1 1 7.5 6.3z" />
-    </svg>
-  )
-}
+import Icon from './Icon'
 
 /**
  * FavoriteButton — heart toggle for saving a recipe.
- * `overlay` styles it as a floating button over card images.
+ * `overlay` floats it over a card image (above the card's stretched link).
  */
 export default function FavoriteButton({ slug, title = 'recipe', overlay = false, className = '' }) {
   const { isFavorite, toggleFavorite } = useFavorites()
@@ -40,18 +23,18 @@ export default function FavoriteButton({ slug, title = 'recipe', overlay = false
       title={saved ? 'Saved' : 'Save recipe'}
       className={
         overlay
-          ? `absolute right-3 top-3 inline-flex h-11 w-11 items-center justify-center rounded-full bg-cream/95 text-ember-dark shadow-md backdrop-blur transition hover:scale-105 ${className}`
-          : `inline-flex min-h-[44px] min-w-[44px] items-center justify-center gap-2 rounded-full border px-4 py-2.5 text-sm font-semibold transition ${
+          ? `absolute right-3 top-3 z-10 inline-flex h-10 w-10 items-center justify-center rounded-full bg-card/90 shadow-sm backdrop-blur hover:scale-110 ${
+              saved ? 'text-tomato' : 'text-ink/70'
+            } ${className}`
+          : `inline-flex min-h-[44px] items-center justify-center gap-2 rounded-full border px-5 py-2.5 text-sm font-semibold ${
               saved
-                ? 'border-ember-dark bg-ember-dark text-white'
-                : 'border-forest/25 bg-cream-card text-forest hover:border-ember-dark hover:text-ember-dark'
+                ? 'border-tomato bg-tomato text-white'
+                : 'border-line bg-card text-ink hover:border-tomato hover:text-tomato-dark'
             } ${className}`
       }
     >
-      <span className={overlay ? (saved ? 'text-ember' : 'text-forest/60') : ''}>
-        <HeartIcon filled={saved} />
-      </span>
-      {!overlay && (saved ? 'Saved' : 'Save recipe')}
+      <Icon name="heart" filled={saved} className="h-5 w-5" strokeWidth={2} />
+      {!overlay && (saved ? 'Saved' : 'Save')}
     </button>
   )
 }

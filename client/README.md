@@ -5,8 +5,11 @@ Nutrition-first recipe site: "Find recipes by what your body needs."
 ## Stack
 
 - **React 19 + Vite 7/8 + react-router-dom v7** (real paths via `BrowserRouter` — never hash routes)
-- **Tailwind CSS v4** via `@tailwindcss/vite` (theme tokens in `src/index.css` `@theme`: `forest #1E4633`,
-  `cream #FAF5E9`, `ember #E4572E` + tints/shades; Fraunces display + Inter body via Google Fonts)
+- **Tailwind CSS v4** via `@tailwindcss/vite`. "Fresh Market" design system (branch `new-design`): tokens in
+  `src/index.css` `@theme` (`ink #16201B`, `paper #F6F4EE`, `leaf #1F7A4A`, `zest #D7F25C`, `tomato #E5482D`),
+  one accent color per nutrient in `src/data/nutrientMeta.js`, Bricolage Grotesque display + Inter body via
+  Google Fonts. The old token names (`forest`, `cream`, `ember`) are kept as aliases onto the new palette so the
+  Day Builder, Fibermax and admin pages inherit the new look.
 - **react-helmet-async** for per-route head tags
 - **Custom prerenderer** (`scripts/prerender.mjs`) instead of vite-ssg — see below
 - Zero paid deps. Dev proxy: `/api` → `http://localhost:3001` (Express API, sibling agent)

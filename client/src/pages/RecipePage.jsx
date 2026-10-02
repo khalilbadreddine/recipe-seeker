@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import Seo from '../components/Seo'
 import FavoriteButton from '../components/FavoriteButton'
@@ -13,10 +13,15 @@ import MedicalDisclaimer from '../components/MedicalDisclaimer'
 import AuthorByline from '../components/AuthorByline'
 import ResponsiveImage from '../components/ResponsiveImage'
 import PrintButton from '../components/PrintButton'
-import Reveal, { Parallax } from '../components/Reveal'
-import {
-  absUrl, absImage, getRecipe, getNutrient, recipes, formatAmount,
-} from '../data/site'
+import CookMode from '../components/CookMode'
+import Icon from '../components/Icon'
+import Reveal from '../components/Reveal'
+import { SectionHeading } from '../components/ContentBlocks'
+import { scaleAmount } from '../lib/scaleAmount'
+import { rememberRecipe, addToDay, slotFor } from '../lib/localPrefs'
+import { useShoppingList } from '../context/ShoppingListContext'
+import { absUrl, absImage, getRecipe, getNutrient, recipes, formatAmount } from '../data/site'
+import { nutrientMeta, tint, DIET_LABELS, MEAL_LABELS } from '../data/nutrientMeta'
 
 /** schema.org nutrition field names for the keys we track. */
 const NUTRITION_MAP = {
@@ -33,20 +38,18 @@ const NUTRITION_MAP = {
   servingSize: 'servingSize',
 }
 
+/** Diet tags (lowercase in the data) → schema.org RestrictedDiet. */
 const DIET_MAP = {
-  Vegan: 'https://schema.org/VeganDiet',
-  Vegetarian: 'https://schema.org/VegetarianDiet',
-  'Gluten-Free': 'https://schema.org/GlutenFreeDiet',
-  'Low-Carb': 'https://schema.org/LowCalorieDiet',
+  vegan: 'https://schema.org/VeganDiet',
+  vegetarian: 'https://schema.org/VegetarianDiet',
+  'gluten-free': 'https://schema.org/GlutenFreeDiet',
 }
 
-/** Exact nutrition disclaimer required on every recipe page. It names the data
- * source, so no separate "Nutrition source" line is needed. */
+/** Exact nutrition disclaimer required on every recipe page. */
 const NUTRITION_DISCLAIMER =
   'Nutrition is an estimate calculated from USDA FoodData Central ingredient data and may vary by ingredient brand, preparation, and portion size.'
 
-/** Positive badge shown only for recipes genuinely cooked in our kitchen.
- * No negative "untested" warnings are rendered — see policy change 2026-09-28. */
+/** Positive badge shown only for recipes genuinely cooked in our kitchen. */
 const KITCHEN_TESTED_BADGE = 'Tested in our kitchen'
 
 function buildRecipeLd(recipe, canonical) {
@@ -79,47 +82,99 @@ function buildRecipeLd(recipe, canonical) {
       url: `${canonical}#step-${i + 1}`,
     })),
     nutrition: { '@type': 'NutritionInformation', servingSize: '1 serving', ...nutrition },
-    suitableForDiet: recipe.tags.diets.map((d) => DIET_MAP[d]).filter(Boolean),
+    suitableForDiet: recipe.tags.diets.map((d) => DIET_MAP[d.toLowerCase()]).filter(Boolean),
   }
 }
 
-function StatCard({ label, value, icon }) {
+function Stat({ icon, label, value }) {
   return (
-    <div className="flex flex-col items-center rounded-2xl border border-forest-line bg-cream-card px-4 py-5 text-center shadow-sm">
-      <span className="flex items-center gap-1.5 text-sm font-medium text-forest/80">
-        <svg viewBox="0 0 24 24" className="h-5 w-5 text-ember" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden="true">
-          <path d={icon} />
-        </svg>
-        {label}
+    <div className="flex items-center gap-3 rounded-2xl bg-card px-4 py-3 ring-1 ring-line">
+      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-mist text-ink">
+        <Icon name={icon} className="h-5 w-5" />
       </span>
-      <span className="mt-1 font-display text-2xl font-semibold text-forest">{value}</span>
+      <span className="leading-tight">
+        <span className="block text-xs font-medium uppercase tracking-wider text-ink/55">{label}</span>
+        <span className="font-display text-lg font-bold text-ink">{value}</span>
+      </span>
     </div>
   )
 }
 
-const STAT_ICONS = {
-  prep: 'M12 8v4l2.5 2.5M12 21a9 9 0 100-18 9 9 0 000 18z',
-  cook: 'M4 11h16v2a8 8 0 01-8 8h-2a6 6 0 01-6-6v-4zM12 3v4M8 5l1 2M16 5l-1 2',
-  kcal: 'M12 3c2.5 3.5 5 6 5 9.5a5 5 0 11-10 0C7 9 9.5 6.5 12 3z',
-  serves: 'M5 8h14l-1.5 12a2 2 0 01-2 1.8h-7A2 2 0 017.5 20L6 8zM8 8V6a4 4 0 018 0v2',
+/** Key nutrient tiles: big number + %DV meter in the nutrient's color. */
+function AtAGlance({ recipe }) {
+  const items = recipe.keyNutrients
+    .map((b) => {
+      const key = b.key || b.id
+      const data = recipe.nutrition[key]
+      return data ? { key, data, hub: getNutrient(key), meta: nutrientMeta(key) } : null
+    })
+    .filter(Boolean)
+    .slice(0, 4)
+  if (!items.length) return null
+  return (
+    <section aria-labelledby="glance-heading" className="mt-10">
+      <h2 id="glance-heading" className="sr-only">Key nutrients per serving</h2>
+      <ul className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+        {items.map(({ key, data, hub, meta }) => {
+          const pct = Math.round(data.dv || 0)
+          const inner = (
+            <>
+              <span className="flex items-center justify-between text-sm font-semibold text-ink/70">
+                {hub ? hub.name : meta.short}
+                <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: meta.color }} aria-hidden="true" />
+              </span>
+              <span className="mt-2 block font-display text-3xl font-extrabold text-ink sm:text-4xl">
+                {formatAmount(data.amount, data.unit)}
+              </span>
+              <span className="mt-3 block h-2 overflow-hidden rounded-full bg-card/70">
+                <span className="block h-full rounded-full" style={{ width: `${Math.min(100, pct)}%`, backgroundColor: meta.color }} />
+              </span>
+              <span className="mt-1.5 block text-xs font-medium text-ink/60">{pct}% of daily value</span>
+            </>
+          )
+          return (
+            <li key={key}>
+              {hub ? (
+                <Link
+                  to={`/nutrients/${hub.slug || hub.key}`}
+                  className="block h-full rounded-3xl p-4 hover:-translate-y-0.5 sm:p-5"
+                  style={{ backgroundColor: tint(meta.color, 0.12) }}
+                  aria-label={`${formatAmount(data.amount, data.unit)} ${hub.name}, ${pct}% daily value. Learn about ${hub.name}`}
+                >
+                  {inner}
+                </Link>
+              ) : (
+                <div className="h-full rounded-3xl p-4 sm:p-5" style={{ backgroundColor: tint(meta.color, 0.12) }}>
+                  {inner}
+                </div>
+              )}
+            </li>
+          )
+        })}
+      </ul>
+    </section>
+  )
 }
 
-function Ingredients({ recipe }) {
+function Ingredients({ recipe, onToast }) {
+  const list = useShoppingList()
+  const [servings, setServings] = useState(recipe.servings)
   const [checked, setChecked] = useState(() => new Set())
   const [copied, setCopied] = useState(false)
+  const factor = servings / recipe.servings
 
-  const toggle = (i) => {
+  const toggle = (i) =>
     setChecked((prev) => {
       const next = new Set(prev)
       if (next.has(i)) next.delete(i)
       else next.add(i)
       return next
     })
-  }
 
   const copyAll = async () => {
-    const text = `Shopping list - ${recipe.title}\n` +
-      recipe.ingredients.map((i) => `• ${i.amount} ${i.item}`.trim()).join('\n')
+    const text =
+      `Shopping list: ${recipe.title} (${servings} servings)\n` +
+      recipe.ingredients.map((i) => `• ${scaleAmount(i.amount, factor)} ${i.item}`.trim()).join('\n')
     try {
       await navigator.clipboard.writeText(text)
       setCopied(true)
@@ -129,43 +184,88 @@ function Ingredients({ recipe }) {
     }
   }
 
+  const addToList = () => {
+    const wasOnList = list.has(recipe.slug)
+    list.addRecipe({
+      slug: recipe.slug,
+      title: recipe.title,
+      servings,
+      items: recipe.ingredients.map((i) => ({ amount: scaleAmount(i.amount, factor), item: i.item })),
+    })
+    onToast({ text: wasOnList ? `Shopping list updated (${servings} servings)` : 'Added to your shopping list', to: '/shopping-list', link: 'View list' })
+  }
+
   return (
-    <section aria-labelledby="ingredients-heading">
-      <div className="flex flex-wrap items-start justify-between gap-4">
-        <div>
-          <h2 id="ingredients-heading" className="font-display text-3xl font-semibold text-forest">Ingredients</h2>
-          <p className="mt-1 text-sm text-forest/75">
-            {recipe.ingredients.length} ingredients · adjust for {recipe.servings} servings
-          </p>
+    <section aria-labelledby="ingredients-heading" id="ingredients" className="scroll-mt-24 rounded-3xl border border-line bg-card p-5 sm:p-6">
+      <div className="flex items-center justify-between gap-3">
+        <h2 id="ingredients-heading" className="font-display text-2xl font-bold text-ink">Ingredients</h2>
+        <div className="no-print flex items-center gap-1 rounded-full bg-mist p-1" role="group" aria-label="Adjust servings">
+          <button
+            type="button"
+            onClick={() => setServings((s) => Math.max(1, s - 1))}
+            disabled={servings <= 1}
+            className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-card text-ink shadow-sm disabled:opacity-40"
+            aria-label="Fewer servings"
+          >
+            <Icon name="minus" className="h-4 w-4" strokeWidth={2.4} />
+          </button>
+          <span className="min-w-[4.5rem] text-center text-sm font-semibold tabular-nums text-ink" aria-live="polite">
+            {servings} serving{servings === 1 ? '' : 's'}
+          </span>
+          <button
+            type="button"
+            onClick={() => setServings((s) => Math.min(24, s + 1))}
+            className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-card text-ink shadow-sm"
+            aria-label="More servings"
+          >
+            <Icon name="plus" className="h-4 w-4" strokeWidth={2.4} />
+          </button>
         </div>
-        <PrintButton className="w-full justify-center sm:w-auto" />
       </div>
-      <ul className="mt-4 space-y-1">
-        {recipe.ingredients.map((ing, i) => (
-          <li key={i}>
-            <label className="flex cursor-pointer items-start gap-3 rounded-xl px-2 py-2.5 transition hover:bg-forest-soft/60">
-              <input
-                type="checkbox"
-                checked={checked.has(i)}
-                onChange={() => toggle(i)}
-                className="mt-1 h-5 w-5 shrink-0 accent-[#1E4633]"
-                aria-label={`${ing.amount} ${ing.item}`}
-              />
-              <span className={`text-[15px] ${checked.has(i) ? 'text-forest/45 line-through' : 'text-forest/90'}`}>
-                <strong className="font-semibold">{ing.amount}</strong> {ing.item}
-              </span>
-            </label>
-          </li>
-        ))}
+      {factor !== 1 && (
+        <p className="no-print mt-2 text-xs text-ink/55">
+          Amounts scaled from the original {recipe.servings} servings. Nutrition stays per serving.
+        </p>
+      )}
+      <ul className="mt-4 space-y-0.5">
+        {recipe.ingredients.map((ing, i) => {
+          const amount = scaleAmount(ing.amount, factor)
+          return (
+            <li key={i}>
+              <label className="flex cursor-pointer items-start gap-3 rounded-xl px-2 py-2.5 hover:bg-mist">
+                <input
+                  type="checkbox"
+                  checked={checked.has(i)}
+                  onChange={() => toggle(i)}
+                  className="mt-0.5 h-5 w-5 shrink-0 accent-[#1F7A4A]"
+                  aria-label={`${amount} ${ing.item}`}
+                />
+                <span className={`text-[15px] leading-snug ${checked.has(i) ? 'text-ink/40 line-through' : 'text-ink/85'}`}>
+                  <strong className="font-semibold text-ink">{amount}</strong> {ing.item}
+                </span>
+              </label>
+            </li>
+          )
+        })}
       </ul>
-      <button
-        type="button"
-        onClick={copyAll}
-        className="mt-4 inline-flex items-center gap-2 rounded-full border border-ember px-5 py-2.5 text-sm font-semibold text-ember-dark transition hover:bg-ember-dark hover:text-white"
-      >
-        <span aria-hidden="true">{copied ? '✓' : '+'}</span>
-        {copied ? 'Copied to clipboard!' : 'Add all ingredients to shopping list'}
-      </button>
+      <div className="no-print mt-4 grid gap-2">
+        <button
+          type="button"
+          onClick={addToList}
+          className="inline-flex min-h-[48px] w-full items-center justify-center gap-2 rounded-full bg-ink px-5 text-sm font-bold text-paper hover:bg-leaf-dark"
+        >
+          <Icon name="list" className="h-4 w-4" />
+          {list.has(recipe.slug) ? 'Update shopping list' : 'Add to shopping list'}
+        </button>
+        <button
+          type="button"
+          onClick={copyAll}
+          className="inline-flex min-h-[44px] w-full items-center justify-center gap-2 rounded-full border border-line px-5 text-sm font-semibold text-ink hover:border-ink/30"
+        >
+          <Icon name={copied ? 'check' : 'copy'} className="h-4 w-4" />
+          {copied ? 'Copied to clipboard!' : 'Copy ingredients'}
+        </button>
+      </div>
     </section>
   )
 }
@@ -173,11 +273,25 @@ function Ingredients({ recipe }) {
 export default function RecipePage() {
   const { slug } = useParams()
   const recipe = getRecipe(slug)
+  const [cooking, setCooking] = useState(false)
+  const [toast, setToast] = useState(null)
+
+  useEffect(() => {
+    if (recipe) rememberRecipe(recipe.slug)
+  }, [recipe])
+
+  useEffect(() => {
+    if (!toast) return
+    const t = setTimeout(() => setToast(null), 3500)
+    return () => clearTimeout(t)
+  }, [toast])
 
   const related = useMemo(() => {
     if (!recipe) return []
+    const score = (r) => r.tags.nutrients.filter((n) => recipe.tags.nutrients.includes(n)).length
     return recipes
-      .filter((r) => r.slug !== recipe.slug && r.tags.nutrients.some((n) => recipe.tags.nutrients.includes(n)))
+      .filter((r) => r.slug !== recipe.slug && score(r) > 0)
+      .sort((a, b) => score(b) - score(a))
       .slice(0, 3)
   }, [recipe])
 
@@ -185,10 +299,10 @@ export default function RecipePage() {
     return (
       <>
         <Seo title="Recipe not found | The Recipe Seeker" description="This recipe could not be found." canonical={absUrl('/recipes/')} noindex />
-        <div className="mx-auto max-w-3xl px-4 py-20 text-center sm:px-6">
-          <h1 className="font-display text-4xl font-semibold text-forest">Recipe not found</h1>
-          <p className="mt-4 text-forest/80">We couldn’t find that recipe. Try browsing the collection instead.</p>
-          <Link to="/search" className="mt-6 inline-block rounded-full bg-ember-dark px-6 py-3 font-semibold text-white shadow-sm transition hover:shadow-md">Search Recipes</Link>
+        <div className="mx-auto max-w-3xl px-4 py-24 text-center sm:px-6">
+          <h1 className="font-display text-4xl font-extrabold text-ink">Recipe not found</h1>
+          <p className="mt-4 text-ink/70">We couldn’t find that recipe. Try browsing the collection instead.</p>
+          <Link to="/recipes" className="mt-6 inline-flex min-h-[48px] items-center rounded-full bg-ink px-6 font-semibold text-paper">Browse recipes</Link>
         </div>
       </>
     )
@@ -206,7 +320,7 @@ export default function RecipePage() {
     '@type': 'BreadcrumbList',
     itemListElement: [
       { '@type': 'ListItem', position: 1, name: 'Home', item: absUrl('/') },
-      { '@type': 'ListItem', position: 2, name: 'Recipes', item: absUrl('/#recipes') },
+      { '@type': 'ListItem', position: 2, name: 'Recipes', item: absUrl('/recipes') },
       { '@type': 'ListItem', position: 3, name: recipe.title, item: canonical },
     ],
   }
@@ -219,6 +333,30 @@ export default function RecipePage() {
       acceptedAnswer: { '@type': 'Answer', text: f.a },
     })),
   }
+
+  const eyebrow = [...recipe.tags.meals.map((m) => MEAL_LABELS[m] || m), ...recipe.tags.diets.map((d) => DIET_LABELS[d] || d)]
+
+  const slot = slotFor(recipe)
+  const slotLabel = { breakfast: 'breakfast', lunch: 'lunch', dinner: 'dinner', snacks: 'snacks' }[slot]
+  const planIt = () => {
+    addToDay(recipe.slug, slot)
+    setToast({ text: `Added to today’s ${slotLabel}`, to: '/day-builder', link: 'Open My Day' })
+  }
+  const share = async () => {
+    const data = { title: recipe.title, text: `${recipe.title}: ${recipe.description}`, url: canonical }
+    try {
+      if (navigator.share) await navigator.share(data)
+      else {
+        await navigator.clipboard.writeText(canonical)
+        setToast({ text: 'Link copied to clipboard' })
+      }
+    } catch {
+      /* share sheet dismissed */
+    }
+  }
+  const pinUrl = `https://www.pinterest.com/pin/create/button/?url=${encodeURIComponent(canonical)}&media=${encodeURIComponent(
+    absImage(recipe.image),
+  )}&description=${encodeURIComponent(`${recipe.title} (${topBadge} per serving)`)}`
 
   return (
     <>
@@ -233,139 +371,198 @@ export default function RecipePage() {
       />
       <JsonLd data={[recipeLd, breadcrumbLd, faqLd]} />
 
-      <article className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
-        <Link to="/#recipes" className="inline-flex items-center gap-1 text-[15px] font-medium text-ember-dark underline decoration-ember/50 underline-offset-4 hover:text-ember">
-          <span aria-hidden="true">←</span> Back to Recipes
-        </Link>
+      <article className="mx-auto max-w-7xl px-4 pb-8 pt-4 sm:px-6 sm:pt-6">
+        <Breadcrumbs items={[{ label: 'Home', to: '/' }, { label: 'Recipes', to: '/recipes' }, { label: recipe.title }]} />
 
-        <Breadcrumbs items={[{ label: 'Home', to: '/' }, { label: 'Recipes', to: '/#recipes' }, { label: recipe.title }]} />
-
-        <Reveal as="h1" immediate variant="up" className="mt-2 max-w-4xl font-display text-4xl font-semibold leading-tight text-forest sm:text-5xl">
-          {recipe.title}
-        </Reveal>
-        <Reveal as="p" immediate variant="up" delay={90} className="mt-4 max-w-3xl text-lg leading-relaxed text-forest/75">{recipe.description}</Reveal>
-
-        {recipe.kitchenTested === true && (
-          <Reveal immediate variant="up" delay={110} className="mt-4 max-w-3xl">
-            <p className="inline-flex items-center gap-2 rounded-full border border-forest/30 bg-forest/5 px-4 py-2 text-sm font-semibold text-forest" role="note">
-              <span aria-hidden="true">✓</span> {KITCHEN_TESTED_BADGE}
-            </p>
-          </Reveal>
-        )}
-
-        <Reveal immediate variant="up" delay={130} className="mt-5">
-          <FavoriteButton slug={recipe.slug} title={recipe.title} />
-        </Reveal>
-
-        <Reveal immediate variant="up" delay={180} className="mt-6 flex flex-wrap gap-3">
-          {recipe.keyNutrients.map((b) => {
-            const n = getNutrient(b.key || b.id)
-            return <NutrientBadge key={b.key || b.id} label={b.label} variant="outline" to={n ? `/nutrients/${n.slug || n.key}` : undefined} />
-          })}
-          {recipe.tags.diets.map((d) => (
-            <NutrientBadge key={d} label={d} variant="outline" />
-          ))}
-        </Reveal>
-
-        <Reveal variant="fade" delay={240} className="mt-8 max-w-3xl">
-          <AuthorByline />
-        </Reveal>
-
-        <Reveal variant="scale" className="mt-8">
-          <div className="overflow-hidden rounded-[2rem] shadow-[0_24px_60px_rgba(30,70,51,0.18)]">
-            <Parallax speed={0.08} className="aspect-[16/10] w-full">
+        {/* HERO */}
+        <div className="grid items-center gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:gap-12">
+          <Reveal variant="scale" immediate className="order-2 lg:order-1">
+            <div className="relative overflow-hidden rounded-[2rem] bg-mist">
               <ResponsiveImage
                 src={recipe.image}
                 alt={recipe.imageAlt}
                 width={1200}
-                height={800}
+                height={900}
                 fetchPriority="high"
-                sizes="100vw"
-                className="h-full w-full scale-[1.15] object-cover"
+                sizes="(max-width: 1024px) 100vw, 640px"
+                className="aspect-[4/3] w-full object-cover"
               />
-            </Parallax>
+            </div>
+          </Reveal>
+
+          <div className="order-1 lg:order-2">
+            <Reveal immediate variant="up" className="flex flex-wrap gap-2">
+              {eyebrow.map((t) => (
+                <span key={t} className="rounded-full bg-mist px-3 py-1 text-xs font-bold uppercase tracking-wider text-ink/70">{t}</span>
+              ))}
+            </Reveal>
+            <Reveal as="h1" immediate variant="up" delay={60} className="mt-4 font-display text-4xl font-extrabold leading-[1.04] text-ink sm:text-5xl lg:text-[3.4rem]">
+              {recipe.title}
+            </Reveal>
+            <Reveal as="p" immediate variant="up" delay={120} className="mt-4 text-lg leading-relaxed text-ink/70">
+              {recipe.description}
+            </Reveal>
+
+            {recipe.kitchenTested === true && (
+              <Reveal immediate variant="up" delay={140} className="mt-4">
+                <p className="inline-flex items-center gap-2 rounded-full bg-leaf-soft px-4 py-2 text-sm font-semibold text-leaf-dark" role="note">
+                  <Icon name="check" className="h-4 w-4" strokeWidth={2.6} /> {KITCHEN_TESTED_BADGE}
+                </p>
+              </Reveal>
+            )}
+
+            <Reveal immediate variant="up" delay={180} className="mt-6 flex flex-wrap gap-2">
+              {recipe.keyNutrients.map((b) => {
+                const key = b.key || b.id
+                const n = getNutrient(key)
+                return <NutrientBadge key={key} label={b.label} nutrientKey={key} to={n ? `/nutrients/${n.slug || n.key}` : undefined} />
+              })}
+            </Reveal>
+
+            <Reveal immediate variant="up" delay={220} className="no-print mt-7 flex flex-wrap gap-2.5">
+              <button
+                type="button"
+                onClick={() => setCooking(true)}
+                className="inline-flex min-h-[48px] items-center gap-2 rounded-full bg-ink px-6 text-[15px] font-bold text-paper hover:bg-leaf-dark"
+              >
+                <Icon name="chef" className="h-5 w-5" /> Start cook mode
+              </button>
+              <FavoriteButton slug={recipe.slug} title={recipe.title} className="min-h-[48px]" />
+              <button
+                type="button"
+                onClick={planIt}
+                className="inline-flex min-h-[48px] items-center gap-2 rounded-full border border-line bg-card px-5 text-sm font-semibold text-ink hover:border-ink/30"
+              >
+                <Icon name="calendar" className="h-4 w-4" /> Add to My Day
+              </button>
+            </Reveal>
+            <Reveal immediate variant="up" delay={260} className="no-print mt-4 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm font-semibold text-ink/70">
+              <a href="#ingredients" className="inline-flex min-h-[36px] items-center gap-1.5 hover:text-ink">
+                <Icon name="arrowDown" className="h-4 w-4" /> Jump to recipe
+              </a>
+              <button type="button" onClick={share} className="inline-flex min-h-[36px] items-center gap-1.5 hover:text-ink">
+                <Icon name="share" className="h-4 w-4" /> Share
+              </button>
+              <a href={pinUrl} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-[36px] items-center gap-1.5 hover:text-[#E60023]">
+                <svg viewBox="0 0 24 24" className="h-4 w-4" fill="currentColor" aria-hidden="true">
+                  <path d="M12 2a10 10 0 0 0-3.6 19.3c-.1-.8-.2-2 0-2.9l1.2-5s-.3-.6-.3-1.5c0-1.4.8-2.5 1.8-2.5.9 0 1.3.7 1.3 1.4 0 .9-.6 2.2-.9 3.4-.2 1 .5 1.9 1.6 1.9 1.9 0 3.3-2 3.3-4.9 0-2.6-1.8-4.4-4.5-4.4-3 0-4.8 2.3-4.8 4.6 0 .9.4 1.9.8 2.4l.1.4-.3 1.2c0 .2-.2.3-.4.2-1.3-.6-2.2-2.6-2.2-4.2 0-3.4 2.5-6.5 7.1-6.5 3.7 0 6.6 2.7 6.6 6.2 0 3.7-2.3 6.6-5.6 6.6-1.1 0-2.1-.6-2.5-1.2l-.7 2.6c-.2 1-.9 2.2-1.4 2.9A10 10 0 1 0 12 2z" />
+                </svg>
+                Pin it
+              </a>
+            </Reveal>
           </div>
-        </Reveal>
-
-        <Reveal variant="up" className="mt-6 grid grid-cols-2 gap-4 sm:grid-cols-4">
-          <StatCard label="Prep Time" value={`${recipe.prepMinutes} mins`} icon={STAT_ICONS.prep} />
-          <StatCard label="Cook Time" value={`${recipe.cookMinutes} mins`} icon={STAT_ICONS.cook} />
-          <StatCard label="Calories" value={formatAmount(recipe.calories, 'kcal')} icon={STAT_ICONS.kcal} />
-          <StatCard label="Serves" value={`${recipe.servings} servings`} icon={STAT_ICONS.serves} />
-        </Reveal>
-
-        <div className="mt-12 grid gap-10 lg:grid-cols-[1fr_1.1fr]">
-          <Reveal variant="up">
-            <Ingredients recipe={recipe} />
-          </Reveal>
-          <Reveal variant="up" delay={120}>
-            <NutritionTable nutrition={recipe.nutrition} servings={recipe.servings} />
-            <p className="mt-3 text-xs leading-relaxed text-forest/75">{NUTRITION_DISCLAIMER}</p>
-          </Reveal>
         </div>
 
-        <Reveal variant="up" as="section" aria-labelledby="instructions-heading" className="mt-14">
-          <h2 id="instructions-heading" className="font-display text-3xl font-semibold text-forest">Instructions</h2>
-          <p className="mt-1 text-sm text-forest/75">
-            {recipe.steps.length} steps · ~{recipe.totalMinutes} minutes total
-          </p>
-          <ol className="mt-6 space-y-7">
-            {recipe.steps.map((step, i) => (
-              <li key={i} id={`step-${i + 1}`} className="scroll-mt-28 rounded-2xl border border-forest-line bg-cream-card p-6 shadow-sm">
-                <div className="flex items-start gap-4">
-                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-ember-dark font-display text-lg font-bold text-white" aria-hidden="true">
-                    {i + 1}
-                  </span>
-                  <div>
-                    <h3 className="font-display text-xl font-semibold text-forest">{step.title}</h3>
-                    <p className="mt-2 leading-relaxed text-forest/80">{step.text}</p>
-                  </div>
+        {/* STATS */}
+        <Reveal variant="up" className="mt-8 grid grid-cols-2 gap-3 md:grid-cols-4">
+          <Stat icon="clock" label="Prep" value={`${recipe.prepMinutes} min`} />
+          <Stat icon="flame" label="Cook" value={`${recipe.cookMinutes} min`} />
+          <Stat icon="bolt" label="Calories" value={formatAmount(recipe.calories, 'kcal')} />
+          <Stat icon="users" label="Serves" value={`${recipe.servings}`} />
+        </Reveal>
+
+        <AtAGlance recipe={recipe} />
+
+        <div className="mt-8 max-w-xl">
+          <AuthorByline compact date={recipe.dateModified ? `Updated ${recipe.dateModified}` : undefined} />
+        </div>
+
+        {/* BODY */}
+        <div className="mt-12 grid gap-10 lg:grid-cols-[380px_1fr] lg:gap-14">
+          <div className="lg:sticky lg:top-24 lg:self-start">
+            <Ingredients recipe={recipe} onToast={setToast} />
+            <div className="no-print mt-3 flex justify-center">
+              <PrintButton label="Print recipe" />
+            </div>
+          </div>
+
+          <div className="min-w-0">
+            <section aria-labelledby="instructions-heading">
+              <div className="flex flex-wrap items-end justify-between gap-3">
+                <div>
+                  <h2 id="instructions-heading" className="font-display text-3xl font-extrabold text-ink">Instructions</h2>
+                  <p className="mt-1 text-sm text-ink/60">
+                    {recipe.steps.length} steps · about {recipe.totalMinutes} minutes total
+                  </p>
                 </div>
-              </li>
-            ))}
-          </ol>
-        </Reveal>
+                <button
+                  type="button"
+                  onClick={() => setCooking(true)}
+                  className="no-print inline-flex min-h-[44px] items-center gap-2 rounded-full bg-zest px-5 text-sm font-bold text-ink hover:brightness-95"
+                >
+                  <Icon name="chef" className="h-4 w-4" /> Cook mode
+                </button>
+              </div>
+              <ol className="mt-6 space-y-4">
+                {recipe.steps.map((step, i) => (
+                  <li key={i} id={`step-${i + 1}`} className="scroll-mt-28 rounded-3xl border border-line bg-card p-5 sm:p-6">
+                    <div className="flex items-start gap-4">
+                      <span className="font-display text-4xl font-extrabold leading-none text-leaf" aria-hidden="true">
+                        {String(i + 1).padStart(2, '0')}
+                      </span>
+                      <div className="min-w-0">
+                        <h3 className="font-display text-xl font-bold text-ink">{step.title}</h3>
+                        <p className="mt-2 leading-relaxed text-ink/75">{step.text}</p>
+                      </div>
+                    </div>
+                  </li>
+                ))}
+              </ol>
+            </section>
 
-        <Reveal variant="up" as="section" aria-labelledby="why-heading" className="mt-14 rounded-[2rem] bg-forest px-6 py-10 text-cream sm:px-10">
-          <h2 id="why-heading" className="font-display text-3xl font-semibold">
-            Why this helps {recipe.whyItHelps.goal}
-          </h2>
-          <p className="mt-4 max-w-3xl text-lg leading-relaxed text-cream/85">{recipe.whyItHelps.text}</p>
-          <div className="mt-6 flex flex-wrap gap-3">
-            {recipe.keyNutrients.map((b) => {
-              const n = getNutrient(b.key || b.id)
-              return n ? (
-                <Link key={b.key || b.id} to={`/nutrients/${n.slug || n.key}`} className="rounded-full bg-cream/15 px-4 py-2 text-sm font-semibold text-cream transition hover:bg-cream/25">
-                  Learn about {n.name} →
-                </Link>
-              ) : null
-            })}
+            <Reveal variant="up" as="section" aria-labelledby="why-heading" className="relative mt-12 overflow-hidden rounded-[2rem] bg-ink px-6 py-9 text-paper sm:px-10">
+              <p className="text-xs font-bold uppercase tracking-[0.18em] text-zest">Why this helps</p>
+              <h2 id="why-heading" className="mt-2 font-display text-3xl font-extrabold">
+                {recipe.whyItHelps.goal}
+              </h2>
+              <p className="mt-4 max-w-3xl text-lg leading-relaxed text-paper/80">{recipe.whyItHelps.text}</p>
+              <div className="no-print mt-6 flex flex-wrap gap-2.5">
+                {recipe.keyNutrients.map((b) => {
+                  const n = getNutrient(b.key || b.id)
+                  return n ? (
+                    <Link key={b.key || b.id} to={`/nutrients/${n.slug || n.key}`} className="inline-flex min-h-[40px] items-center gap-2 rounded-full bg-paper/10 px-4 text-sm font-semibold text-paper hover:bg-paper/20">
+                      <span className="h-2 w-2 rounded-full" style={{ backgroundColor: nutrientMeta(n.key).color }} aria-hidden="true" />
+                      All about {n.name}
+                    </Link>
+                  ) : null
+                })}
+              </div>
+            </Reveal>
+
+            <div className="mt-12">
+              <NutritionTable nutrition={recipe.nutrition} servings={recipe.servings} />
+              <p className="mt-3 text-xs leading-relaxed text-ink/55">{NUTRITION_DISCLAIMER}</p>
+            </div>
+
+            <section aria-labelledby="faq-heading" className="mt-12">
+              <h2 id="faq-heading" className="font-display text-3xl font-extrabold text-ink">Questions, answered</h2>
+              <div className="mt-6">
+                <FaqAccordion faqs={recipe.faqs} idPrefix={`faq-${recipe.slug}`} />
+              </div>
+            </section>
+
+            <div className="mt-10">
+              <RatingWidget slug={recipe.slug} title={recipe.title} />
+            </div>
           </div>
-        </Reveal>
-
-        <Reveal variant="up" as="section" aria-labelledby="faq-heading" className="mt-14">
-          <h2 id="faq-heading" className="font-display text-3xl font-semibold text-forest">
-            Frequently asked questions
-          </h2>
-          <div className="mt-6">
-            <FaqAccordion faqs={recipe.faqs} idPrefix={`faq-${recipe.slug}`} />
-          </div>
-        </Reveal>
-
-        <div className="mt-10">
-          <RatingWidget slug={recipe.slug} title={recipe.title} />
         </div>
 
         {related.length > 0 && (
-          <section aria-labelledby="related-heading" className="mt-14">
-            <Reveal variant="up" className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-2">
-              <h2 id="related-heading" className="font-display text-3xl font-semibold text-forest">You Might Also Like</h2>
-              <Link to="/search" className="font-medium text-ember-dark hover:text-ember">Search Recipes →</Link>
-            </Reveal>
-            <div className="mt-6 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+          <section aria-labelledby="related-heading" className="no-print mt-20">
+            <SectionHeading
+              id="related-heading"
+              eyebrow="Same nutrients, different dish"
+              title="You might also like"
+              action={
+                <Link to="/recipes" className="inline-flex items-center gap-1.5 font-semibold text-ink hover:text-leaf-dark">
+                  All recipes <Icon name="arrowRight" className="h-4 w-4" />
+                </Link>
+              }
+            />
+            <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {related.map((r, i) => (
                 <Reveal key={r.slug} variant="up" delay={Math.min(i * 80, 240)}>
-                  <RecipeCard recipe={r} badgeVariant="outline" />
+                  <RecipeCard recipe={r} />
                 </Reveal>
               ))}
             </div>
@@ -376,6 +573,25 @@ export default function RecipePage() {
           <MedicalDisclaimer />
         </div>
       </article>
+
+      <CookMode recipe={recipe} open={cooking} onClose={() => setCooking(false)} />
+
+      <div aria-live="polite" className="no-print pointer-events-none fixed inset-x-0 bottom-[calc(80px+env(safe-area-inset-bottom))] z-50 flex justify-center px-4 lg:bottom-6">
+        {toast && (
+          <div className="pop-in pointer-events-auto flex items-center gap-4 rounded-full bg-ink py-2 pl-5 pr-2 text-sm font-semibold text-paper shadow-[var(--shadow-lift)]">
+            <span className="flex items-center gap-2">
+              <Icon name="check" className="h-4 w-4 text-zest" strokeWidth={2.6} /> {toast.text}
+            </span>
+            {toast.to ? (
+              <Link to={toast.to} className="inline-flex min-h-[36px] items-center rounded-full bg-zest px-4 font-bold text-ink">
+                {toast.link}
+              </Link>
+            ) : (
+              <span className="w-2" />
+            )}
+          </div>
+        )}
+      </div>
     </>
   )
 }
