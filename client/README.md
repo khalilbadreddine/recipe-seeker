@@ -10,6 +10,12 @@ Nutrition-first recipe site: "Find recipes by what your body needs."
   one accent color per nutrient in `src/data/nutrientMeta.js`, Bricolage Grotesque display + Inter body via
   Google Fonts. The old token names (`forest`, `cream`, `ember`) are kept as aliases onto the new palette so the
   Day Builder, Fibermax and admin pages inherit the new look.
+- **3D + motion (progressive enhancement):** `src/three/foodScene.js` (three.js) renders the "Living Plate":
+  low-poly foods built from primitives, re-composed per nutrient with GSAP, on the home hero and nutrient
+  hubs (`components/FoodScene.jsx`). `src/lib/motion.js` (GSAP + ScrollTrigger) adds count-ups
+  (`data-count`), pointer tilt (`data-tilt`), scroll-drawn lines (`data-scrub-line`) and pops (`data-pop`).
+  Both are separate lazy chunks loaded after idle; skipped for reduced motion, data saver and no-WebGL,
+  paused off-screen, and never hide content from crawlers. The hero headline cascade is pure CSS.
 - **react-helmet-async** for per-route head tags
 - **Custom prerenderer** (`scripts/prerender.mjs`) instead of vite-ssg — see below
 - Zero paid deps. Dev proxy: `/api` → `http://localhost:3001` (`npm run api:dev` serves the Vercel functions in `/api`)

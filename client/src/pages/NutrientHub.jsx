@@ -9,6 +9,7 @@ import NutrientIcon from '../components/NutrientIcon'
 import Icon from '../components/Icon'
 import Reveal from '../components/Reveal'
 import { SectionHeading } from '../components/ContentBlocks'
+import FoodScene from '../components/FoodScene'
 import { absUrl, absImage, getNutrient, nutrients } from '../data/site'
 import { nutrientMeta, tint, recipesForNutrient } from '../data/nutrientMeta'
 
@@ -100,7 +101,8 @@ export default function NutrientHub() {
 
         {/* HERO */}
         <div className="relative overflow-hidden rounded-[2rem] px-6 py-10 sm:px-10 sm:py-14" style={{ backgroundColor: tint(meta.color, 0.13) }}>
-          <div className="grid gap-10 lg:grid-cols-[1.4fr_0.6fr] lg:items-end">
+          <FoodScene key={nutrient.key} variant="panel" nutrient={nutrient.key} minWidth={1024} className="absolute bottom-[34%] left-[56%] right-0 top-0 hidden lg:block" />
+          <div className="relative grid gap-10 lg:grid-cols-[1.4fr_0.6fr] lg:items-end">
             <div>
               <Reveal immediate variant="up" className="flex items-center gap-3">
                 <span className="flex h-12 w-12 items-center justify-center rounded-2xl text-white" style={{ backgroundColor: meta.color }}>

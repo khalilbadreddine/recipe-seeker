@@ -7,6 +7,7 @@ import PostCard from '../components/PostCard'
 import LeadMagnetCta from '../components/LeadMagnetCta'
 import AskSeeker from '../components/AskSeeker'
 import RecentlyViewed from '../components/RecentlyViewed'
+import FoodScene from '../components/FoodScene'
 import ResponsiveImage from '../components/ResponsiveImage'
 import Reveal from '../components/Reveal'
 import Icon from '../components/Icon'
@@ -59,9 +60,10 @@ const POPULAR = [
 
 const LEARN_SLUGS = ['iron-vitamin-c-food-pairings', 'foods-that-block-iron-absorption', 'what-to-eat-in-a-day-for-iron']
 
+const HERO_WORDS = ['Find', 'recipes', 'by', 'what', 'your', 'body']
+
 /** Hero widget: "I need more ___" → the top recipes for that nutrient, with real numbers. */
-function NutrientPicker() {
-  const [active, setActive] = useState('iron')
+function NutrientPicker({ active, setActive }) {
   const hub = getNutrient(active)
   const meta = nutrientMeta(active)
   const top = useMemo(() => topRecipesBy(active, 3), [active])
@@ -69,7 +71,7 @@ function NutrientPicker() {
   const dvNumber = hub ? parseFloat(hub.dailyValue) : 0
 
   return (
-    <div className="relative rounded-[2rem] bg-ink p-5 text-paper shadow-[var(--shadow-lift)] sm:p-7">
+    <div data-tilt="3" data-food-avoid className="relative rounded-[2rem] bg-ink p-5 text-paper shadow-[var(--shadow-lift)] sm:p-7">
       <p className="font-display text-2xl font-bold sm:text-3xl">
         I need more <span className="text-zest">{hub?.name.toLowerCase()}</span>
       </p>
@@ -141,6 +143,7 @@ export default function Home() {
   const navigate = useNavigate()
   const [query, setQuery] = useState('')
   const [tab, setTab] = useState('all')
+  const [pickerNutrient, setPickerNutrient] = useState('iron')
 
   const canonical = absUrl('/')
   const title = 'The Recipe Seeker - Find Recipes by What Your Body Needs'
@@ -208,10 +211,10 @@ export default function Home() {
       <JsonLd data={[websiteLd, itemListLd]} />
 
       {/* HERO */}
-      <section className="relative overflow-hidden">
+      <section className="relative isolate overflow-hidden">
         <div aria-hidden="true" className="bg-dots pointer-events-none absolute inset-0 [mask-image:linear-gradient(to_bottom,black,transparent_85%)]" />
         <div className="relative mx-auto grid max-w-7xl items-center gap-10 px-4 pb-16 pt-10 [&>*]:min-w-0 sm:px-6 lg:grid-cols-[1.15fr_0.85fr] lg:gap-14 lg:pb-24 lg:pt-16">
-          <div>
+          <div data-food-avoid>
             <Reveal immediate variant="up">
               <p className="inline-flex items-center gap-2 rounded-full border border-line bg-card px-3 py-1.5 text-xs font-semibold text-ink/70">
                 <span className="flex h-5 w-5 items-center justify-center rounded-full bg-zest">
@@ -220,9 +223,14 @@ export default function Home() {
                 {recipes.length} recipes · nutrition from USDA data
               </p>
             </Reveal>
-            <Reveal as="h1" immediate variant="up" delay={70} className="mt-5 font-display text-[2.75rem] font-extrabold leading-[0.98] text-ink sm:text-6xl lg:text-7xl">
-              Find recipes by what your body <span className="mark-zest">needs.</span>
-            </Reveal>
+            <h1 className="mt-5 font-display text-[2.75rem] font-extrabold leading-[0.98] text-ink sm:text-6xl lg:text-7xl">
+              {HERO_WORDS.map((w, i) => (
+                <React.Fragment key={w}>
+                  <span className="hero-word" style={{ '--i': i }}>{w}</span>{' '}
+                </React.Fragment>
+              ))}
+              <span className="hero-word mark-zest" style={{ '--i': HERO_WORDS.length }}>needs.</span>
+            </h1>
             <Reveal as="p" immediate variant="up" delay={140} className="mt-6 max-w-xl text-lg leading-relaxed text-ink/70 sm:text-xl">
               Search by nutrient, not just by craving. Every recipe shows real per-serving numbers for protein, iron, fiber and more.
             </Reveal>
@@ -253,9 +261,18 @@ export default function Home() {
             </Reveal>
           </div>
 
-          <Reveal immediate variant="scale" delay={180}>
-            <NutrientPicker />
-          </Reveal>
+          {/* On narrow screens the card fills the width, so the foods get their own band above it
+              (only reserved when motion is allowed, i.e. when the scene can appear). */}
+          <div className="relative motion-safe:pt-20 lg:motion-safe:pt-0">
+            <FoodScene
+              nutrient={pickerNutrient}
+              avoid="[data-food-avoid]"
+              className="absolute -inset-x-4 -bottom-16 -top-6 -z-10 sm:-inset-x-20 lg:-inset-x-24 lg:-inset-y-20"
+            />
+            <Reveal immediate variant="scale" delay={180} className="relative">
+              <NutrientPicker active={pickerNutrient} setActive={setPickerNutrient} />
+            </Reveal>
+          </div>
         </div>
       </section>
 
@@ -319,7 +336,7 @@ export default function Home() {
                   </span>
                   <span>
                     <span className="block font-display text-lg font-bold leading-tight text-ink">{n.name}</span>
-                    <span className="mt-0.5 block text-xs font-medium text-ink/60">{count} recipes</span>
+                    <span className="mt-0.5 block text-xs font-medium text-ink/60"><span data-count={count}>{count}</span> recipes</span>
                   </span>
                 </Link>
               </Reveal>
@@ -442,14 +459,15 @@ export default function Home() {
           <h2 id="how-heading" className="mt-3 max-w-2xl font-display text-4xl font-extrabold leading-[1.05] sm:text-5xl">
             Honest numbers. Real food. No miracle claims.
           </h2>
-          <ol className="mt-12 grid gap-8 md:grid-cols-3">
+          <ol className="mt-12 grid gap-8 md:grid-cols-3" data-scrub-root>
             {[
               { n: '01', t: 'Pick what you need', d: 'Choose a nutrient or goal: iron, protein, fiber, calcium and more.' },
               { n: '02', t: 'See the real numbers', d: 'Every recipe lists per-serving nutrition and % daily value, computed from USDA ingredient data.' },
               { n: '03', t: 'Cook, save, plan', d: 'Use cook mode in the kitchen, save favorites, and plan your week in the planner.' },
             ].map((s) => (
-              <li key={s.n} className="border-t border-paper/15 pt-6">
-                <span className="font-display text-5xl font-extrabold text-zest">{s.n}</span>
+              <li key={s.n} className="relative border-t border-paper/15 pt-6">
+                <span data-scrub-line aria-hidden="true" className="absolute -top-px left-0 h-0.5 w-full origin-left bg-zest" />
+                <span data-pop className="inline-block font-display text-5xl font-extrabold text-zest">{s.n}</span>
                 <h3 className="mt-4 font-display text-2xl font-bold">{s.t}</h3>
                 <p className="mt-2 leading-relaxed text-paper/70">{s.d}</p>
               </li>
