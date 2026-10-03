@@ -5,7 +5,7 @@
     "canonicalBase": "https://recipe-seeker-client.vercel.app"
   },
   "meta": {
-    "recipes": 57
+    "recipes": 58
   },
   "recipes": [
     {
@@ -12893,6 +12893,208 @@
       "kitchenTested": false,
       "datePublished": "2026-10-01",
       "dateModified": "2026-10-01"
+    },
+    {
+      "slug": "high-protein-stuffed-acorn-squash",
+      "title": "High Protein Stuffed Acorn Squash (35g Protein)",
+      "description": "Roasted acorn squash halves stuffed with quinoa, lean ground turkey, chickpeas, and spinach. 34.9g protein and 11.2g fiber per serving, ready in 45 minutes.",
+      "image": "/images/high-protein-stuffed-acorn-squash.webp",
+      "imageAlt": "Two roasted acorn squash halves stuffed with quinoa, turkey, chickpeas and spinach, topped with feta and parsley",
+      "prepTime": "PT15M",
+      "cookTime": "PT30M",
+      "totalTime": "PT45M",
+      "prepMinutes": 15,
+      "cookMinutes": 30,
+      "totalMinutes": 45,
+      "servings": 4,
+      "calories": 574,
+      "nutrition": {
+        "calories": {
+          "amount": 574,
+          "unit": "kcal",
+          "dv": 29
+        },
+        "protein": {
+          "amount": 34.9,
+          "unit": "g",
+          "dv": 70
+        },
+        "fat": {
+          "amount": 20.8,
+          "unit": "g",
+          "dv": 27
+        },
+        "carbs": {
+          "amount": 65.7,
+          "unit": "g",
+          "dv": 24
+        },
+        "fiber": {
+          "amount": 11.2,
+          "unit": "g",
+          "dv": 40
+        },
+        "sugar": {
+          "amount": 4.1,
+          "unit": "g",
+          "dv": 8
+        },
+        "sodium": {
+          "amount": 246,
+          "unit": "mg",
+          "dv": 11
+        },
+        "iron": {
+          "amount": 7.2,
+          "unit": "mg",
+          "dv": 40
+        },
+        "calcium": {
+          "amount": 157,
+          "unit": "mg",
+          "dv": 12
+        },
+        "vitaminC": {
+          "amount": 26.3,
+          "unit": "mg",
+          "dv": 29
+        },
+        "potassium": {
+          "amount": 1404,
+          "unit": "mg",
+          "dv": 30
+        }
+      },
+      "keyNutrients": [
+        {
+          "key": "protein",
+          "label": "34.9g Protein"
+        },
+        {
+          "key": "fiber",
+          "label": "11.2g Fiber"
+        },
+        {
+          "key": "iron",
+          "label": "7.2mg Iron"
+        }
+      ],
+      "ingredients": [
+        {
+          "amount": "2 medium (700 g edible)",
+          "item": "acorn squash, halved and seeded"
+        },
+        {
+          "amount": "1 cup, uncooked (170 g)",
+          "item": "quinoa, rinsed"
+        },
+        {
+          "amount": "1 lb (454 g)",
+          "item": "lean ground turkey (93% lean)"
+        },
+        {
+          "amount": "1 can (15 oz), drained and rinsed (240 g)",
+          "item": "chickpeas"
+        },
+        {
+          "amount": "2 cups (60 g)",
+          "item": "fresh spinach"
+        },
+        {
+          "amount": "1 small (100 g)",
+          "item": "onion, diced"
+        },
+        {
+          "amount": "2 cloves (6 g)",
+          "item": "garlic, minced"
+        },
+        {
+          "amount": "1 tsp",
+          "item": "smoked paprika"
+        },
+        {
+          "amount": "1 tsp",
+          "item": "ground cumin"
+        },
+        {
+          "amount": "2 Tbsp (27 g), divided",
+          "item": "olive oil"
+        },
+        {
+          "amount": "to taste",
+          "item": "salt and black pepper (check spice labels if celiac)"
+        },
+        {
+          "amount": "optional",
+          "item": "crumbled feta and chopped parsley, to finish"
+        }
+      ],
+      "steps": [
+        {
+          "title": "Roast the squash",
+          "text": "Preheat the oven to 400°F (200°C). Brush the squash halves with 1 tablespoon of the olive oil, season with salt and pepper, and place cut-side down on a baking sheet. Roast 25-30 minutes until fork-tender."
+        },
+        {
+          "title": "Cook the quinoa",
+          "text": "While the squash roasts, cook the quinoa in 2 cups water or broth: bring to a boil, cover, and simmer 12-15 minutes. Fluff with a fork."
+        },
+        {
+          "title": "Build the filling",
+          "text": "In a large skillet, heat the remaining 1 tablespoon oil over medium heat. Sauté the onion 3-4 minutes, add the garlic and spices and cook 30 seconds. Add the turkey, breaking it up, and cook until browned. Stir in the chickpeas and spinach until wilted, then mix in the cooked quinoa. Season to taste."
+        },
+        {
+          "title": "Stuff and heat through",
+          "text": "Flip the squash halves cut-side up and divide the filling among them. Return to the oven 5-10 minutes to heat through."
+        },
+        {
+          "title": "Finish and serve",
+          "text": "Garnish with feta and parsley if using, and serve warm."
+        }
+      ],
+      "tags": {
+        "nutrients": [
+          "protein",
+          "fiber",
+          "iron"
+        ],
+        "diets": [
+          "gluten-free",
+          "dairy-free"
+        ],
+        "meals": [
+          "dinner"
+        ]
+      },
+      "faqs": [
+        {
+          "q": "How long does it take to make stuffed acorn squash?",
+          "a": "About 45 minutes total: 25-30 minutes to roast the squash, plus 15-20 minutes for the filling while the squash cooks."
+        },
+        {
+          "q": "Can I make this vegetarian or vegan?",
+          "a": "Yes. Omit the turkey and double the chickpeas, or use crumbled tempeh or lentils. Skip the feta or use a plant-based alternative for a fully vegan dish."
+        },
+        {
+          "q": "How much protein is in each stuffed squash half?",
+          "a": "About 34.9g of protein per stuffed squash half (70% of the daily value), calculated from USDA FoodData Central ingredient data for acorn squash, quinoa, lean ground turkey, chickpeas, spinach, onion, garlic, and olive oil."
+        },
+        {
+          "q": "What is the best way to reheat leftovers?",
+          "a": "Oven at 350°F for 15 minutes keeps the squash texture best. Microwave works in a pinch but may soften the squash more."
+        },
+        {
+          "q": "Can I use a different squash?",
+          "a": "Delicata or small butternut halves work too — adjust roasting time since thickness varies."
+        }
+      ],
+      "whyItHelps": {
+        "goal": "protein",
+        "text": "Recipe method developed in-house for The Recipe Seeker: acorn squash halves roasted and stuffed with quinoa, lean ground turkey, chickpeas, and spinach. 34.9g protein (70% DV), 11.2g fiber, and 7.2mg iron per serving. Nutrition calculated from USDA FoodData Central ingredient data (every selected record verified to report an energy value)."
+      },
+      "source": "cached-verified",
+      "kitchenTested": false,
+      "datePublished": "2026-10-03",
+      "dateModified": "2026-10-03"
     }
   ],
   "nutrients": [
