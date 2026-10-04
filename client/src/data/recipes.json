@@ -14862,6 +14862,97 @@
       ],
       "datePublished": "2026-09-17",
       "dateModified": "2026-09-17"
+    },
+    {
+      "slug": "high-protein-apple-pie-smoothie",
+      "title": "High Protein Apple Pie Smoothie",
+      "description": "A creamy apple pie smoothie packed with protein — perfect for busy mornings or post-workout recovery.",
+      "lede": "This high protein apple pie smoothie delivers fall flavors in a glass while keeping your protein goals on track.",
+      "category": "Protein",
+      "image": "https://karxpekwwfyujjcjaiou.supabase.co/storage/v1/object/public/ai-images/drafts/high-protein-apple-pie-smoothie-1791100096557.jpg",
+      "sections": [
+        {
+          "h2": "What Is an Apple Pie Protein Smoothie?",
+          "paragraphs": [
+            "Think of it as dessert for breakfast — without the sugar crash. This smoothie blends frozen apple, warm spices, Greek yogurt or protein powder, and a splash of milk into something that tastes like pie filling but fuels like a meal.",
+            "It comes together in under five minutes, no oven required."
+          ]
+        },
+        {
+          "h2": "Why Protein Matters Here",
+          "paragraphs": [
+            "Protein is what turns this smoothie from a snack into a meal. A typical build with ¾ cup Greek yogurt and a scoop of protein powder lands around 40–45g protein per serving (calculated from USDA FoodData Central ingredient data) — enough to count as a real breakfast."
+          ]
+        },
+        {
+          "h2": "Recipe",
+          "paragraphs": [
+            "Ingredients:",
+            "• 1 medium apple, cored and chopped (peel on for fiber)",
+            "• ½ cup frozen cauliflower rice (adds creaminess without flavor)",
+            "• ¾ cup plain Greek yogurt (2% or 0%)",
+            "• 1 scoop vanilla or unflavored protein powder (whey or plant-based)",
+            "• ¾ cup unsweetened almond milk (or milk of choice)",
+            "• 1 tsp apple pie spice (or ½ tsp cinnamon + pinch nutmeg + pinch allspice)",
+            "• 1 tsp maple syrup or honey (optional, adjust to taste)",
+            "• Handful of ice",
+            "",
+            "Steps:",
+            "1. Add liquid first, then yogurt, protein powder, apple, cauliflower, spices, and ice to a high-speed blender.",
+            "2. Blend 45–60 seconds until completely smooth. Scrape sides if needed.",
+            "3. Taste and adjust sweetness or thickness with more milk or ice.",
+            "4. Pour into a glass. Sprinkle extra cinnamon on top if you like."
+          ]
+        },
+        {
+          "h2": "Meal-Prep & Storage",
+          "paragraphs": [
+            "Portion dry ingredients (protein powder, spices) into small jars or bags for grab-and-blend mornings.",
+            "Pre-chop and freeze apple chunks on a tray, then transfer to a freezer bag — they blend easier than fresh.",
+            "Blended smoothies keep 24 hours in the fridge in a sealed jar. Shake well before drinking; separation is normal.",
+            "For longer storage, pour into freezer-safe jars leaving 1-inch headspace. Thaw overnight in the fridge."
+          ]
+        },
+        {
+          "h2": "Substitutions & Variations",
+          "paragraphs": [
+            "Dairy-free: Use soy yogurt + plant protein powder + oat milk.",
+            "No protein powder: Add ¼ cup hemp hearts or 2 tbsp almond butter + extra Greek yogurt.",
+            "Lower sugar: Skip maple syrup; use half a frozen banana for creaminess instead.",
+            "Extra fiber: Stir in 1 tbsp ground flax or chia after blending.",
+            "Warm version: Blend hot (vent the lid) for a drinkable apple pie soup — great for cold mornings."
+          ]
+        }
+      ],
+      "faqs": [
+        {
+          "a": "It depends on your protein powder and yogurt brand, but a typical build with ¾ cup Greek yogurt and one scoop whey lands around 40–45g protein per serving (calculated from USDA FoodData Central ingredient data).",
+          "q": "How much protein is in one serving?"
+        },
+        {
+          "a": "Yes. Use 1 cup Greek yogurt plus 2 tablespoons hemp hearts or almond butter for a whole-food version that still delivers 20g+ protein.",
+          "q": "Can I make this without protein powder?"
+        },
+        {
+          "a": "The spice blend (cinnamon, nutmeg, allspice) gives that unmistakable pie aroma. The cauliflower disappears flavor-wise but makes it thick like a milkshake.",
+          "q": "Does it taste like apple pie?"
+        },
+        {
+          "a": "Best blended fresh for texture, but you can refrigerate up to 24 hours. Shake hard before drinking.",
+          "q": "Can I prep this the night before?"
+        },
+        {
+          "a": "Yes — all listed ingredients are naturally gluten-free. Check your protein powder label if you're highly sensitive.",
+          "q": "Is this gluten-free?"
+        }
+      ],
+      "relatedRecipes": [
+        "apple-pie-overnight-oats",
+        "pumpkin-protein-muffins",
+        "tahini-banana-smoothie"
+      ],
+      "datePublished": "2026-10-04",
+      "dateModified": "2026-10-04"
     }
   ]
 }
