@@ -7692,7 +7692,10 @@
       },
       "source": "cached-verified",
       "datePublished": "2026-09-17",
-      "dateModified": "2026-09-17"
+      "dateModified": "2026-09-17",
+      "relatedRecipes": [
+        "high-fiber-unstuffed-cabbage-roll-soup"
+      ]
     },
     {
       "slug": "savory-mushroom-oatmeal",
@@ -11838,7 +11841,10 @@
       },
       "source": "cached-verified",
       "datePublished": "2026-09-23",
-      "dateModified": "2026-09-23"
+      "dateModified": "2026-09-23",
+      "relatedRecipes": [
+        "high-protein-custard-oats"
+      ]
     },
     {
       "slug": "pumpkin-spice-overnight-oats",
@@ -12893,6 +12899,180 @@
       "kitchenTested": false,
       "datePublished": "2026-10-01",
       "dateModified": "2026-10-01"
+    },
+    {
+      "slug": "high-protein-custard-oats",
+      "title": "High Protein Custard Oats: Creamy Breakfast That Keeps You Full",
+      "description": "Learn how to make high protein custard oats — a creamy, custardy breakfast bowl with around 40g protein per serving. Ready in 5 minutes with simple swaps for any diet.",
+      "lede": "High protein custard oats turn a humble bowl of oatmeal into a silky, dessert-like breakfast that actually keeps hunger quiet until lunch.",
+      "category": "Protein",
+      "image": "https://karxpekwwfyujjcjaiou.supabase.co/storage/v1/object/public/ai-images/drafts/high-protein-custard-oats-1791186814189.jpg",
+      "sections": [
+        {
+          "h2": "What Are Custard Oats?",
+          "paragraphs": [
+            "Custard oats get their name from the texture — thick, creamy, and slightly wobbly, like a warm vanilla custard. The trick is cooking oats with extra liquid and stirring in egg whites or a scoop of protein powder at the end, which sets into that signature spoonable consistency.",
+            "Unlike overnight oats, these come together on the stovetop or in the microwave in about five minutes. The result feels indulgent but runs on pantry staples: oats, milk (or plant milk), egg whites or protein powder, and whatever fruit or nuts you have around."
+          ]
+        },
+        {
+          "h2": "Why Protein at Breakfast Matters",
+          "paragraphs": [
+            "A protein-rich start can help you feel full longer, which is why many people build their breakfast around protein — especially on training days.",
+            "Custard oats make that pattern easy: a base of half a cup of oats plus a scoop of whey protein and a splash of egg whites lands you around 40g protein per serving (calculated from USDA FoodData Central ingredient data), without forcing down a pile of plain egg whites on the side."
+          ]
+        },
+        {
+          "h2": "The Basic Formula",
+          "paragraphs": [
+            "Ratio: 1/2 cup rolled oats + 3/4 cup liquid + 1 scoop protein powder + 2–3 tablespoons liquid egg whites (optional, for extra fluff).",
+            "Stovetop: Simmer oats and liquid 3–4 minutes, stirring. Remove from heat. Whisk protein powder with a splash of cold milk to a slurry, then stir into oats. Fold in egg whites if using; residual heat cooks them into ribbons.",
+            "Microwave: Combine oats and liquid in a large bowl. Microwave 90 seconds, stir, then 60 seconds more. Whisk in protein slurry and egg whites; the carryover heat does the rest.",
+            "Top with berries, a spoonful of nut butter, seeds, or a drizzle of maple syrup."
+          ]
+        },
+        {
+          "h2": "Meal-Prep & Storage",
+          "paragraphs": [
+            "Custard oats keep well in the fridge for up to four days in an airtight container. The texture thickens as it cools — loosen with a splash of milk when reheating.",
+            "For grab-and-go mornings, portion into jars. Add fresh fruit and crunchy toppings (nuts, granola, cacao nibs) just before eating so they stay crisp.",
+            "Freezing works but changes the texture slightly; thaw overnight in the fridge and reheat gently with extra liquid."
+          ]
+        },
+        {
+          "h2": "Swaps & Variations",
+          "paragraphs": [
+            "Dairy-free: use soy, oat, or pea milk and a plant-based protein powder. Soy and pea proteins blend smoothest.",
+            "Gluten-free: choose certified GF oats.",
+            "No protein powder: stir in 1/2 cup Greek yogurt or cottage cheese off-heat for a similar boost.",
+            "Flavor ideas: cocoa powder + banana, pumpkin puree + pumpkin spice, matcha + white chocolate chips, peanut butter + jam swirl."
+          ]
+        }
+      ],
+      "faqs": [
+        {
+          "a": "About 5 minutes on the stovetop or 2–3 minutes in the microwave.",
+          "q": "How long do custard oats take to make?"
+        },
+        {
+          "a": "Yes — fold in Greek yogurt, cottage cheese, or extra egg whites off-heat for a protein boost.",
+          "q": "Can I make them without protein powder?"
+        },
+        {
+          "a": "Not ideal — steel-cut oats need 20+ minutes to cook and won't get the same custardy texture. Stick with rolled or quick oats.",
+          "q": "Do they work with steel-cut oats?"
+        },
+        {
+          "a": "They thicken into a pudding-like texture cold, which some people prefer. Add extra liquid if you want it looser.",
+          "q": "Are they good cold?"
+        },
+        {
+          "a": "Whey isolate blends smoothest. For plant-based, choose a pea/rice blend or soy — single-source pea can turn gummy.",
+          "q": "What protein powder works best?"
+        }
+      ],
+      "relatedRecipes": [
+        "apple-pie-overnight-oats",
+        "pumpkin-spice-overnight-oats",
+        "high-protein-pumpkin-chia-pudding"
+      ],
+      "datePublished": "2026-10-05",
+      "dateModified": "2026-10-05"
+    },
+    {
+      "slug": "high-fiber-unstuffed-cabbage-roll-soup",
+      "title": "High-Fiber Unstuffed Cabbage Roll Soup",
+      "description": "A cozy, fiber-rich twist on classic cabbage rolls — ready in one pot with ground turkey, tomatoes, and plenty of cabbage.",
+      "lede": "This high-fiber unstuffed cabbage roll soup delivers all the comfort of the original dish in a fraction of the time, packing a serious fiber boost from cabbage, tomatoes, and beans.",
+      "category": "Fiber",
+      "image": "https://karxpekwwfyujjcjaiou.supabase.co/storage/v1/object/public/ai-images/drafts/high-fiber-unstuffed-cabbage-roll-soup-1791186815530.jpg",
+      "sections": [
+        {
+          "h2": "What Is Unstuffed Cabbage Roll Soup?",
+          "paragraphs": [
+            "Think of it as deconstructed cabbage rolls — ground meat, rice, cabbage, and tomato broth all simmered together in one pot. No rolling required. The result is a hearty, slurpable soup that hits the same savory-sweet notes as the baked version but comes together on a weeknight timeline."
+          ]
+        },
+        {
+          "h2": "Why This Soup Is a Fiber Win",
+          "paragraphs": [
+            "Cabbage brings both soluble and insoluble fiber, while canned tomatoes add pectin and diced tomatoes contribute cellulose. White beans (or cannellini) layer in resistant starch and additional soluble fiber. Together they create a bowl that supports digestion and keeps you full longer — without relying on fortified additives.",
+            "Altogether, one serving lands around 13g of fiber — nearly half of the 28g daily target (calculated from USDA FoodData Central ingredient data)."
+          ]
+        },
+        {
+          "h2": "Ingredients",
+          "paragraphs": [
+            "1 lb ground turkey (or 90% lean ground beef)",
+            "1 large onion, diced",
+            "3 garlic cloves, minced",
+            "1 small green cabbage (about 3 lbs), core removed and chopped",
+            "1 (28 oz) can crushed tomatoes",
+            "1 (14.5 oz) can diced tomatoes, undrained",
+            "4 cups low-sodium chicken broth",
+            "1 (15 oz) can cannellini beans, rinsed and drained",
+            "1/2 cup uncooked brown rice",
+            "1 tsp dried oregano",
+            "1 tsp smoked paprika",
+            "1 bay leaf",
+            "Salt and black pepper to taste",
+            "Fresh parsley for serving"
+          ]
+        },
+        {
+          "h2": "Step-by-Step Instructions",
+          "paragraphs": [
+            "In a large Dutch oven or soup pot, brown the ground turkey over medium-high heat, breaking it up with a wooden spoon, about 5 minutes. Drain excess fat if needed.",
+            "Add onion and cook until softened, 3–4 minutes. Stir in garlic and cook 30 seconds more.",
+            "Add chopped cabbage and let it wilt down, stirring occasionally, about 5 minutes.",
+            "Pour in crushed tomatoes, diced tomatoes with their juices, and chicken broth. Stir in oregano, smoked paprika, bay leaf, and brown rice.",
+            "Bring to a boil, then reduce to a simmer. Cover and cook 35–40 minutes, or until the brown rice is tender.",
+            "Stir in rinsed cannellini beans and heat through, 2–3 minutes. Remove bay leaf. Season with salt and pepper.",
+            "Ladle into bowls and top with fresh parsley."
+          ]
+        },
+        {
+          "h2": "Meal-Prep & Storage Tips",
+          "paragraphs": [
+            "This soup thickens as it sits — the rice continues absorbing liquid. Store in airtight containers up to 4 days in the fridge or 3 months in the freezer. Reheat gently on the stove with a splash of broth or water to loosen. For meal prep, portion into single-serve containers; the flavor deepens overnight."
+          ]
+        },
+        {
+          "h2": "Substitutions & Variations",
+          "paragraphs": [
+            "Swap ground turkey for plant-based crumbles to keep it vegetarian. Use quinoa instead of brown rice for a gluten-free grain that cooks in 15 minutes. Kale or collard greens can replace half the cabbage for a different texture. Add a Parmesan rind while simmering for extra umami (remove before serving)."
+          ]
+        }
+      ],
+      "faqs": [
+        {
+          "a": "Each serving packs about 13g of dietary fiber — nearly half the 28g daily target — from cabbage, tomatoes, beans, and brown rice (calculated from USDA FoodData Central ingredient data).",
+          "q": "How much fiber is in a bowl?"
+        },
+        {
+          "a": "Yes. Brown the meat and sauté the onion and garlic first, then transfer everything except the rice and beans to the slow cooker. Cook on low 6–7 hours or high 3–4 hours. Add rice in the last hour and beans in the last 15 minutes.",
+          "q": "Can I make this in a slow cooker?"
+        },
+        {
+          "a": "Yes, as written — brown rice and all other ingredients are naturally gluten-free. Always check labels on broth and canned tomatoes if you're highly sensitive.",
+          "q": "Is this soup gluten-free?"
+        },
+        {
+          "a": "You can, but the rice will soften further on reheating. For best texture, freeze the soup base without rice and stir in freshly cooked rice when reheating.",
+          "q": "Can I freeze the soup with the rice already cooked?"
+        },
+        {
+          "a": "Quarter the cabbage, remove the core, then slice each quarter crosswise into 1/2-inch strips. A food processor with a slicing disk makes quick work of it.",
+          "q": "What's the best way to shred cabbage for soup?"
+        }
+      ],
+      "relatedRecipes": [
+        "beef-broccoli-stir-fry",
+        "white-bean-shakshuka",
+        "high-fiber-roasted-butternut-squash-soup"
+      ],
+      "datePublished": "2026-10-05",
+      "dateModified": "2026-10-05"
     }
   ],
   "nutrients": [
