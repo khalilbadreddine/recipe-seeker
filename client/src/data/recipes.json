@@ -5,7 +5,7 @@
     "canonicalBase": "https://recipe-seeker-client.vercel.app"
   },
   "meta": {
-    "recipes": 57
+    "recipes": 63
   },
   "recipes": [
     {
@@ -7691,11 +7691,11 @@
         "text": "Beef is one of the richest food sources of both heme iron and zinc in highly absorbable forms. Here is the clever part: the broccoli and bell pepper deliver over 200% of your vitamin C for the day, which significantly boosts absorption of the iron in the same meal. Fast food that actually works for your body."
       },
       "source": "cached-verified",
-      "datePublished": "2026-09-17",
-      "dateModified": "2026-09-17",
       "relatedRecipes": [
         "high-fiber-unstuffed-cabbage-roll-soup"
-      ]
+      ],
+      "datePublished": "2026-09-17",
+      "dateModified": "2026-09-17"
     },
     {
       "slug": "savory-mushroom-oatmeal",
@@ -9780,6 +9780,9 @@
         "goal": "Pantry staples, real minerals",
         "text": "Canned pumpkin and coconut milk are both quietly rich in iron — 4.7mg per bowl here — plus potassium and fiber. The lime juice is not garnish: its vitamin C helps your body absorb the plant-based iron in the same bowl. Proof that a weeknight pantry soup can pull nutritional weight."
       },
+      "relatedRecipes": [
+        "high-protein-pumpkin-soup"
+      ],
       "source": "cached-verified",
       "datePublished": "2026-09-17",
       "dateModified": "2026-09-17"
@@ -11840,12 +11843,13 @@
         "text": "This jar layers rolled oats, Greek yogurt, protein powder, chia and diced apple with cinnamon and nutmeg, and soaks overnight into a pudding. Per the USDA FoodData Central ingredient calculation, one jar lands at about 28g protein, 423mg calcium and 141mg magnesium — ready in the fridge with zero morning cooking."
       },
       "source": "cached-verified",
-      "datePublished": "2026-09-23",
-      "dateModified": "2026-10-06",
       "relatedRecipes": [
         "high-protein-custard-oats",
-        "high-protein-pumpkin-pecan-loaf"
-      ]
+        "high-protein-pumpkin-pecan-loaf",
+        "high-protein-baked-apples"
+      ],
+      "datePublished": "2026-09-23",
+      "dateModified": "2026-10-06"
     },
     {
       "slug": "pumpkin-spice-overnight-oats",
@@ -12684,11 +12688,11 @@
       },
       "source": "cached-verified",
       "kitchenTested": false,
-      "datePublished": "2026-09-29",
-      "dateModified": "2026-10-06",
       "relatedRecipes": [
         "high-protein-butternut-squash-mac-and-cheese"
-      ]
+      ],
+      "datePublished": "2026-09-29",
+      "dateModified": "2026-10-06"
     },
     {
       "slug": "high-fiber-apple-crisp",
@@ -12908,71 +12912,160 @@
       "slug": "high-protein-custard-oats",
       "title": "High Protein Custard Oats: A Creamy Stovetop Breakfast",
       "description": "Learn how to make high protein custard oats — a creamy, custardy breakfast bowl with around 40g protein per serving. Ready in 5 minutes with simple swaps for any diet.",
-      "lede": "High protein custard oats turn a humble bowl of oatmeal into a silky, dessert-like breakfast with a rich, satisfying texture.",
-      "category": "Protein",
       "image": "https://karxpekwwfyujjcjaiou.supabase.co/storage/v1/object/public/ai-images/drafts/high-protein-custard-oats-1791186814189.jpg",
-      "sections": [
+      "imageAlt": "Creamy bowl of custard oats topped with fresh berries",
+      "prepTime": "PT2M",
+      "prepMinutes": 2,
+      "cookTime": "PT5M",
+      "cookMinutes": 5,
+      "totalTime": "PT7M",
+      "totalMinutes": 7,
+      "servings": 1,
+      "calories": 390,
+      "nutrition": {
+        "calories": {
+          "amount": 390,
+          "unit": "kcal",
+          "dv": 20
+        },
+        "protein": {
+          "amount": 38.7,
+          "unit": "g",
+          "dv": 77
+        },
+        "fat": {
+          "amount": 8.8,
+          "unit": "g",
+          "dv": 11
+        },
+        "carbs": {
+          "amount": 38,
+          "unit": "g",
+          "dv": 14
+        },
+        "fiber": {
+          "amount": 0.9,
+          "unit": "g",
+          "dv": 3
+        },
+        "sugar": {
+          "amount": 9.5,
+          "unit": "g",
+          "dv": 19
+        },
+        "sodium": {
+          "amount": 189,
+          "unit": "mg",
+          "dv": 8
+        },
+        "iron": {
+          "amount": 2.2,
+          "unit": "mg",
+          "dv": 12
+        },
+        "calcium": {
+          "amount": 368,
+          "unit": "mg",
+          "dv": 28
+        },
+        "vitaminC": {
+          "amount": 0,
+          "unit": "mg",
+          "dv": 0
+        },
+        "potassium": {
+          "amount": 594,
+          "unit": "mg",
+          "dv": 13
+        }
+      },
+      "keyNutrients": [
         {
-          "h2": "What Are Custard Oats?",
-          "paragraphs": [
-            "Custard oats get their name from the texture — thick, creamy, and slightly wobbly, like a warm vanilla custard. The trick is cooking oats with extra liquid and stirring in egg whites or a scoop of protein powder at the end, which sets into that signature spoonable consistency.",
-            "Unlike overnight oats, these come together on the stovetop or in the microwave in about five minutes. The result feels indulgent but runs on pantry staples: oats, milk (or plant milk), egg whites or protein powder, and whatever fruit or nuts you have around."
-          ]
+          "key": "protein",
+          "label": "39g Protein"
         },
         {
-          "h2": "Why Protein at Breakfast Matters",
-          "paragraphs": [
-            "Many people build their breakfast around protein, especially on training days — and custard oats make that pattern easy.",
-            "Custard oats make that pattern easy: a base of half a cup of oats plus a scoop of whey protein and a splash of egg whites lands you around 40g protein per serving (calculated from USDA FoodData Central ingredient data), without forcing down a pile of plain egg whites on the side."
-          ]
+          "key": "calcium",
+          "label": "368mg Calcium"
         },
         {
-          "h2": "The Basic Formula",
-          "paragraphs": [
-            "Ratio: 1/2 cup rolled oats + 3/4 cup liquid + 1 scoop protein powder + 2–3 tablespoons liquid egg whites (optional, for extra fluff).",
-            "Stovetop: Simmer oats and liquid 3–4 minutes, stirring. Remove from heat. Whisk protein powder with a splash of cold milk to a slurry, then stir into oats. Fold in egg whites if using; residual heat cooks them into ribbons.",
-            "Microwave: Combine oats and liquid in a large bowl. Microwave 90 seconds, stir, then 60 seconds more. Whisk in protein slurry and egg whites; the carryover heat does the rest.",
-            "Top with berries, a spoonful of nut butter, seeds, or a drizzle of maple syrup."
-          ]
-        },
-        {
-          "h2": "Meal-Prep & Storage",
-          "paragraphs": [
-            "Custard oats keep well in the fridge for up to four days in an airtight container. The texture thickens as it cools — loosen with a splash of milk when reheating.",
-            "For grab-and-go mornings, portion into jars. Add fresh fruit and crunchy toppings (nuts, granola, cacao nibs) just before eating so they stay crisp.",
-            "Freezing works but changes the texture slightly; thaw overnight in the fridge and reheat gently with extra liquid."
-          ]
-        },
-        {
-          "h2": "Swaps & Variations",
-          "paragraphs": [
-            "Dairy-free: use soy, oat, or pea milk and a plant-based protein powder. Soy and pea proteins blend smoothest.",
-            "Gluten-free: choose certified GF oats.",
-            "No protein powder: stir in 1/2 cup Greek yogurt or cottage cheese off-heat for a similar boost.",
-            "Flavor ideas: cocoa powder + banana, pumpkin puree + pumpkin spice, matcha + white chocolate chips, peanut butter + jam swirl."
-          ]
+          "key": "potassium",
+          "label": "594mg Potassium"
         }
       ],
+      "ingredients": [
+        {
+          "amount": "1/2 cup (40 g)",
+          "item": "rolled oats"
+        },
+        {
+          "amount": "3/4 cup (180 ml)",
+          "item": "whole milk (or unsweetened soy milk for dairy-free)"
+        },
+        {
+          "amount": "1 scoop (30 g)",
+          "item": "whey protein powder (or plant-based protein powder)"
+        },
+        {
+          "amount": "2-3 tbsp",
+          "item": "liquid egg whites (optional, for extra fluff)"
+        }
+      ],
+      "steps": [
+        {
+          "title": "Simmer the oats",
+          "text": "Combine the oats and milk in a saucepan and simmer over medium heat for 3-4 minutes, stirring often, until thick. (Microwave option: combine in a large bowl, microwave 90 seconds, stir, then 60 seconds more.)"
+        },
+        {
+          "title": "Make the protein slurry",
+          "text": "In a small bowl, whisk the protein powder with a splash of cold milk until completely smooth — no dry pockets."
+        },
+        {
+          "title": "Stir it in",
+          "text": "Remove the oats from the heat. Stir in the protein slurry, then fold in the egg whites if using; the residual heat cooks them into silky ribbons and sets the custard texture."
+        },
+        {
+          "title": "Top and serve",
+          "text": "Spoon into a bowl and top with berries, a spoonful of nut butter, seeds, or a drizzle of maple syrup."
+        }
+      ],
+      "tags": {
+        "nutrients": [
+          "protein",
+          "calcium",
+          "potassium"
+        ],
+        "diets": [
+          "vegetarian"
+        ],
+        "meals": [
+          "breakfast"
+        ]
+      },
+      "whyItHelps": {
+        "goal": "High-protein breakfasts",
+        "text": "Half a cup of oats plus whey protein and egg whites lands this bowl at about 39 g of protein per serving — calculated from USDA FoodData Central ingredient data — in roughly five minutes on the stovetop. A practical template for training days or anyone front-loading protein at breakfast."
+      },
       "faqs": [
         {
-          "a": "About 5 minutes on the stovetop or 2–3 minutes in the microwave.",
-          "q": "How long do custard oats take to make?"
+          "q": "About 5 minutes on the stovetop or 2–3 minutes in the microwave.",
+          "a": "How long do custard oats take to make?"
         },
         {
-          "a": "Yes — fold in Greek yogurt, cottage cheese, or extra egg whites off-heat for a protein boost.",
-          "q": "Can I make them without protein powder?"
+          "q": "Yes — fold in Greek yogurt, cottage cheese, or extra egg whites off-heat for a protein boost.",
+          "a": "Can I make them without protein powder?"
         },
         {
-          "a": "Not ideal — steel-cut oats need 20+ minutes to cook and won't get the same custardy texture. Stick with rolled or quick oats.",
-          "q": "Do they work with steel-cut oats?"
+          "q": "Not ideal — steel-cut oats need 20+ minutes to cook and won't get the same custardy texture. Stick with rolled or quick oats.",
+          "a": "Do they work with steel-cut oats?"
         },
         {
-          "a": "They thicken into a pudding-like texture cold, which some people prefer. Add extra liquid if you want it looser.",
-          "q": "Are they good cold?"
+          "q": "They thicken into a pudding-like texture cold, which some people prefer. Add extra liquid if you want it looser.",
+          "a": "Are they good cold?"
         },
         {
-          "a": "Whey isolate blends smoothest. For plant-based, choose a pea/rice blend or soy — single-source pea can turn gummy.",
-          "q": "What protein powder works best?"
+          "q": "Whey isolate blends smoothest. For plant-based, choose a pea/rice blend or soy — single-source pea can turn gummy.",
+          "a": "What protein powder works best?"
         }
       ],
       "relatedRecipes": [
@@ -12981,93 +13074,216 @@
         "high-protein-pumpkin-chia-pudding"
       ],
       "datePublished": "2026-10-05",
-      "dateModified": "2026-10-05"
+      "dateModified": "2026-10-05",
+      "source": "cached-verified"
     },
     {
       "slug": "high-fiber-unstuffed-cabbage-roll-soup",
       "title": "High-Fiber Unstuffed Cabbage Roll Soup",
       "description": "A cozy, fiber-rich twist on classic cabbage rolls — ready in one pot with ground turkey, tomatoes, and plenty of cabbage.",
-      "lede": "This high-fiber unstuffed cabbage roll soup delivers all the comfort of the original dish in a fraction of the time, packing a serious fiber boost from cabbage, tomatoes, and beans.",
-      "category": "Fiber",
       "image": "https://karxpekwwfyujjcjaiou.supabase.co/storage/v1/object/public/ai-images/drafts/high-fiber-unstuffed-cabbage-roll-soup-1791186815530.jpg",
-      "sections": [
+      "imageAlt": "Hearty bowl of unstuffed cabbage roll soup with ground turkey, cabbage and tomatoes",
+      "prepTime": "PT15M",
+      "prepMinutes": 15,
+      "cookTime": "PT50M",
+      "cookMinutes": 50,
+      "totalTime": "PT65M",
+      "totalMinutes": 65,
+      "servings": 5,
+      "calories": 438,
+      "nutrition": {
+        "calories": {
+          "amount": 438,
+          "unit": "kcal",
+          "dv": 22
+        },
+        "protein": {
+          "amount": 34,
+          "unit": "g",
+          "dv": 68
+        },
+        "fat": {
+          "amount": 10,
+          "unit": "g",
+          "dv": 13
+        },
+        "carbs": {
+          "amount": 61,
+          "unit": "g",
+          "dv": 22
+        },
+        "fiber": {
+          "amount": 12.5,
+          "unit": "g",
+          "dv": 45
+        },
+        "sugar": {
+          "amount": 20,
+          "unit": "g",
+          "dv": 40
+        },
+        "sodium": {
+          "amount": 1104,
+          "unit": "mg",
+          "dv": 48
+        },
+        "iron": {
+          "amount": 5,
+          "unit": "mg",
+          "dv": 28
+        },
+        "calcium": {
+          "amount": 242,
+          "unit": "mg",
+          "dv": 19
+        },
+        "vitaminC": {
+          "amount": 127,
+          "unit": "mg",
+          "dv": 141
+        },
+        "potassium": {
+          "amount": 1364,
+          "unit": "mg",
+          "dv": 29
+        }
+      },
+      "keyNutrients": [
         {
-          "h2": "What Is Unstuffed Cabbage Roll Soup?",
-          "paragraphs": [
-            "Think of it as deconstructed cabbage rolls — ground meat, rice, cabbage, and tomato broth all simmered together in one pot. No rolling required. The result is a hearty, slurpable soup that hits the same savory-sweet notes as the baked version but comes together on a weeknight timeline."
-          ]
+          "key": "fiber",
+          "label": "13g Fiber"
         },
         {
-          "h2": "Why This Soup Is a Fiber Win",
-          "paragraphs": [
-            "Cabbage brings both soluble and insoluble fiber, while canned tomatoes add pectin and diced tomatoes contribute cellulose. White beans (or cannellini) layer in resistant starch and additional soluble fiber. Together they create a hearty bowl built on whole ingredients — not fortified additives.",
-            "Altogether, one serving lands around 13g of fiber — nearly half of the 28g daily target (calculated from USDA FoodData Central ingredient data)."
-          ]
+          "key": "protein",
+          "label": "34g Protein"
         },
         {
-          "h2": "Ingredients",
-          "paragraphs": [
-            "1 lb ground turkey (or 90% lean ground beef)",
-            "1 large onion, diced",
-            "3 garlic cloves, minced",
-            "1 small green cabbage (about 3 lbs), core removed and chopped",
-            "1 (28 oz) can crushed tomatoes",
-            "1 (14.5 oz) can diced tomatoes, undrained",
-            "4 cups low-sodium chicken broth",
-            "1 (15 oz) can cannellini beans, rinsed and drained",
-            "1/2 cup uncooked brown rice",
-            "1 tsp dried oregano",
-            "1 tsp smoked paprika",
-            "1 bay leaf",
-            "Salt and black pepper to taste",
-            "Fresh parsley for serving"
-          ]
-        },
-        {
-          "h2": "Step-by-Step Instructions",
-          "paragraphs": [
-            "In a large Dutch oven or soup pot, brown the ground turkey over medium-high heat, breaking it up with a wooden spoon, about 5 minutes. Drain excess fat if needed.",
-            "Add onion and cook until softened, 3–4 minutes. Stir in garlic and cook 30 seconds more.",
-            "Add chopped cabbage and let it wilt down, stirring occasionally, about 5 minutes.",
-            "Pour in crushed tomatoes, diced tomatoes with their juices, and chicken broth. Stir in oregano, smoked paprika, bay leaf, and brown rice.",
-            "Bring to a boil, then reduce to a simmer. Cover and cook 35–40 minutes, or until the brown rice is tender.",
-            "Stir in rinsed cannellini beans and heat through, 2–3 minutes. Remove bay leaf. Season with salt and pepper.",
-            "Ladle into bowls and top with fresh parsley."
-          ]
-        },
-        {
-          "h2": "Meal-Prep & Storage Tips",
-          "paragraphs": [
-            "This soup thickens as it sits — the rice continues absorbing liquid. Store in airtight containers up to 4 days in the fridge or 3 months in the freezer. Reheat gently on the stove with a splash of broth or water to loosen. For meal prep, portion into single-serve containers; the flavor deepens overnight."
-          ]
-        },
-        {
-          "h2": "Substitutions & Variations",
-          "paragraphs": [
-            "Swap ground turkey for plant-based crumbles to keep it vegetarian. Use quinoa instead of brown rice for a gluten-free grain that cooks in 15 minutes. Kale or collard greens can replace half the cabbage for a different texture. Add a Parmesan rind while simmering for extra umami (remove before serving)."
-          ]
+          "key": "vitaminC",
+          "label": "127mg Vitamin C"
         }
       ],
+      "ingredients": [
+        {
+          "amount": "1 lb (454 g)",
+          "item": "ground turkey (or 90% lean ground beef)"
+        },
+        {
+          "amount": "1 large (150 g)",
+          "item": "yellow onion, diced"
+        },
+        {
+          "amount": "3 cloves",
+          "item": "garlic, minced"
+        },
+        {
+          "amount": "1 small (about 3 lb / 1.36 kg)",
+          "item": "green cabbage, cored and chopped"
+        },
+        {
+          "amount": "1 can (28 oz / 794 g)",
+          "item": "crushed tomatoes"
+        },
+        {
+          "amount": "1 can (14.5 oz / 411 g)",
+          "item": "diced tomatoes, undrained"
+        },
+        {
+          "amount": "4 cups (960 ml)",
+          "item": "low-sodium chicken broth"
+        },
+        {
+          "amount": "1 can (15 oz), rinsed and drained",
+          "item": "cannellini beans"
+        },
+        {
+          "amount": "1/2 cup (100 g)",
+          "item": "uncooked brown rice"
+        },
+        {
+          "amount": "1 tsp",
+          "item": "dried oregano"
+        },
+        {
+          "amount": "1 tsp",
+          "item": "smoked paprika"
+        },
+        {
+          "amount": "1",
+          "item": "bay leaf"
+        },
+        {
+          "amount": "to taste",
+          "item": "salt and black pepper"
+        },
+        {
+          "amount": "for serving",
+          "item": "fresh parsley, chopped"
+        }
+      ],
+      "steps": [
+        {
+          "title": "Brown the turkey",
+          "text": "In a large Dutch oven or soup pot over medium-high heat, brown the ground turkey, breaking it up with a wooden spoon, about 5 minutes. Drain excess fat if needed."
+        },
+        {
+          "title": "Soften the aromatics",
+          "text": "Add the onion and cook until softened, 3-4 minutes. Stir in the garlic and cook 30 seconds more."
+        },
+        {
+          "title": "Wilt the cabbage",
+          "text": "Add the chopped cabbage and cook, stirring occasionally, until it wilts down, about 5 minutes."
+        },
+        {
+          "title": "Add tomatoes, broth and rice",
+          "text": "Pour in the crushed tomatoes, diced tomatoes with their juices, and the chicken broth. Stir in the oregano, smoked paprika, bay leaf, and brown rice."
+        },
+        {
+          "title": "Simmer",
+          "text": "Bring to a boil, then reduce to a simmer. Cover and cook 35-40 minutes, until the brown rice is tender."
+        },
+        {
+          "title": "Finish and serve",
+          "text": "Stir in the rinsed cannellini beans and heat through, 2-3 minutes. Remove the bay leaf, season with salt and pepper, ladle into bowls and top with fresh parsley."
+        }
+      ],
+      "tags": {
+        "nutrients": [
+          "fiber",
+          "protein",
+          "vitaminC"
+        ],
+        "diets": [
+          "gluten-free"
+        ],
+        "meals": [
+          "dinner",
+          "lunch"
+        ]
+      },
+      "whyItHelps": {
+        "goal": "High-fiber one-pot meals",
+        "text": "Cabbage, cannellini beans, brown rice and tomatoes each contribute fiber, adding up to about 13 g per serving — nearly half the 28 g daily target — from whole ingredients, not fortified additives. One pot, about an hour, and it reheats well for days."
+      },
       "faqs": [
         {
-          "a": "Each serving packs about 13g of dietary fiber — nearly half the 28g daily target — from cabbage, tomatoes, beans, and brown rice (calculated from USDA FoodData Central ingredient data).",
-          "q": "How much fiber is in a bowl?"
+          "q": "Each serving packs about 13g of dietary fiber — nearly half the 28g daily target — from cabbage, tomatoes, beans, and brown rice (calculated from USDA FoodData Central ingredient data).",
+          "a": "How much fiber is in a bowl?"
         },
         {
-          "a": "Yes. Brown the meat and sauté the onion and garlic first, then transfer everything except the rice and beans to the slow cooker. Cook on low 6–7 hours or high 3–4 hours. Add rice in the last hour and beans in the last 15 minutes.",
-          "q": "Can I make this in a slow cooker?"
+          "q": "Yes. Brown the meat and sauté the onion and garlic first, then transfer everything except the rice and beans to the slow cooker. Cook on low 6–7 hours or high 3–4 hours. Add rice in the last hour and beans in the last 15 minutes.",
+          "a": "Can I make this in a slow cooker?"
         },
         {
-          "a": "Yes, as written — brown rice and all other ingredients are naturally gluten-free. Always check labels on broth and canned tomatoes if you're highly sensitive.",
-          "q": "Is this soup gluten-free?"
+          "q": "Yes, as written — brown rice and all other ingredients are naturally gluten-free. Always check labels on broth and canned tomatoes if you're highly sensitive.",
+          "a": "Is this soup gluten-free?"
         },
         {
-          "a": "You can, but the rice will soften further on reheating. For best texture, freeze the soup base without rice and stir in freshly cooked rice when reheating.",
-          "q": "Can I freeze the soup with the rice already cooked?"
+          "q": "You can, but the rice will soften further on reheating. For best texture, freeze the soup base without rice and stir in freshly cooked rice when reheating.",
+          "a": "Can I freeze the soup with the rice already cooked?"
         },
         {
-          "a": "Quarter the cabbage, remove the core, then slice each quarter crosswise into 1/2-inch strips. A food processor with a slicing disk makes quick work of it.",
-          "q": "What's the best way to shred cabbage for soup?"
+          "q": "Quarter the cabbage, remove the core, then slice each quarter crosswise into 1/2-inch strips. A food processor with a slicing disk makes quick work of it.",
+          "a": "What's the best way to shred cabbage for soup?"
         }
       ],
       "relatedRecipes": [
@@ -13076,73 +13292,211 @@
         "high-fiber-roasted-butternut-squash-soup"
       ],
       "datePublished": "2026-10-05",
-      "dateModified": "2026-10-05"
+      "dateModified": "2026-10-05",
+      "source": "cached-verified"
     },
     {
       "slug": "high-protein-pumpkin-pecan-loaf",
       "title": "High Protein Pumpkin Pecan Loaf: Fall Baking with a Protein Boost",
       "description": "A moist pumpkin pecan loaf with about 11g protein per slice — cozy fall baking with a real nutrition upgrade. Gluten-free option included.",
-      "lede": "This high protein pumpkin pecan loaf delivers cozy fall flavor with about 11g of protein per slice — a genuinely better-for-you take on a fall classic.",
-      "category": "Protein",
       "image": "https://karxpekwwfyujjcjaiou.supabase.co/storage/v1/object/public/ai-images/drafts/high-protein-pumpkin-pecan-loaf-1791273131589.jpg",
-      "sections": [
+      "imageAlt": "Sliced high-protein pumpkin pecan loaf showing moist crumb and pecan topping",
+      "prepTime": "PT15M",
+      "prepMinutes": 15,
+      "cookTime": "PT50M",
+      "cookMinutes": 50,
+      "totalTime": "PT65M",
+      "totalMinutes": 65,
+      "servings": 10,
+      "calories": 190,
+      "nutrition": {
+        "calories": {
+          "amount": 190,
+          "unit": "kcal",
+          "dv": 10
+        },
+        "protein": {
+          "amount": 10.6,
+          "unit": "g",
+          "dv": 21
+        },
+        "fat": {
+          "amount": 8.6,
+          "unit": "g",
+          "dv": 11
+        },
+        "carbs": {
+          "amount": 19,
+          "unit": "g",
+          "dv": 7
+        },
+        "fiber": {
+          "amount": 3,
+          "unit": "g",
+          "dv": 11
+        },
+        "sugar": {
+          "amount": 5.9,
+          "unit": "g",
+          "dv": 12
+        },
+        "sodium": {
+          "amount": 353,
+          "unit": "mg",
+          "dv": 15
+        },
+        "iron": {
+          "amount": 1.4,
+          "unit": "mg",
+          "dv": 8
+        },
+        "calcium": {
+          "amount": 78,
+          "unit": "mg",
+          "dv": 6
+        },
+        "vitaminC": {
+          "amount": 0.9,
+          "unit": "mg",
+          "dv": 1
+        },
+        "potassium": {
+          "amount": 172,
+          "unit": "mg",
+          "dv": 4
+        }
+      },
+      "keyNutrients": [
         {
-          "h2": "What Is High Protein Pumpkin Pecan Loaf?",
-          "paragraphs": [
-            "A seasonal quick bread that blends pumpkin puree, warm spices, and toasted pecans with a protein-rich base of Greek yogurt and whey protein powder. The result is a slice that feels like a treat but carries about 11g of protein (calculated from USDA FoodData Central ingredient data)."
-          ]
+          "key": "protein",
+          "label": "11g Protein"
         },
         {
-          "h2": "Why Protein Matters Here",
-          "paragraphs": [
-            "A pumpkin loaf is usually a carb-forward bake. Adding nonfat Greek yogurt and whey protein powder shifts the nutrition profile — each slice (one of ten) lands at about 11g of protein, which meets the FDA bar for a \"high protein\" claim (10g, or 20% of the Daily Value).",
-            "The pecans add crunch and a buttery flavor that plays well with pumpkin spice, plus a few extra grams of protein and fiber per slice."
-          ]
+          "key": "fiber",
+          "label": "3g Fiber"
         },
         {
-          "h2": "Recipe: Ingredients & Steps",
-          "paragraphs": [
-            "Ingredients:\n\n• 1 cup pumpkin puree (not pie filling)\n\n• ¾ cup plain nonfat Greek yogurt\n\n• ¼ cup maple syrup or honey\n\n• 2 large eggs\n\n• 1 tsp vanilla extract\n\n• 1 ½ cups oat flour\n\n• 2 scoops (≈60 g) unflavored or vanilla whey protein powder\n\n• 1 tsp baking powder\n\n• ½ tsp baking soda\n\n• 1 ½ tsp pumpkin pie spice\n\n• ½ tsp salt\n\n• ¾ cup chopped pecans, divided",
-            "Steps:\n\n1. Preheat oven to 350 °F (175 °C). Line a 9×5-inch loaf pan with parchment.\n\n2. Whisk pumpkin, yogurt, maple syrup, eggs, and vanilla until smooth.\n\n3. In a separate bowl, combine oat flour, protein powder, baking powder, baking soda, spices, and salt.\n\n4. Fold dry into wet until just combined — the batter will be thick, which is normal with two scoops of protein powder. Stir in ½ cup pecans.\n\n5. Pour batter into pan, smooth top, sprinkle remaining pecans.\n\n6. Bake 45–55 minutes, until a toothpick inserted in the center comes out clean.\n\n7. Cool 10 minutes in pan, then transfer to a wire rack."
-          ]
-        },
-        {
-          "h2": "Meal-Prep & Storage Tips",
-          "paragraphs": [
-            "Store cooled loaf wrapped tightly at room temperature for up to 3 days, or refrigerate for 5 days. For longer storage, slice and freeze in a single layer on a baking sheet, then transfer to a freezer bag — up to 3 months. Thaw slices at room temperature or toast straight from frozen."
-          ]
-        },
-        {
-          "h2": "Substitutions & Variations",
-          "paragraphs": [
-            "Flour: Use 1:1 gluten-free blend instead of oat flour. Protein powder: Plant-based powder works but may absorb more liquid — add an extra tablespoon or two of yogurt if the batter seems too thick (protein per slice will change with your powder — check your label). Sweetener: Coconut sugar or monk fruit blend can replace maple syrup; reduce by 2 tbsp if using granulated. Nuts: Walnuts or pepitas swap for pecans. Dairy-free: Use coconut yogurt and a plant protein powder."
-          ]
+          "key": "iron",
+          "label": "1.4mg Iron"
         }
       ],
+      "ingredients": [
+        {
+          "amount": "1 cup (245 g)",
+          "item": "pumpkin puree (not pie filling)"
+        },
+        {
+          "amount": "3/4 cup (170 g)",
+          "item": "plain nonfat Greek yogurt"
+        },
+        {
+          "amount": "1/4 cup (80 ml)",
+          "item": "maple syrup or honey"
+        },
+        {
+          "amount": "2 large",
+          "item": "eggs"
+        },
+        {
+          "amount": "1 tsp",
+          "item": "vanilla extract"
+        },
+        {
+          "amount": "1 1/2 cups (135 g)",
+          "item": "oat flour"
+        },
+        {
+          "amount": "2 scoops (60 g)",
+          "item": "whey protein powder (unflavored or vanilla)"
+        },
+        {
+          "amount": "1 tsp",
+          "item": "baking powder"
+        },
+        {
+          "amount": "1/2 tsp",
+          "item": "baking soda"
+        },
+        {
+          "amount": "1 1/2 tsp",
+          "item": "pumpkin pie spice"
+        },
+        {
+          "amount": "1/2 tsp",
+          "item": "salt"
+        },
+        {
+          "amount": "3/4 cup (82 g), divided",
+          "item": "chopped pecans"
+        }
+      ],
+      "steps": [
+        {
+          "title": "Heat the oven",
+          "text": "Preheat to 350°F (175°C). Line a 9x5-inch loaf pan with parchment."
+        },
+        {
+          "title": "Whisk the wet ingredients",
+          "text": "In a large bowl, whisk the pumpkin puree, Greek yogurt, maple syrup, eggs, and vanilla until smooth."
+        },
+        {
+          "title": "Mix the dry ingredients",
+          "text": "In a separate bowl, combine the oat flour, protein powder, baking powder, baking soda, pumpkin pie spice, and salt."
+        },
+        {
+          "title": "Combine",
+          "text": "Fold the dry ingredients into the wet until just combined — the batter will be thick, which is normal with two scoops of protein powder. Stir in 1/2 cup of the pecans."
+        },
+        {
+          "title": "Bake",
+          "text": "Pour the batter into the pan, smooth the top, and sprinkle with the remaining pecans. Bake 45-55 minutes, until a toothpick inserted in the center comes out clean."
+        },
+        {
+          "title": "Cool",
+          "text": "Cool 10 minutes in the pan, then transfer to a wire rack to cool completely before slicing."
+        }
+      ],
+      "tags": {
+        "nutrients": [
+          "protein",
+          "fiber"
+        ],
+        "diets": [
+          "vegetarian"
+        ],
+        "meals": [
+          "breakfast",
+          "snack"
+        ]
+      },
+      "whyItHelps": {
+        "goal": "Protein-boosted fall baking",
+        "text": "Swapping in nonfat Greek yogurt and two scoops of whey protein takes this pumpkin-pecan loaf to about 11 g of protein per slice, which clears the FDA bar for a “high protein” claim (10 g). Same cozy fall flavor, measurably more protein per slice."
+      },
       "faqs": [
         {
-          "a": "About 11g per slice (one of ten), calculated from USDA FoodData Central ingredient data for pumpkin puree, nonfat Greek yogurt, whey protein powder, oat flour, eggs, and pecans. Your exact number shifts a little with your protein powder and yogurt brands.",
-          "q": "How much protein is in each slice?"
+          "q": "About 11g per slice (one of ten), calculated from USDA FoodData Central ingredient data for pumpkin puree, nonfat Greek yogurt, whey protein powder, oat flour, eggs, and pecans. Your exact number shifts a little with your protein powder and yogurt brands.",
+          "a": "How much protein is in each slice?"
         },
         {
-          "a": "Yes. Use certified GF oat flour or a 1:1 gluten-free baking blend. The texture stays moist.",
-          "q": "Can I make it gluten-free?"
+          "q": "Yes. Use certified GF oat flour or a 1:1 gluten-free baking blend. The texture stays moist.",
+          "a": "Can I make it gluten-free?"
         },
         {
-          "a": "3 days at room temperature, 5 days refrigerated, 3 months frozen.",
-          "q": "How long does it keep?"
+          "q": "3 days at room temperature, 5 days refrigerated, 3 months frozen.",
+          "a": "How long does it keep?"
         },
         {
-          "a": "Absolutely. Slice, flash-freeze on a tray, then bag. Toast from frozen for a quick breakfast.",
-          "q": "Can I freeze individual slices?"
+          "q": "Absolutely. Slice, flash-freeze on a tray, then bag. Toast from frozen for a quick breakfast.",
+          "a": "Can I freeze individual slices?"
         },
         {
-          "a": "Yes — at about 11g per slice it clears the FDA \"high protein\" threshold of 10g per serving (20% of the Daily Value).",
-          "q": "Is it actually high in protein?"
+          "q": "Yes — at about 11g per slice it clears the FDA \"high protein\" threshold of 10g per serving (20% of the Daily Value).",
+          "a": "Is it actually high in protein?"
         },
         {
-          "a": "No — use plain pumpkin puree. Pie filling comes pre-sweetened and pre-spiced, which would throw off both the sugar level and the spice balance.",
-          "q": "Can I use pumpkin pie filling instead of puree?"
+          "q": "No — use plain pumpkin puree. Pie filling comes pre-sweetened and pre-spiced, which would throw off both the sugar level and the spice balance.",
+          "a": "Can I use pumpkin pie filling instead of puree?"
         }
       ],
       "relatedRecipes": [
@@ -13151,67 +13505,208 @@
         "high-protein-pumpkin-chia-pudding"
       ],
       "datePublished": "2026-10-06",
-      "dateModified": "2026-10-06"
+      "dateModified": "2026-10-06",
+      "source": "cached-verified"
     },
     {
       "slug": "high-protein-butternut-squash-mac-and-cheese",
       "title": "High Protein Butternut Squash Mac and Cheese Recipe",
       "description": "A creamy, protein-rich twist on classic mac and cheese — roasted butternut squash, chickpea penne, and about 28g protein per serving.",
-      "lede": "As cooler weather arrives, a warm bowl of high protein butternut squash mac and cheese feels especially satisfying — with about 28g of protein in every serving.",
-      "category": "Protein",
       "image": "https://karxpekwwfyujjcjaiou.supabase.co/storage/v1/object/public/ai-images/drafts/high-protein-butternut-squash-mac-and-cheese-1791273131589.jpg",
-      "sections": [
+      "imageAlt": "Creamy high-protein butternut squash mac and cheese in a bowl",
+      "prepTime": "PT15M",
+      "prepMinutes": 15,
+      "cookTime": "PT30M",
+      "cookMinutes": 30,
+      "totalTime": "PT45M",
+      "totalMinutes": 45,
+      "servings": 4,
+      "calories": 474,
+      "nutrition": {
+        "calories": {
+          "amount": 474,
+          "unit": "kcal",
+          "dv": 24
+        },
+        "protein": {
+          "amount": 27.5,
+          "unit": "g",
+          "dv": 55
+        },
+        "fat": {
+          "amount": 21,
+          "unit": "g",
+          "dv": 27
+        },
+        "carbs": {
+          "amount": 49,
+          "unit": "g",
+          "dv": 18
+        },
+        "fiber": {
+          "amount": 9.5,
+          "unit": "g",
+          "dv": 34
+        },
+        "sugar": {
+          "amount": 6.7,
+          "unit": "g",
+          "dv": 13
+        },
+        "sodium": {
+          "amount": 1042,
+          "unit": "mg",
+          "dv": 45
+        },
+        "iron": {
+          "amount": 3.7,
+          "unit": "mg",
+          "dv": 21
+        },
+        "calcium": {
+          "amount": 474,
+          "unit": "mg",
+          "dv": 36
+        },
+        "vitaminC": {
+          "amount": 15,
+          "unit": "mg",
+          "dv": 17
+        },
+        "potassium": {
+          "amount": 1022,
+          "unit": "mg",
+          "dv": 22
+        }
+      },
+      "keyNutrients": [
         {
-          "h2": "What Is High Protein Butternut Squash Mac and Cheese?",
-          "paragraphs": [
-            "This dish takes the familiar comfort of mac and cheese and adds roasted butternut squash for natural sweetness and extra nutrients. Chickpea penne, sharp cheddar, Parmesan, and Greek yogurt bring the meal to about 28g of protein per serving (calculated from USDA FoodData Central ingredient data) — while it still tastes indulgent."
-          ]
+          "key": "protein",
+          "label": "28g Protein"
         },
         {
-          "h2": "Why Protein Matters in This Dish",
-          "paragraphs": [
-            "Protein is one of the three macronutrients, and this dish gets it from several places at once: chickpea penne, sharp cheddar, Parmesan, and Greek yogurt. Pairing that protein with the carbohydrates from pasta and the fiber from roasted butternut squash makes a complete, comforting meal — the kind that works as well for a weeknight dinner as it does for next-day lunches."
-          ]
+          "key": "fiber",
+          "label": "9.5g Fiber"
         },
         {
-          "h2": "Recipe",
-          "paragraphs": [
-            "Ingredients: 8 oz chickpea penne (dry), 2 cups peeled and diced butternut squash, 1 cup shredded sharp cheddar, ½ cup grated Parmesan, ½ cup plain nonfat Greek yogurt, 1 cup whole milk (or unsweetened plant-based milk), 1 tbsp olive oil, ½ tsp garlic powder, ½ tsp mustard powder, pinch of nutmeg, salt and pepper to taste.",
-            "Steps: 1. Preheat oven to 400°F (200°C). Toss squash with olive oil, salt, and pepper; spread on a baking sheet and roast 20–25 minutes until tender. 2. While squash roasts, cook pasta according to package directions; drain and set aside. 3. In a saucepan over medium heat, whisk together milk, Greek yogurt, garlic powder, mustard powder, and nutmeg; simmer 3–4 minutes until slightly thickened. 4. Stir in cheddar and Parmesan until melted. 5. Add roasted squash and pasta to the sauce; toss to coat. 6. Season with additional salt and pepper if needed. Serve warm."
-          ]
-        },
-        {
-          "h2": "Meal-Prep, Storage, and Substitutions",
-          "paragraphs": [
-            "Storage: Let the mac and cheese cool, then transfer to airtight containers. Refrigerate for up to 4 days or freeze for up to 2 months. Reheat in the microwave or oven, adding a splash of milk if the sauce thickens.",
-            "Substitutions: For a gluten-free version, use gluten-free high-protein pasta. To make it dairy-free, replace cheddar and Parmesan with dairy-free shredded cheese and use a plant-based yogurt and milk. Add cooked chicken, turkey, or white beans for extra protein if desired."
-          ]
+          "key": "calcium",
+          "label": "474mg Calcium"
         }
       ],
+      "ingredients": [
+        {
+          "amount": "8 oz (227 g)",
+          "item": "chickpea penne (dry)"
+        },
+        {
+          "amount": "2 cups (280 g)",
+          "item": "butternut squash, peeled and diced"
+        },
+        {
+          "amount": "1 cup (113 g)",
+          "item": "sharp cheddar, shredded"
+        },
+        {
+          "amount": "1/2 cup (50 g)",
+          "item": "parmesan, grated"
+        },
+        {
+          "amount": "1/2 cup (120 g)",
+          "item": "plain nonfat Greek yogurt"
+        },
+        {
+          "amount": "1 cup (240 ml)",
+          "item": "whole milk (or unsweetened plant-based milk)"
+        },
+        {
+          "amount": "1 tbsp",
+          "item": "olive oil"
+        },
+        {
+          "amount": "1/2 tsp",
+          "item": "garlic powder"
+        },
+        {
+          "amount": "1/2 tsp",
+          "item": "mustard powder"
+        },
+        {
+          "amount": "1 pinch",
+          "item": "nutmeg"
+        },
+        {
+          "amount": "to taste",
+          "item": "salt and black pepper"
+        }
+      ],
+      "steps": [
+        {
+          "title": "Roast the squash",
+          "text": "Preheat the oven to 400°F (200°C). Toss the diced squash with olive oil, salt, and pepper; spread on a baking sheet and roast 20-25 minutes, until tender."
+        },
+        {
+          "title": "Cook the pasta",
+          "text": "While the squash roasts, cook the chickpea penne according to package directions; drain and set aside."
+        },
+        {
+          "title": "Make the sauce base",
+          "text": "In a saucepan over medium heat, whisk together the milk, Greek yogurt, garlic powder, mustard powder, and nutmeg; simmer 3-4 minutes until slightly thickened."
+        },
+        {
+          "title": "Melt the cheeses",
+          "text": "Stir in the cheddar and parmesan until melted and smooth."
+        },
+        {
+          "title": "Combine",
+          "text": "Add the roasted squash and pasta to the sauce; toss to coat everything evenly."
+        },
+        {
+          "title": "Season and serve",
+          "text": "Season with additional salt and pepper if needed and serve warm."
+        }
+      ],
+      "tags": {
+        "nutrients": [
+          "protein",
+          "fiber",
+          "calcium"
+        ],
+        "diets": [
+          "vegetarian"
+        ],
+        "meals": [
+          "dinner",
+          "lunch"
+        ]
+      },
+      "whyItHelps": {
+        "goal": "High-protein comfort food",
+        "text": "Chickpea penne, sharp cheddar, parmesan and Greek yogurt stack up to about 28 g of protein per serving, with roasted butternut squash adding fiber and natural sweetness. A weeknight-friendly comfort dish that also packs well for next-day lunches."
+      },
       "faqs": [
         {
-          "a": "About 35–40 minutes total, including roasting the squash and cooking the pasta.",
-          "q": "How long does it take to make high protein butternut squash mac and cheese?"
+          "q": "About 35–40 minutes total, including roasting the squash and cooking the pasta.",
+          "a": "How long does it take to make high protein butternut squash mac and cheese?"
         },
         {
-          "a": "Yes. Assemble the mac and cheese, cover, and refrigerate overnight. Bake or reheat when ready to eat; add a little milk to loosen the sauce if needed.",
-          "q": "Can I prepare this dish ahead of time?"
+          "q": "Yes. Assemble the mac and cheese, cover, and refrigerate overnight. Bake or reheat when ready to eat; add a little milk to loosen the sauce if needed.",
+          "a": "Can I prepare this dish ahead of time?"
         },
         {
-          "a": "You can use plain cottage cheese blended until smooth, or a plant-based yogurt alternative for a dairy-free option.",
-          "q": "What swaps work if I don’t have Greek yogurt?"
+          "q": "You can use plain cottage cheese blended until smooth, or a plant-based yogurt alternative for a dairy-free option.",
+          "a": "What swaps work if I don’t have Greek yogurt?"
         },
         {
-          "a": "Yes — each serving has about 28g of protein (USDA FoodData Central ingredient math), well above the FDA \"high protein\" bar of 10g per serving.",
-          "q": "Is this actually high in protein?"
+          "q": "Yes — each serving has about 28g of protein (USDA FoodData Central ingredient math), well above the FDA \"high protein\" bar of 10g per serving.",
+          "a": "Is this actually high in protein?"
         },
         {
-          "a": "Freeze in a sealed container for up to two months. Thaw overnight in the fridge and reheat gently, stirring in a splash of milk to restore creaminess.",
-          "q": "Can I freeze leftovers?"
+          "q": "Freeze in a sealed container for up to two months. Thaw overnight in the fridge and reheat gently, stirring in a splash of milk to restore creaminess.",
+          "a": "Can I freeze leftovers?"
         },
         {
-          "a": "Yes — the sauce works with any short pasta, but the protein per serving will drop since the chickpea penne contributes a large share. Add extra Greek yogurt or a handful of white beans to compensate.",
-          "q": "Can I use regular pasta instead of chickpea penne?"
+          "q": "Yes — the sauce works with any short pasta, but the protein per serving will drop since the chickpea penne contributes a large share. Add extra Greek yogurt or a handful of white beans to compensate.",
+          "a": "Can I use regular pasta instead of chickpea penne?"
         }
       ],
       "relatedRecipes": [
@@ -13220,7 +13715,404 @@
         "broccoli-cheddar-quinoa-bake"
       ],
       "datePublished": "2026-10-06",
-      "dateModified": "2026-10-06"
+      "dateModified": "2026-10-06",
+      "source": "cached-verified"
+    },
+    {
+      "slug": "high-protein-pumpkin-soup",
+      "title": "High-Protein Pumpkin Soup Recipe – Easy, Creamy, Plant-Based",
+      "description": "A velvety pumpkin soup with 15g plant protein per serving, ready in 30 minutes. Gluten-free, dairy-free, and perfect for meal prep.",
+      "image": "https://karxpekwwfyujjcjaiou.supabase.co/storage/v1/object/public/ai-images/drafts/high-protein-pumpkin-soup-1791359643376.jpg",
+      "imageAlt": "Bowl of creamy pumpkin soup with a coconut cream swirl and toasted pumpkin seeds",
+      "prepTime": "PT10M",
+      "prepMinutes": 10,
+      "cookTime": "PT20M",
+      "cookMinutes": 20,
+      "totalTime": "PT30M",
+      "totalMinutes": 30,
+      "servings": 4,
+      "calories": 423,
+      "nutrition": {
+        "calories": {
+          "amount": 423,
+          "unit": "kcal",
+          "dv": 21
+        },
+        "protein": {
+          "amount": 15.2,
+          "unit": "g",
+          "dv": 30
+        },
+        "fat": {
+          "amount": 21.3,
+          "unit": "g",
+          "dv": 27
+        },
+        "carbs": {
+          "amount": 48.5,
+          "unit": "g",
+          "dv": 18
+        },
+        "fiber": {
+          "amount": 9.6,
+          "unit": "g",
+          "dv": 34
+        },
+        "sugar": {
+          "amount": 7,
+          "unit": "g",
+          "dv": 14
+        },
+        "sodium": {
+          "amount": 731,
+          "unit": "mg",
+          "dv": 32
+        },
+        "iron": {
+          "amount": 7.9,
+          "unit": "mg",
+          "dv": 44
+        },
+        "calcium": {
+          "amount": 90,
+          "unit": "mg",
+          "dv": 7
+        },
+        "vitaminC": {
+          "amount": 10.8,
+          "unit": "mg",
+          "dv": 12
+        },
+        "potassium": {
+          "amount": 826,
+          "unit": "mg",
+          "dv": 18
+        }
+      },
+      "keyNutrients": [
+        {
+          "key": "protein",
+          "label": "15g Protein"
+        },
+        {
+          "key": "fiber",
+          "label": "10g Fiber"
+        },
+        {
+          "key": "iron",
+          "label": "8mg Iron"
+        }
+      ],
+      "ingredients": [
+        {
+          "amount": "2 cups (490 g)",
+          "item": "pumpkin puree (canned)"
+        },
+        {
+          "amount": "1 cup (192 g)",
+          "item": "red lentils, rinsed"
+        },
+        {
+          "amount": "1 medium (150 g)",
+          "item": "onion, diced"
+        },
+        {
+          "amount": "2 cloves",
+          "item": "garlic, minced"
+        },
+        {
+          "amount": "1 tsp",
+          "item": "ground cumin"
+        },
+        {
+          "amount": "1/2 tsp",
+          "item": "smoked paprika"
+        },
+        {
+          "amount": "4 cups (960 ml)",
+          "item": "vegetable broth"
+        },
+        {
+          "amount": "1 cup (240 ml)",
+          "item": "coconut milk, canned"
+        },
+        {
+          "amount": "2 tbsp",
+          "item": "olive oil"
+        },
+        {
+          "amount": "to taste",
+          "item": "salt and pepper"
+        }
+      ],
+      "steps": [
+        {
+          "title": "Sauté the aromatics",
+          "text": "Heat the olive oil in a large pot over medium heat. Add the onion and garlic and sauté 4–5 minutes until softened. Stir in the cumin and smoked paprika and cook 30 seconds until fragrant."
+        },
+        {
+          "title": "Add pumpkin, lentils, and broth",
+          "text": "Add the pumpkin puree, red lentils, and vegetable broth. Bring to a gentle boil, then reduce to a simmer."
+        },
+        {
+          "title": "Simmer until thick",
+          "text": "Cook 20–25 minutes, stirring occasionally, until the lentils are completely tender and the soup has thickened."
+        },
+        {
+          "title": "Blend it smooth",
+          "text": "Use an immersion blender to blend until velvety, or leave it rustic with some texture."
+        },
+        {
+          "title": "Finish and serve",
+          "text": "Swirl in the coconut milk, season with salt and pepper, and ladle into bowls. Garnish with toasted pumpkin seeds if you like."
+        }
+      ],
+      "tags": {
+        "nutrients": [
+          "protein",
+          "fiber",
+          "iron"
+        ],
+        "diets": [
+          "vegan",
+          "gluten-free",
+          "dairy-free"
+        ],
+        "meals": [
+          "lunch",
+          "dinner"
+        ]
+      },
+      "whyItHelps": {
+        "goal": "High-protein plant-based soups",
+        "text": "Red lentils melt into the pumpkin base and carry each bowl to about 15 g of protein — calculated from USDA FoodData Central ingredient data — with 10 g of fiber and 44% of the day's iron. No cream, no protein powder: just pantry staples in one pot."
+      },
+      "faqs": [
+        {
+          "q": "How long does it take to make high protein pumpkin soup?",
+          "a": "From start to finish, the soup is ready in about 30 minutes, including prep and simmering time."
+        },
+        {
+          "q": "Can I make this soup ahead of time?",
+          "a": "Yes. It stores well in the fridge for four days or freezes for 2–3 months, making it ideal for meal prep."
+        },
+        {
+          "q": "What makes this pumpkin soup high in protein?",
+          "a": "The red lentils (1 cup dry) cook down into the base and contribute most of the 15 g of protein per serving — calculated from USDA FoodData Central ingredient data — without any dairy or meat."
+        },
+        {
+          "q": "Is the soup gluten-free and dairy-free?",
+          "a": "As written, the recipe contains no gluten or dairy ingredients, so it is naturally gluten-free, dairy-free, and vegan."
+        }
+      ],
+      "relatedRecipes": [
+        "coconut-pumpkin-soup",
+        "high-fiber-roasted-butternut-squash-soup",
+        "beef-lentil-chili"
+      ],
+      "datePublished": "2026-10-07",
+      "dateModified": "2026-10-07",
+      "source": "cached-verified"
+    },
+    {
+      "slug": "high-protein-baked-apples",
+      "title": "High-Protein Baked Apples with Greek Yogurt & Nuts",
+      "description": "Warm cinnamon apples stuffed with Greek yogurt, nuts, and seeds — about 13g protein per apple, ready in 40 minutes for breakfast or dessert.",
+      "image": "https://karxpekwwfyujjcjaiou.supabase.co/storage/v1/object/public/ai-images/drafts/high-protein-baked-apples-1791359644492.jpg",
+      "imageAlt": "Baked cinnamon apples stuffed with Greek yogurt, walnuts, and seeds",
+      "prepTime": "PT10M",
+      "prepMinutes": 10,
+      "cookTime": "PT30M",
+      "cookMinutes": 30,
+      "totalTime": "PT40M",
+      "totalMinutes": 40,
+      "servings": 4,
+      "calories": 280,
+      "nutrition": {
+        "calories": {
+          "amount": 280,
+          "unit": "kcal",
+          "dv": 14
+        },
+        "protein": {
+          "amount": 12.7,
+          "unit": "g",
+          "dv": 25
+        },
+        "fat": {
+          "amount": 11,
+          "unit": "g",
+          "dv": 14
+        },
+        "carbs": {
+          "amount": 37,
+          "unit": "g",
+          "dv": 13
+        },
+        "fiber": {
+          "amount": 5.2,
+          "unit": "g",
+          "dv": 19
+        },
+        "sugar": {
+          "amount": 28.4,
+          "unit": "g",
+          "dv": 57
+        },
+        "sodium": {
+          "amount": 35,
+          "unit": "mg",
+          "dv": 2
+        },
+        "iron": {
+          "amount": 1,
+          "unit": "mg",
+          "dv": 5
+        },
+        "calcium": {
+          "amount": 140,
+          "unit": "mg",
+          "dv": 11
+        },
+        "vitaminC": {
+          "amount": 9.2,
+          "unit": "mg",
+          "dv": 10
+        },
+        "potassium": {
+          "amount": 448,
+          "unit": "mg",
+          "dv": 10
+        }
+      },
+      "keyNutrients": [
+        {
+          "key": "protein",
+          "label": "13g Protein"
+        },
+        {
+          "key": "fiber",
+          "label": "5g Fiber"
+        },
+        {
+          "key": "calcium",
+          "label": "140mg Calcium"
+        }
+      ],
+      "ingredients": [
+        {
+          "amount": "4 medium (~720 g)",
+          "item": "firm apples (Honeycrisp, Fuji, or Braeburn)"
+        },
+        {
+          "amount": "1 1/2 cups (368 g)",
+          "item": "plain Greek yogurt (2%)"
+        },
+        {
+          "amount": "1/3 cup (40 g)",
+          "item": "chopped walnuts or pecans"
+        },
+        {
+          "amount": "2 tbsp (20 g)",
+          "item": "hemp seeds or chia seeds"
+        },
+        {
+          "amount": "2 tbsp (40 g)",
+          "item": "maple syrup or honey, divided"
+        },
+        {
+          "amount": "1 tsp",
+          "item": "cinnamon"
+        },
+        {
+          "amount": "1/4 tsp",
+          "item": "nutmeg"
+        },
+        {
+          "amount": "pinch",
+          "item": "salt"
+        },
+        {
+          "amount": "1 tbsp (optional)",
+          "item": "almond butter or peanut butter"
+        }
+      ],
+      "steps": [
+        {
+          "title": "Heat the oven",
+          "text": "Preheat the oven to 375°F (190°C). Lightly grease a baking dish that holds the apples snugly."
+        },
+        {
+          "title": "Core the apples",
+          "text": "Core the apples, leaving the bottom 1/2 inch intact. Use a melon baller or small spoon to widen the cavity slightly — you want room for filling without breaking through."
+        },
+        {
+          "title": "Mix the filling",
+          "text": "In a bowl, mix the Greek yogurt, half the nuts, half the seeds, 1 tablespoon maple syrup, cinnamon, nutmeg, and salt. Stir in the almond butter if using."
+        },
+        {
+          "title": "Stuff and bake",
+          "text": "Stuff each apple generously with the yogurt mixture, mounding it slightly on top. Place in the baking dish, pour 1/4 cup water into the bottom of the dish, and bake 25–30 minutes, until the apples are tender but not collapsed."
+        },
+        {
+          "title": "Crisp the topping",
+          "text": "While the apples bake, toss the remaining nuts and seeds with the remaining maple syrup."
+        },
+        {
+          "title": "Serve warm",
+          "text": "Sprinkle the nut-and-seed topping over the hot apples just before serving."
+        }
+      ],
+      "tags": {
+        "nutrients": [
+          "protein",
+          "fiber",
+          "calcium"
+        ],
+        "diets": [
+          "vegetarian",
+          "gluten-free"
+        ],
+        "meals": [
+          "breakfast",
+          "dessert",
+          "snack"
+        ]
+      },
+      "whyItHelps": {
+        "goal": "High-protein fall breakfasts",
+        "text": "Bumping the filling to a cup and a half of Greek yogurt lands each apple at about 13 g of protein — calculated from USDA FoodData Central ingredient data — with 5 g of fiber from the apple, walnuts, and seeds. A warm, cinnamon-spiced breakfast or dessert that eats like a treat."
+      },
+      "faqs": [
+        {
+          "q": "How much protein is in each baked apple?",
+          "a": "About 13 g per apple, from 1½ cups of Greek yogurt plus walnuts and hemp seeds — calculated from USDA FoodData Central ingredient data. Exact totals vary with your yogurt and nut brands."
+        },
+        {
+          "q": "Can I make these ahead for meal prep?",
+          "a": "Prep the components separately up to 2 days ahead. Core apples and store in lemon water; keep the yogurt filling refrigerated. Assemble and bake fresh for best texture."
+        },
+        {
+          "q": "Which apples hold their shape best for baking?",
+          "a": "Firm, tart-sweet varieties like Honeycrisp, Fuji, Braeburn, or Pink Lady hold their shape. Avoid softer apples like McIntosh or Red Delicious — they turn mushy."
+        },
+        {
+          "q": "Are these gluten-free?",
+          "a": "Yes, all ingredients are naturally gluten-free. Check labels on yogurt and nuts if you have celiac disease or severe sensitivity."
+        },
+        {
+          "q": "Can I use regular yogurt instead of Greek?",
+          "a": "Regular yogurt is thinner and will make the filling runny. Strain it through cheesecloth for a few hours to thicken, or use a plant-based Greek-style alternative."
+        }
+      ],
+      "relatedRecipes": [
+        "apple-pie-overnight-oats",
+        "high-fiber-apple-crisp",
+        "high-protein-pumpkin-chia-pudding"
+      ],
+      "datePublished": "2026-10-07",
+      "dateModified": "2026-10-07",
+      "source": "cached-verified"
     }
   ],
   "nutrients": [
@@ -13297,7 +14189,11 @@
         "white-bean-shakshuka",
         "black-bean-quinoa-burgers",
         "tempeh-rainbow-buddha-bowl",
-        "beef-broccoli-stir-fry"
+        "beef-broccoli-stir-fry",
+        "high-protein-custard-oats",
+        "high-protein-pumpkin-pecan-loaf",
+        "high-protein-butternut-squash-mac-and-cheese",
+        "high-fiber-unstuffed-cabbage-roll-soup"
       ]
     },
     {
