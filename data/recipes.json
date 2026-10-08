@@ -5,7 +5,7 @@
     "canonicalBase": "https://recipe-seeker-client.vercel.app"
   },
   "meta": {
-    "recipes": 63
+    "recipes": 64
   },
   "recipes": [
     {
@@ -14109,6 +14109,192 @@
         "apple-pie-overnight-oats",
         "high-fiber-apple-crisp",
         "high-protein-pumpkin-chia-pudding"
+      ],
+      "datePublished": "2026-10-07",
+      "dateModified": "2026-10-07",
+      "source": "cached-verified"
+    },
+    {
+      "slug": "oreo-balls",
+      "title": "Oreo Balls: 3-Ingredient No-Bake Chocolate Truffles",
+      "description": "Crushed Oreos and cream cheese rolled into truffles and dipped in white chocolate — about 250 kcal per 2-ball serving. No oven, just a freezer and 20 minutes of hands-on time.",
+      "image": "https://karxpekwwfyujjcjaiou.supabase.co/storage/v1/object/public/ai-images/drafts/oreo-balls-1791373207535.jpg",
+      "imageAlt": "Chocolate-covered Oreo truffle balls in paper cups on a white plate",
+      "prepTime": "PT20M",
+      "cookTime": "PT0M",
+      "totalTime": "PT1H20M",
+      "prepMinutes": 20,
+      "cookMinutes": 0,
+      "totalMinutes": 80,
+      "servings": 18,
+      "calories": 250,
+      "nutrition": {
+        "calories": {
+          "amount": 250,
+          "unit": "kcal",
+          "dv": 13
+        },
+        "protein": {
+          "amount": 3.1,
+          "unit": "g",
+          "dv": 6
+        },
+        "fat": {
+          "amount": 14.7,
+          "unit": "g",
+          "dv": 19
+        },
+        "carbs": {
+          "amount": 27.9,
+          "unit": "g",
+          "dv": 10
+        },
+        "fiber": {
+          "amount": 0.7,
+          "unit": "g",
+          "dv": 2
+        },
+        "sugar": {
+          "amount": 20.8,
+          "unit": "g",
+          "dv": 42
+        },
+        "sodium": {
+          "amount": 144,
+          "unit": "mg",
+          "dv": 6
+        },
+        "iron": {
+          "amount": 2.8,
+          "unit": "mg",
+          "dv": 16
+        },
+        "calcium": {
+          "amount": 54,
+          "unit": "mg",
+          "dv": 4
+        },
+        "vitaminC": {
+          "amount": 0.1,
+          "unit": "mg",
+          "dv": 0
+        },
+        "potassium": {
+          "amount": 123,
+          "unit": "mg",
+          "dv": 3
+        }
+      },
+      "keyNutrients": [
+        {
+          "key": "iron",
+          "label": "2.8mg Iron"
+        },
+        {
+          "key": "calcium",
+          "label": "54mg Calcium"
+        },
+        {
+          "key": "potassium",
+          "label": "123mg Potassium"
+        }
+      ],
+      "ingredients": [
+        {
+          "amount": "1 package (405 g / 36 cookies)",
+          "item": "Oreo cookies, or any chocolate sandwich cookies"
+        },
+        {
+          "amount": "226 g (8 oz)",
+          "item": "cream cheese, softened to room temperature"
+        },
+        {
+          "amount": "340 g (12 oz)",
+          "item": "white chocolate chips or chopped white chocolate, for coating"
+        },
+        {
+          "amount": "1 tsp (optional)",
+          "item": "coconut oil, to thin the coating"
+        },
+        {
+          "amount": "2 tbsp (optional)",
+          "item": "crushed Oreo crumbs, for topping"
+        }
+      ],
+      "steps": [
+        {
+          "title": "Crush the cookies",
+          "text": "Place the Oreos — filling and all — in a food processor and pulse into fine crumbs. No food processor? Seal them in a zip-top bag and crush with a rolling pin."
+        },
+        {
+          "title": "Mix with cream cheese",
+          "text": "Add the softened cream cheese to the crumbs and pulse, or stir firmly with a spatula, until a thick, even dough forms. It should hold together when pinched."
+        },
+        {
+          "title": "Roll the balls",
+          "text": "Scoop about 1 tablespoon of dough per ball and roll between your palms. Arrange on a parchment-lined baking sheet — you should get about 36 balls."
+        },
+        {
+          "title": "Chill firm",
+          "text": "Freeze the balls for 30–60 minutes, until firm to the touch. Cold balls dip cleanly; warm ones fall apart in the chocolate."
+        },
+        {
+          "title": "Melt the coating",
+          "text": "Melt the white chocolate with the coconut oil, if using, in 30-second microwave bursts, stirring between each, until smooth."
+        },
+        {
+          "title": "Dip and set",
+          "text": "Dip each cold ball into the chocolate, let the excess drip off, and return it to the parchment. Sprinkle with Oreo crumbs before the coating sets, if you like. Refrigerate 15 minutes to set fully."
+        }
+      ],
+      "tags": {
+        "nutrients": [
+          "iron",
+          "calcium",
+          "potassium"
+        ],
+        "diets": [
+          "vegetarian"
+        ],
+        "meals": [
+          "dessert",
+          "snack"
+        ]
+      },
+      "whyItHelps": {
+        "goal": "Honest numbers for the treats people actually crave",
+        "text": "This is the recipe behind the account's most-viewed pin — published here with the same USDA FoodData Central math as everything else on the site: about 250 kcal and 21 g of sugar per 2-ball serving. No health claims, no superfood halo — just the real numbers, so the treat fits your day with eyes open."
+      },
+      "faqs": [
+        {
+          "q": "How many calories are in one Oreo ball?",
+          "a": "About 125 kcal per ball — the panel on this page is calculated per 2-ball serving (250 kcal), from USDA FoodData Central data for sandwich cookies, cream cheese, and white chocolate. Exact totals vary slightly with your cookie and chocolate brands."
+        },
+        {
+          "q": "Do I need to remove the Oreo filling?",
+          "a": "No — crush the whole cookie, filling included. The creme filling is part of what binds the dough together with the cream cheese."
+        },
+        {
+          "q": "Can I use dark or milk chocolate instead of white?",
+          "a": "Yes. Dark chocolate adds a pleasant bitterness against the sweet filling; milk chocolate keeps it classic. Either works 1:1 by weight for the coating."
+        },
+        {
+          "q": "Why are my Oreo balls falling apart when I dip them?",
+          "a": "They weren't cold enough. Freeze the rolled balls at least 30 minutes so they're firm, and work in batches — keep the rest in the freezer while you dip."
+        },
+        {
+          "q": "How long do Oreo balls keep?",
+          "a": "Refrigerated in an airtight container, up to 1 week. They also freeze well for up to 2 months — thaw in the fridge, not on the counter, so the coating doesn't sweat."
+        },
+        {
+          "q": "Are Oreo balls gluten-free?",
+          "a": "Not as written — standard Oreos contain wheat. Use certified gluten-free chocolate sandwich cookies for a gluten-free version."
+        }
+      ],
+      "relatedRecipes": [
+        "high-fiber-apple-crisp",
+        "cottage-cheese-protein-pancakes",
+        "high-protein-baked-apples"
       ],
       "datePublished": "2026-10-07",
       "dateModified": "2026-10-07",
