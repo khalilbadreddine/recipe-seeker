@@ -17,7 +17,8 @@ export const getNutrient = (key) => nutrients.find((n) => n.slug === key || n.ke
 export const getGuide = (slug) => guides.find((g) => g.slug === slug)
 export const getPost = (slug) => posts.find((p) => p.slug === slug)
 
-export const absUrl = (path) => `${SITE_URL}${path.startsWith('/') ? path : `/${path}`}`
+export const absUrl = (path) =>
+  /^https?:\/\//i.test(path) ? path : `${SITE_URL}${path.startsWith('/') ? path : `/${path}`}`
 export const absImage = (path) => absUrl(path)
 
 export const formatAmount = (amount, unit) => {

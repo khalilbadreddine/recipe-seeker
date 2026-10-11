@@ -5,7 +5,7 @@
     "description": "Vitamin C can double or triple iron absorption from plant foods. 7 iron + vitamin C pairings with real per-serving numbers \u2014 and a recipe for each.",
     "lede": "The simplest nutrition upgrade we know: eat vitamin C in the same meal as iron-rich plant foods. Vitamin C converts plant iron into a form your body absorbs far more easily \u2014 research shows it can double or even triple non-heme iron absorption. These are 7 easy pairings, with real per-serving iron and vitamin C numbers from our recipes.",
     "category": "Iron",
-    "image": "https://karxpekwwfyujjcjaiou.supabase.co/storage/v1/object/public/ai-images/heroes/iron-vitamin-c-food-pairings-v2.jpg",
+    "image": "/images/heroes/iron-vitamin-c-food-pairings-v2.jpg",
     "sections": [
       {
         "h2": "Why this pairing works (the 30-second science)",
@@ -107,7 +107,7 @@
     "description": "Zinc is the quiet nutrient vegetarians miss. The best plant sources, 3 absorption tricks, and 5 zinc-rich vegetarian recipes with real per-serving numbers.",
     "lede": "Zinc never makes the headlines, but it is the nutrient worth watching most carefully in vegetarian cooking. Plants absolutely contain zinc \u2014 the catch is that a compound called phytate makes it harder to absorb. Here is where zinc actually hides in a vegetarian kitchen, the prep tricks that unlock more of it, and five recipes with real numbers.",
     "category": "Zinc",
-    "image": "https://karxpekwwfyujjcjaiou.supabase.co/storage/v1/object/public/ai-images/heroes/zinc-rich-vegetarian-foods-v2.jpg",
+    "image": "/images/heroes/zinc-rich-vegetarian-foods-v2.jpg",
     "sections": [
       {
         "h2": "Why zinc deserves your attention",
@@ -220,7 +220,7 @@
     "description": "Tea with dinner can slash iron absorption. 5 common iron blockers \u2014 coffee, calcium, phytates \u2014 and simple timing fixes that cost nothing.",
     "lede": "You can eat all the lentils in the world, but if a big mug of tea lands next to them, your body sees a fraction of the iron. Blockers are the most overlooked half of eating for iron \u2014 and every fix here is free. These are the five worth watching.",
     "category": "Iron",
-    "image": "https://karxpekwwfyujjcjaiou.supabase.co/storage/v1/object/public/ai-images/heroes/foods-that-block-iron-absorption-v2.jpg",
+    "image": "/images/heroes/foods-that-block-iron-absorption-v2.jpg",
     "sections": [
       {
         "h2": "1. Tea and coffee with the meal",
@@ -322,7 +322,7 @@
     "description": "A full day of real meals delivering about 22mg of iron \u2014 breakfast, lunch, snack and dinner with per-serving numbers from our recipes.",
     "lede": "Women aged 19\u201350 need 18 mg of iron a day; men need 8 mg \u2014 and most people do not get there by accident. This is a full day of real food that adds up to about 22 mg, every number pulled from our recipes. Cook the whole day, or steal the pattern.",
     "category": "Iron",
-    "image": "https://karxpekwwfyujjcjaiou.supabase.co/storage/v1/object/public/ai-images/heroes/what-to-eat-in-a-day-for-iron-v2.jpg",
+    "image": "/images/heroes/what-to-eat-in-a-day-for-iron-v2.jpg",
     "sections": [
       {
         "h2": "The target (and why a day beats a superfood)",
@@ -466,7 +466,7 @@
     "description": "Most 'high-protein' breakfasts land at 12\u201315g. 5 breakfasts with real per-serving numbers \u2014 one hits 30g as-is, the rest with a single tweak.",
     "lede": "Thirty grams of protein at breakfast is the difference between coasting to lunch and raiding the pantry at 10:30. But most breakfasts labeled high-protein quietly land at 12\u201315 grams. We ran the numbers on our recipes \u2014 here is what actually hits 30, what gets there with a single tweak, and the formula to build your own.",
     "category": "Protein",
-    "image": "https://karxpekwwfyujjcjaiou.supabase.co/storage/v1/object/public/ai-images/heroes/high-protein-breakfast-30g-ideas-v2.jpg",
+    "image": "/images/heroes/high-protein-breakfast-30g-ideas-v2.jpg",
     "sections": [
       {
         "h2": "Why 30 grams?",
