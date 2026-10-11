@@ -183,7 +183,10 @@ function assertShape() {
       if (!recipeSlugs.has(s)) fail(`post ${p.slug}: unknown recipe slug "${s}"`);
     }
     const imgPath = path.join(ROOT, 'client', 'public', String(p.image || '').replace(/^\//, ''));
-    if (!fs.existsSync(imgPath)) fail(`post ${p.slug}: image not found: ${p.image}`);
+    // 2026-10-11: blog heroes now live on Supabase (absolute URLs). A remote URL
+    // can never exist as a local file — skip the local-file check for http(s)
+    // images (they're verified reachable via HTTP at publish time instead).
+    if (!/^https?:\/\//i.test(String(p.image || '')) && !fs.existsSync(imgPath)) fail(`post ${p.slug}: image not found: ${p.image}`);
   }
 }
 
